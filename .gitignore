@@ -12,3 +12,4 @@ app/logs/*.*
 app\logs\*.*
 *.bat
 *.pem
+app/pylib/ad_settings.py
