@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="ION Racing Website" />
+    <meta name="author" content="ION Racing" />
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>ION Racing{% block title %}{% endblock %}</title>
+    <link rel="icon" href="{{ url_for('static', filename='images/favicon.png') }}" />
+    <script type="text/javascript" src="{{ url_for('static', filename='applications/jquery-3.4.1.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='applications/bootstrap.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='applicaitons/navbar.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='applications/app.js') }}"></script>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/bootstrap.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/general.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/navbar.css') }}" />
+</head>
+
+<body>
+    <div id="headarea">
+
+        <div id="navpad"></div>
+
+        <nav class="navbar navbar-default navbar-static-top" role="navigation">
+            <div class="container">
+                <!-- Brand and mobile menu toggle -->
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="/home">
+                        <img src="{{ url_for('static', filename='images/logos/ION_Racing.png') }}" alt="ION Racing" />
+                    </a>
+                    <a class="navbar-brand"
+                        href="https://docs.microsoft.com/en-us/windows-server/identity/ad-ds/get-started/virtual-dc/active-directory-domain-services-overview"
+                        target="_blank">
+                        <img src="{{ url_for('static', filename='images/logos/win_adw.png') }}" alt="AD" />
+                    </a>
+                </div>
+
+                <!-- Collapsable nav items -->
+                <div id="myCollapse" class="">
+                    <ul class="nav">
+                        {% for i in range(0, head_menu|length) %}
+                        {% if active==i %}
+                        <li class="active"><a
+                                href="/{{ head_menu[i] | lower }}">{{ head_menu[i] | replace("_", " ") }}</a></li>
+                        {% else %}
+                        <li><a href="/{{ head_menu[i] | lower }}">{{ head_menu[i] | replace("_", " ") }}</a></li>
+                        {% endif %}
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+        <div class="heading">
+            <div class="container">
+                <h2>Welcome</h2>
+                <p>This is a local web-interface for <span
+                        style="text-decoration: underline rgb(255, 255, 255);">ION</span> Racing UiS. <br />
+                    For the official website please go to <a href="https://ionracing.no/">this</a> site instead. (Not working due to domain issues...)</p>
+            </div>
+        </div>
+    </div>
+    <div id="content">
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+            <ul class="flashes">
+                {% for message in messages %}
+                <li>{{ message }}</li>
+                {% endfor %}
+            </ul>
+            {% endif %}
+        {% endwith %}
+        {% block content %}{% endblock %}
+    </div>
+</body>
+
+</html>

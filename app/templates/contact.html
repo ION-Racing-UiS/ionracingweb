@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+{% block title %} | Contact{% endblock %}
+{% block content %}
+<div class="container">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/contact.css') }}" />
+    <div class="row">
+        <div class="ionform">
+            <div class="col-xs-12 col md-8">
+                <h1>Contact System Administrators</h1>
+                <p>This form can be used to send messages/questions or any other inqueries to the IT-department. To
+                    start please select a category below.</p>
+                <div class="form-group">
+                    <button class="formBtn btn email-me" type="button" id="comp_issue">Computer issue</button>
+                    <button class="formBtn btn email-me" type="button" id="message">Message/Other</button>
+                    <button class="formBtn btn email-me" type="button" id="registration">Registration</button>
+                </div>
+                <form id="contactForm" name="contactform" method="POST"
+                    action="http://www.domeneshop.no/cgi-bin/mailto.cgi">
+                    <input type="hidden" name="_to" value="t.skadberg@ionracing.no">
+                    <input type="hidden" name="_from" value="feedback@ionracing.no">
+                    <input type="hidden" name="_subject" value="Message from AD web interface">
+                    <input type="hidden" name="_resulturl" value="http://ad.ionracing.no">
+                    <div id="ajaxNode" class="form-group">
+                        <!-- Node for ajax returns -->
+                        {% if host is defined %}
+                        {{ host | safe }}
+                        {% endif %}
+                    </div>
+                    <div class="form-group">
+                        <div class="col-lg-12">
+                            <button class="btn email-me" type="submit">Send message!</button>
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

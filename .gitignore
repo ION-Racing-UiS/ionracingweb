@@ -1,0 +1,14 @@
+.DS_Store
+thumbs.db
+Thumbs.db
+*.pyc
+app/__pychache__/
+app/__pychache__/*
+app\__pychache__\
+app\__pychache__\*
+app/__pychache__/*.pyc
+app\__pychache__\*.pyc
+app/logs/*.*
+app\logs\*.*
+*.bat
+*.pem

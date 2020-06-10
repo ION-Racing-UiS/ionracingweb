@@ -1,0 +1,163 @@
+@import url(https://fonts.googleapis.com/css?family=Open+Sans:400,300,700);
+@import url(https://fonts.googleapis.com/css?family=Pacifico);
+@import url(https://fonts.googleapis.com/css?family=Lobster);
+* {
+    font-family: 'Open Sans', sans-serif;
+    color: #fff;
+}
+
+body {
+    background-color: black;
+}
+
+.email-me {
+    background: none;
+    text-decoration: none;
+    color: #fff;
+    border: 2px solid #119ED9;
+    border-radius: 5px;
+    margin-bottom: 1em;
+}
+.email-me:hover {
+    color: #fff;
+}
+.email-me:focus {
+    color: #fff;
+}
+.email-me:active {
+    color: #fff;
+}
+@media(min-width:768px) {
+    .email-me {
+        background-size: 200% 200%;
+        background-image: linear-gradient(to bottom right, black 50%, crimson 50%);
+        transition: all .3s ease-in-out;
+    }
+    .email-me:hover {
+        border-color: crimson;
+        background-position: 100% 100%;
+    }
+}
+@media(max-width:767px) {
+    .email-me {
+        border: none;
+        background-color: #119ED9;
+    }
+}
+
+.col-xs-15,
+.col-sm-15,
+.col-md-15,
+.col-lg-15 {
+    position: relative;
+    min-height: 1px;
+    padding-right: 10px;
+    padding-left: 10px;
+}
+.col-xs-15 {
+    width: 20%;
+    float: left;
+}
+@media (min-width: 768px) {
+    .col-sm-15 {
+        width: 20%;
+        float: left;
+    }
+}
+@media (min-width: 992px) {
+    .col-md-15 {
+        width: 20%;
+        float: left;
+    }
+}
+@media (min-width: 1200px) {
+    .col-lg-15 {
+        width: 20%;
+        float: left;
+    }
+}
+
+/* FOOTER */
+#footer {
+    margin-top: 2em;
+    background-color: black;
+}
+#footer .footer-bar {
+    width: 100%;
+    height: 30px;
+    border-bottom: 2px solid white;
+    margin-bottom: 4em;
+    text-align: center;
+}
+#footer .footer-bar span {
+    background-color: black;
+    font-family: 'Pacifico';
+    color: #119ED9;
+    font-size: 36px;
+    padding-left: 10px;
+    padding-right: 18px;
+}
+#footer .footer-main {
+    text-align: center;
+    padding-top: 5em;
+    padding-bottom: 1.5em;
+}
+#footer .footer-main img {
+    width: 60%;
+}
+#footer .footer-bottom {
+    text-align: center;
+    padding: 2em 0;
+}
+@media(max-width:767px) {
+    #footer {
+        margin-top: 1em;
+    }
+    #footer .footer-main img {
+        width: 40%;
+        padding: 1em 0;
+    }
+    #footer .insta img {
+        margin-top: 0.6em;
+    }
+}
+@media(min-width:768px) {
+    #footer .footer-main a img {
+        transition: all .1s ease-in-out;
+    }
+    #footer .footer-main a:hover img{
+        transform: scale(1.1) rotate(-3deg);
+    }
+}
+
+@media(min-width:768px) {
+    #headarea {
+        background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 1)), url(/../static/images/HP_BG.jpg);
+        background-size: cover;
+        background-position: top center;
+        /*padding-bottom: 1em;*/
+    }
+    .heading img {
+        display: none;
+    }
+    
+}
+@media(max-width:767px) {
+    .heading img {
+        margin-bottom: 1em;
+        outline: 2px solid #119ED9;
+        outline-offset: 3px;
+    }
+}
+
+.row article{
+    margin: 20px;
+}
+
+.error {
+    padding: .5em;
+    border: 2px solid red;
+    border-radius: 4px;
+    box-shadow: 2px 2px darkred;
+    background-color: #222;
+}

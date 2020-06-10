@@ -1,0 +1,81 @@
+@media(min-width:768px) {
+    #headarea {
+        background: linear-gradient(rgba(0, 0, 0, 0.7), rgba(0, 0, 0, 1)), url(/../static/images/HP_BG.jpg);
+        background-size: cover;
+        background-position: top center;
+    }
+}
+
+#content {
+    padding-top: 20px;
+}
+
+.form-group input.form-control, textarea.form-control {
+    padding-left: 0.6em;
+    border: 2px solid #222;
+    border-radius: 5px;
+    background-color: #222;
+    color: #fff;
+}
+.form-group input.form-control:focus, textarea.form-control:focus {
+    border-color: #119ED9;
+    background-color: black;
+    box-shadow: none;
+}
+.form-group label.control-label {
+    margin-bottom: 0;
+    color: #fff;
+}
+.form-group label.control-label p {
+    font-weight: 400;
+}
+.form-group .email-me:active,
+.form-group .email-me:focus {
+    box-shadow: none;
+    outline: none;
+}
+
+.form-names {
+    border: 2px solid #222;
+    border-radius: 5px;
+    background-color: #222;
+    color: #fff;
+    width: 49%;
+    margin-left: 1px;
+    margin-right: 1px;
+}
+
+.form-names:focus {
+    border-color: #119ED9;
+    background-color: #000;
+    box-shadow: none;
+}
+
+.form-names:first-child {
+    margin-right: 1px;
+}
+
+.form-names:last-child {
+    margin-left: 1px;
+}
+
+select option {
+    background-color: #222;
+    color: #fff;
+}
+
+select {
+    background-color: #222;
+    color: #fff;
+}
+
+#deptSel {
+    background-color: #222;
+    color: #fff;
+}
+
+#user_reg>.form-group>.col-lg-12>.col-lg-12>span {
+    width: -moz-fit-content;
+    width: -webkit-fit-content;
+    width: fit-content;
+}

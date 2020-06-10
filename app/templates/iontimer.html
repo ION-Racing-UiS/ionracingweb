@@ -1,0 +1,51 @@
+﻿<!DOCTYPE html>
+
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <title>Ion Count Down</title>
+    <script src="{{ url_for('static', filename='applications/iontimer.js') }}"></script>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/iontimer.css') }}" />
+</head>
+
+<body>
+
+    <div class="container">
+        <div class="background"></div>
+        <div id="outer-wrapper" class="outer-wrapper" style="display: none">
+            <div class="wrapper">
+                <div class="countdown" id="content">
+                </div>
+                <div class="countdown" id="time2">
+                </div>
+            </div>
+
+            <div class="wrapper">
+                <div id="england">
+
+                </div>
+            </div>
+
+            <div class="wrapper">
+                <div id="germany">
+
+                </div>
+            </div>
+        </div>
+        <div id="designlock">
+
+        </div>
+    </div>
+    <div class="sidebar">
+        <div class="clock"></div>
+        <img src="{{ url_for('static', filename='images/ttmf.gif') }}" />
+        <!--<img src="{{ url_for('static', filename='images/scania-1.svg') }}" />-->
+        <!--<video autoplay="" loop="" width="100%" src="{{ url_for('static', filename='videos/ca.mp4') }}"
+            type="video/mp4">
+            <source src="/static/videos/ca.mp4" type="video/mp4">
+        </video>-->
+    </div>
+</body>
+
+</html>

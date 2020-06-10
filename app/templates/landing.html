@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <title>ION Racing</title>
+    <style>
+        html,
+        body {
+            background-color: black;
+            color: white;
+            text-align: center;
+            height: 100%;
+            margin: 0;
+            padding: 0;
+        }
+
+        #img-container {
+            width: 100%;
+            height: 100%;
+        }
+
+        #img-container>img {
+            width: 0px;
+            transition: width 500ms ease-in-out 2000ms, height 500ms ease-in-out 2000ms, background-color 500ms ease-in-out 0, scale(1.0), 2000ms, ease-in-out;
+            transition-property: width, height, background-color, scale(1.0);
+            transition-duration: 500ms, 500ms, 500ms, 2000ms;
+            transition-timing-function: ease-in-out;
+            transition-delay: 2000ms, 2000ms, 0ms, 250ms;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            margin: auto;
+        }
+
+        #img-container>img:hover {
+            background-color: rgba(64, 64, 64, .7);
+            cursor: pointer;
+            transform: scale(250);
+            transition-timing-function: ease-in-out;
+            transition-duration: 2000ms;
+        }
+
+        .l-overlay {
+            position: absolute;
+            width: 100%;
+            min-width: 100%;
+            height: 100%;
+            min-height: 100%;
+            z-index: 1000;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            transition-delay: 500ms;
+            transition-duration: 2000ms;
+            transition-property: height, background-color, z-index;
+            transition-timing-function: ease-in-out;
+            background-color: rgba(32, 32, 32, 1.0);
+        }
+
+        .l-overlay-r {
+            height: 0;
+            min-height: 0;
+            /*z-index: -1000;*/
+            background-color: rgba(0, 0, 0, .8);
+        }
+
+        #img-container>#logo.resize {
+            width: 50%;
+        }
+    </style>
+    <script type="text/javascript" src="/static/applications/jquery-3.4.1.min.js"></script>
+    <script type="text/javascript">
+        var csrf_token = "{{ csrf_token() }}";
+
+        function init() {
+            document.getElementsByClassName("l-overlay")[0].classList.add("l-overlay-r");
+            document.getElementById("logo").classList.add("resize");
+            var element = document.getElementById("img-container");
+            element.addEventListener("click", function () { redirect(element) });
+            $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type) && !this.crossDomain) {
+                    xhr.setRequestHeader("X-CSRFToken", csrf_token);
+                    }
+                }
+            });
+            $.ajax({
+                type: "POST",
+                url: "/r",
+                success: function (resp) {
+                    element.classList.remove("l-overlay-r");
+                    window.location.href = resp;
+                }
+            });
+        }
+
+        function redirect(e) {
+            e.classList.remove("l-overlay-r");
+            window.location.href = "/home/";
+        }
+
+        function sleep(milliseconds) {
+            var start = new Date().getTime();
+            for (var i = 0; i < 1e7; i++) {
+                if ((new Date().getTime() - start) > milliseconds) {
+                    break;
+                }
+            }
+        }
+
+    </script>
+</head>
+
+<body onload="init()">
+    <div id="landing">
+        <div id="img-container">
+            <img id="logo" src="{{ url_for('static', filename='images/logos/ION_Racing.png') }}">
+        </div>
+    </div>
+    <div id="l-overlay" class="l-overlay"></div>
+</body>
+
+</html>

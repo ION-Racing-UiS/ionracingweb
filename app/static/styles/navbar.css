@@ -1,0 +1,229 @@
+/* NAVBAR STYLING */
+
+.heading {
+    padding-top: 15em;
+    padding-bottom: 3em;
+}
+
+#navpad {
+    padding-top: .5em;
+}
+
+.nav>li {
+    margin-bottom: 1em;
+}
+
+/* Transform navbar text -> uppercase */
+
+.navbar .nav > li > a,
+.navbar .navbar-header > a {
+    text-transform: uppercase;
+    font-weight: 400;
+    letter-spacing: 1.5px;
+    color: white;
+    text-decoration: none;
+}
+
+/* Active nav item styling */
+
+.navbar .nav .active a {
+    background: none;
+    color: white;
+}
+
+.navbar .nav .active a:hover {
+    background: none;
+    color: white;
+}
+
+.navbar .nav .active a:focus {
+    background: none;
+    color: white;
+}
+#headarea .heading {
+    color: white;
+}
+.navbar-default {
+    background: none;
+    border: 0;
+}
+
+.heading h1 {
+    padding-bottom: 0.2em;
+    font-family: 'Pacifico';
+    font-size: 2.4em;
+    color: white;
+}
+.heading p {
+    color: white;
+}
+.ionblue {
+    font-weight: bold;
+    padding: 0;
+    color: #119ED9;
+    background: none;
+}
+.ionblue a{
+    color: #119ED9;
+}
+.heading .marked {
+    padding-left: 8px;
+    border-left: 2px solid white;
+}
+.heading .email-me {
+    margin-top: 1em;
+}
+
+.navbar-brand {
+    width: 45%;
+}
+
+/* Styling specific for large screens */
+
+@media(min-width:768px) {
+    .heading h1 {
+        font-size: 2.8em;
+    }
+    .navbar-static-top {
+        padding: 20px;
+    }
+    .navbar-static-top .navbar-brand img {
+        margin-top: -20px;
+        height: 70px;
+    }
+    .navbar .nav > li > a {
+        margin-top: 5px;
+        padding: 10px;
+    }
+    .navbar .nav > li > a {
+        text-transform: capitalize;
+        margin-left: 4px;
+        font-weight: 400;
+    }
+    .navbar .navbar-header > a {
+        font-weight: 900;
+    }
+    .navbar .nav > li > a:hover {
+        box-shadow: 0px -2px 0px white inset;
+    }
+    /* Active nav item styling */
+    .navbar .nav .active a {
+        background: none;
+        box-shadow: 0px -2px 0px white inset;
+    }
+    .navbar .nav .active a:hover {
+        background: none;
+        box-shadow: 0px -2px 0px white inset;
+    }
+    .navbar .nav .active a:focus {
+        background: none;
+        box-shadow: 0px -2px 0px white inset;
+    }
+}
+
+
+/* Mobile-first styling / default styling */
+
+
+/* Navbar custom properties */
+
+@media(max-width:767px) {
+    #myCollapse.navbar-collapse {
+        background-color: #fff;
+    }
+    .navbar .nav .active a {
+        background-color: #119ED9;
+        color: white;
+    }
+    .navbar .nav .active a:hover {
+        background-color: #119ED9;
+    }
+    .navbar .nav > li:not(.active) > a {
+        color: #ffffff;
+        margin-left: 4px;
+        border-bottom: solid 1px white;
+    }
+    .navbar .nav > li:not(.active) > a:hover {
+        color: #ffffff;
+        margin-left: 4px;
+        border-bottom: solid 3px white;
+    }
+    .navbar .nav > li:not(.active):first-child > a {
+        margin-left: 0;
+    }
+    .navbar .nav > li:not(.active):first-child > a:hover {
+        margin-left: 0;
+    }
+    .navbar-static-top .navbar-brand img {
+        margin-top: -6px;
+        height: 34px;
+    }
+    .navbar-default {
+        background-color: #000;
+    }
+    .heading {
+        background-color: #000;
+        padding-top: 1em;
+        padding-bottom: 1em;
+    }
+    .heading h1 {
+        font-size: 2em;
+    }
+    .heading h2 {
+        font-size: 1.3em;
+    }
+}
+.navbar-default div.navbar-collapse {
+    border-top: none;
+    box-shadow: none;
+}
+
+.navbar-static-top {
+    margin: 0;
+}
+
+
+/* Nav item styling */
+
+.navbar .nav > li > a:hover,
+.navbar .navbar-header > a:hover {
+    color: white;
+}
+
+.navbar .nav > li > a:focus,
+.navbar .navbar-header > a:focus {
+    color: white;
+}
+
+
+/* Menu toggle */
+
+.navbar .navbar-header .navbar-toggle {
+    border: none;
+    padding-top: 12px;
+    transition: all 0.3s ease;
+}
+
+.navbar .navbar-header .navbar-toggle:hover {
+    background: none;
+}
+
+.navbar .navbar-header .navbar-toggle:focus {
+    background: none;
+}
+
+.navbar .navbar-header .navbar-toggle .icon-bar {
+    background-color: white;
+    transition: all 0.3s ease;
+}
+
+
+/* Menu toggle animation (two bars to cross) */
+
+.rotateib1 {
+    transform: translateY(3px) rotate(-135deg);
+}
+
+.rotateib2 {
+    transform: translateY(-3px) rotate(-45deg);
+}

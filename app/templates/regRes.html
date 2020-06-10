@@ -1,0 +1,18 @@
+{% extends "layout.html" %}
+{% block title %} | {{ title }}{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        {% if error is defined %}
+        <div class="error">
+            <p>{{ error }}</p>
+            <p>{{ ex_type }}</p>
+            <p>{{ ex_value }}</p>
+            <p>{{ stack_trace }}</p>
+        </div>
+        {% elif msg is defined %}
+        <p>{{ msg }}</p>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
