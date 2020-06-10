@@ -7,7 +7,7 @@
 }
 
 body {
-    background-color: black;
+    background-color: #011321;
 }
 
 .email-me {
@@ -132,9 +132,10 @@ body {
 
 @media(min-width:768px) {
     #headarea {
-        background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 1)), url(/../static/images/HP_BG.jpg);
+        /* background: linear-gradient(rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 1)), url(/../static/images/HP_BG.jpg);
         background-size: cover;
-        background-position: top center;
+        background-position: top center; */
+        background-color: #011321;
         /*padding-bottom: 1em;*/
     }
     .heading img {
@@ -198,4 +199,8 @@ input[type=submut].btn:disabled {
     color: #FFFFFF;
     background-color: #007BFF;
     border-color: #007BFF;
+}
+
+.myCollapse{
+    width: 79%;
 }

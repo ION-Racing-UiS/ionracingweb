@@ -30,16 +30,11 @@
                     <a class="navbar-brand" href="/home">
                         <img src="{{ url_for('static', filename='images/logos/ION_Racing.png') }}" alt="ION Racing" />
                     </a>
-                    <a class="navbar-brand"
-                        href="https://docs.microsoft.com/en-us/windows-server/identity/ad-ds/get-started/virtual-dc/active-directory-domain-services-overview"
-                        target="_blank">
-                        <img src="{{ url_for('static', filename='images/logos/win_adw.png') }}" alt="AD" />
-                    </a>
                 </div>
 
                 <!-- Collapsable nav items -->
-                <div id="myCollapse" class="">
-                    <ul class="nav">
+                <div id="" class="myCollapse">
+                    <ul class="nav" style="justify-content: space-evenly;">
                         {% for i in range(0, head_menu|length) %}
                         {% if active==i %}
                         <li class="active"><a
@@ -52,14 +47,14 @@
                 </div>
             </div>
         </nav>
-        <div class="heading">
+        <!-- <div class="heading">
             <div class="container">
                 <h2>Welcome</h2>
                 <p>This is a local web-interface for <span
                         style="text-decoration: underline rgb(255, 255, 255);">ION</span> Racing UiS. <br />
                     For the official website please go to <a href="https://ionracing.no/">this</a> site instead. (Not working due to domain issues...)</p>
             </div>
-        </div>
+        </div> -->
     </div>
     <div id="content">
         {% with messages = get_flashed_messages() %}
@@ -73,6 +68,8 @@
         {% endwith %}
         {% block content %}{% endblock %}
     </div>
+
+    {% block footer %}{% endblock footer %}
 </body>
 
 </html>

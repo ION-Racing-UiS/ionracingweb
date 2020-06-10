@@ -108,10 +108,10 @@ def load_user(id):
 def get_current_user():
     g.user = current_user.get_id()
 
-@app.route("/")
-def landing():
-    route_log()
-    return render_template("landing.html")
+# @app.route("/")
+# def landing():
+#     route_log()
+#     return render_template("landing.html")
 
 @app.route("/r/", methods=["POST"])
 def r():
@@ -119,6 +119,7 @@ def r():
     time.sleep(3.2)
     return url_for("home")
 
+@app.route("/")
 @app.route("/home/", methods=["GET", "POST"])
 def home():
     route_log()
@@ -394,8 +395,7 @@ def appuser_reportedit():
 
 @app.route("/appuser_reportonchange", methods=["POST"])
 def appuser_reportonchange():
-    request.
-    print(data)
+    # print(data)
     return "Change Detected!"
 
 @app.route("/show/<template_file>")
