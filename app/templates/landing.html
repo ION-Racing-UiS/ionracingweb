@@ -90,7 +90,7 @@
             });
             $.ajax({
                 type: "POST",
-                url: "/r",
+                url: "/r/",
                 success: function (resp) {
                     element.classList.remove("l-overlay-r");
                     window.location.href = resp;
@@ -102,16 +102,6 @@
             e.classList.remove("l-overlay-r");
             window.location.href = "/home/";
         }
-
-        function sleep(milliseconds) {
-            var start = new Date().getTime();
-            for (var i = 0; i < 1e7; i++) {
-                if ((new Date().getTime() - start) > milliseconds) {
-                    break;
-                }
-            }
-        }
-
     </script>
 </head>
 

@@ -1,43 +1,82 @@
 <!DOCTYPE html>
 <html>
-    <head>
-        <meta charset="UTF-8" />
-        <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <meta name="description" content="ION Racing Website" />
-        <meta name="author" content="ION Racing" />
-        <meta name="csrf-token" content="{{ csrf_token() }}">
-        <title>ION Racing{% block title %}{% endblock %}</title>
-        <link rel="icon" href="{{ url_for('static', filename='images/favicon.png') }}" />
-        <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/user_style.css') }}" />
-    </head>
-    <body>
-        <header>
-            Header_Bar
-        </header>
-        <main>
-            <aside class="side-menu">
-                Side_Menu_Bar<br/>
-                Menu_Item<br/>
-                Menu_Item<br/>
-                Menu_Item<br/>
-                Menu_Item<br/>
-                Menu_Item<br/>
-                Menu_Item<br/>
-                Menu_Item
-            </aside>
-            <div id="content">
-                {% with messages = get_flashed_messages() %}
-                {% if messages %}
-                <ul class="flashes">
-                    {% for message in messages %}
-                        <li>{{ message }}</li>
-                    {% endfor %}
-                </ul>
-                {% endif %}
-                {% endwith %}
-                {% block content %}
-                {% endblock %}
-            </div>
-        </main>
-    </body>
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="ION Racing Website" />
+    <meta name="author" content="ION Racing" />
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>ION Racing{% block title %}{% endblock %}</title>
+    <link rel="icon" href="{{ url_for('static', filename='images/favicon.png') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/bootstrap.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/user_style.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/font-awesome.css') }}" />
+    <script type="text/javascript" src="{{ url_for('static', filename='applications/jquery-3.4.1.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='applications/app.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='applications/bootstrap.js') }}"></script>
+</head>
+
+<body><!--
+    <header>
+        <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="/appuser_home">
+                <i class="fa fa-home" aria-hidden="true"></i>
+            </a>
+            <a href="/logout" class="navbar-brand">
+                <i class="fa fa-sign-out" aria-hidden="true"></i>
+            </a>
+        </div>
+        </div>
+    </header>-->
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+        <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a href="/appuser_home" class="navbar-brand">
+                        <i class="fa fa-home" aria-hidden="true"></i> User Home
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="mx-auto order-0">
+            <a class="navbar-brand mx-auto" href="/gohome"><img src="{{ url_for('static', filename='images/ION_ICON_BL.png') }}" /></a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".dual-collapse2">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+        <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a href="/logout" class="navbar-brand">
+                        <i class="fa fa-sign-out" aria-hidden="true"></i> Logout
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <main class="row">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul class="flashes">
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+        <aside class="side-menu col-s-12 col-md-3">
+            <h3>Menu</h3>
+            <a href="/appuser_password"><i class="fa fa-key" aria-hidden="true"></i> Change Password</a><br />
+            <a href="/appuser_edit"><i class="fa fa-user" aria-hidden="true"></i> Edit User </a><br />
+            <a href="/appuser_reportedit"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit Report </a>
+        </aside>
+        <div id="content" class="col-s-12 col-md-9">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </main>
+</body>
+
 </html>

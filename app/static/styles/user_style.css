@@ -1,0 +1,140 @@
+body {
+    background-color: #444;
+    color: #FFFFFF;
+    padding: 0;
+    margin: 0;
+}
+
+header {
+    background-color: #222;
+    height: 50px;
+    color: #FFFFFF;
+}
+
+main {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.side-menu {
+    background-color: #000;
+    color: #FFFFFF;
+}
+
+.side-menu > a {
+    color: #FFFFFF;
+    text-decoration: none;
+    padding-right: 2px;
+    border-radius: 2px;
+    transition-timing-function: ease-in-out;
+    transition-delay: 50ms;
+    transition-duration: 250ms;
+    transition-property: background-color, border-right;
+}
+
+.side-menu > a:hover {
+    border-right: 2px solid #FFFFFF;
+    border-bottom: 2px solid #FFFFFF;
+}
+
+#content {
+    background-color: #444;
+    color: #FFFFFF;
+}
+
+.row {
+    margin: 0;
+    padding-left: 0 5px 0 5px;
+}
+
+.flashes {
+    width: 100%;
+    background-color: none;
+    padding: 0;
+    margin: 0;
+}
+
+.flashes > li {
+    width: 100%;
+    list-style: none;
+    border-width: 2px;
+    border-style: solid;
+    border-radius: 5px;
+    padding: 2px;
+    background-color: #333;
+    transition-property: background-color;
+    transition-timing-function: ease-in-out;
+    transition-duration: 350ms;
+    transition-delay: 50ms;
+}
+
+.flashes > li:hover {
+    background-color: #000;
+}
+
+a.navbar-brand > i {
+    color: #FFFFFF;
+    transition-delay: 50ms;
+    transition-duration: 250ms;
+    transition-timing-function: ease-in-out;
+    transition-property: color;
+}
+
+a.navbar-brand:hover > i {
+    color: #007BFF
+}
+
+.navbar-brand > img {
+    height: 50px;
+}
+
+.nav-item > a.navbar-brand {
+    color: #343a40;
+    transition-property: color;
+    transition-delay: 50ms;
+    transition-duration: 250ms;
+    transition-timing-function: ease-in-out;
+}
+
+.nav-item > a.navbar-brand:hover {
+    color: #007BFF;
+}
+
+input[type=submit].btn {
+    color: #FFFFFF;
+    background-color: #007BFF;
+    border-color: #007BFF;
+    display: inline-block;
+    font-weight: 400;
+    text-align: center;
+    vertical-align: middle;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    user-select: none;
+    border: 1px solid transparent;
+    padding: .375rem .75rem;
+    font-size: 1rem;
+    line-height: 1.5;
+    border-radius: .25rem;
+    transition: color .15s ease-in-out, background-color .15s ease-in-out, border-color .15s ease-in-out, box-shadow .15s ease-in-out;
+}
+
+input[type=submut].btn:hover {
+    color: #FFFFFF;
+    background-color: #0069D9;
+    border-color: #0062CC;
+}
+
+input[type=submut].btn:focus {
+    color: #FFFFFF;
+    background-color: #0069D9;
+    border-color: #0062CC;
+}
+
+input[type=submut].btn:disabled {
+    color: #FFFFFF;
+    background-color: #007BFF;
+    border-color: #007BFF;
+}

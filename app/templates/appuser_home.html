@@ -2,9 +2,6 @@
 {% block title %} | User Home{% endblock %}
 {% block content %}
 {% if user is defined %}
-<p>{{ user }}</p>
-<p>{{ guid }}</p>
-<p>{{ username }}</p>
-<p>{{ adu }}</p>
+<h1>Welcome {{ user.username }}!</h1>
 {% endif %}
 {% endblock %}

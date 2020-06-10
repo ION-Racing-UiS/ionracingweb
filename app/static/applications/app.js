@@ -19,6 +19,31 @@ $(document).ready(function () {
         regiBtn.addEventListener("click", function () { formSelect(regiBtn.id) });
     } else if (document.title === "ION Racing | User Reg") {
         $("#submit").addClass(" btn-primary");
+    } else if (document.title === "ION Racing | Edit Report") {
+        var csrftoken = $('meta[name=csrf-token]').attr('content');
+        $.ajaxSetup({
+            beforeSend: function(xhr, settings) {
+                if (!/^(GET|HEAD|OPTIONS|TRACE)$/i.test(settings.type)) {
+                    xhr.setRequestHeader("X-CSRFToken", csrftoken)
+                }
+            }
+        });
+        console.log("Adding change listener")
+        $("#md-form").change(function() {
+            let d = document.getElementById("md-form").value;
+            $.ajax({
+                url: "/appuser_reportonchange",
+                type: "POST",
+                dataType: "json",
+                data: JSON.stringify({'text': d}),
+                success: function (resp) {
+                    console.log("Sent Data: " + d)
+                    console.log("Response: " + resp)
+                    let view = document.getElementById("md-view");
+                    view.innerHTML = resp;
+                }
+            });
+        });
     }
     $(window).resize(function () { resizeBg(); });
 });

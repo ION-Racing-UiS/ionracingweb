@@ -1,0 +1,23 @@
+{% extends "appuser_template.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block title %} | Edit User{% endblock %}
+{% block content %}
+<div class="container">
+    <div class="row">
+        <div class="col-xs-12 col-md-12">
+            <h1>Edit User Attributes</h1>
+        </div>
+    <form method="POST" action="/appuser_edit" class="col-xs-12 col-md-12">
+        {{ form.csrf_token }}
+        <div class="form-group">
+            {{ wtf.form_field(form.givenName) }}<br />
+            {{ wtf.form_field(form.sn) }}<br />
+            {{ wtf.form_field(form.displayName) }}<br />
+            {{ wtf.form_field(form.description) }}<br />
+            {{ wtf.form_field(form.mail) }}<br />
+            {{ wtf.form_field(form.confirm) }}<br />
+            {{ wtf.form_field(form.apply) }}
+        </div>
+    </form>
+</div>
+{% endblock %}
