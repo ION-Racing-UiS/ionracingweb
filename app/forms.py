@@ -1,7 +1,8 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, FormField, TextAreaField, FileField, SelectField, validators
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, FormField, TextAreaField, FileField, SelectField, HiddenField, validators
 from wtforms.fields.html5 import DateField
 import app.pylib.win_user
+from app.pylib.auth_user import User
 
 class RegisterForm(FlaskForm):
     department = SelectField(
@@ -45,7 +46,7 @@ class RegisterForm(FlaskForm):
     )
     password = PasswordField(
         'Password',
-        validators=[validators.DataRequired(message="Please enter a password"), validators.Length(min=4)],
+        validators=[validators.DataRequired(message="Please enter a password"), validators.Length(min=3)],
         render_kw={'placeholder': 'Password'}
     )
     confirm_password = PasswordField(
@@ -57,7 +58,7 @@ class RegisterForm(FlaskForm):
         'Terms',
         validators=[validators.DataRequired('You must agree to the terms and conditions')]
     )
-    submit = SubmitField('Register User', render_kw={'class': 'btn email-me btn-primary'})
+    submit = SubmitField('Register User', render_kw={'class': 'btn'})
 
 class LoginForm(FlaskForm):
     username = StringField(
@@ -70,4 +71,84 @@ class LoginForm(FlaskForm):
         validators=[validators.DataRequired()],
         render_kw={'placeholder': 'Password'}
     )
-    login = SubmitField('Log In', render_kw={'class': 'btn email-me btn-primary'})
+    login = SubmitField('Log In', render_kw={'class': 'btn'})
+
+class UserEdit(FlaskForm):
+    givenName = StringField(
+        'First Name',
+        validators=[validators.DataRequired("Cannot be empty.")],
+        render_kw={'placeholder': 'First Name'}
+    )
+    sn = StringField(
+        'Last Name',
+        validators=[validators.DataRequired("Cannot be empty.")],
+        render_kw={'placeholder': 'Last Name'}
+    )
+    displayName = StringField(
+        'Display Name',
+        validators=[validators.DataRequired("Cannot be empty.")],
+        render_kw={'placeholder': 'Display Name'}
+    )
+    description = StringField(
+        'Description',
+        render_kw={'placeholder': 'Description'}
+    )
+    mail = StringField(
+        'Mail',
+        validators=[validators.Email(message="Please enter a valid email")],
+        render_kw={'placeholder': 'Email'}
+    )
+    confirm = BooleanField(
+        'Confirm Changes',
+        validators=[validators.DataRequired('You have to confirm that you want to make any changes,')]
+    )
+    apply = SubmitField('Apply', render_kw={'class': 'btn'})
+    '''def __init__(self, givenName_, sn_, displayName_, description_, mail_):
+        givenName = StringField(
+            'First Name',
+            render_kw={'placeholder': 'First Name', 'value': str(givenName_)}
+        )
+        sn = StringField(
+            'Last Name',
+            render_kw={'placeholder': 'Last Name', 'value': str(sn_)}
+        )
+        displayName = StringField(
+            'Display Name',
+            render_kw={'placeholder': 'Display Name', 'value': str(displayName_)}
+        )
+        description = StringField(
+            'Description',
+            render_kw={'placeholder': 'Description', 'value': str(description_)}
+        )
+        mail = StringField(
+            'Mail',
+            render_kw={'placeholder': 'Mail', 'value': str(mail_)}
+        )
+        confirm = BooleanField(
+            'Confirm',
+            validators=[validators.DataRequired('You have to confirm that you want to make any changes.')]
+        )
+        apply = SubmitField('Apply', render_kw={'class': 'btn btn-primary'})'''
+
+class UserOldPwd(FlaskForm):
+    username = HiddenField('Username')
+    password = PasswordField(
+        'Current Password',
+        validators=[validators.DataRequired(message="You need to provide your old password.")],
+        render_kw={'placeholder': 'Current Password'}
+    )
+    proceed = SubmitField('Proceed', render_kw={'class': 'btn'})
+
+class UserChangePwd(FlaskForm):
+    username = HiddenField('Username')
+    password = PasswordField(
+        'New Password',
+        validators=[validators.Length(min=3, max=128, message="Your password must meet the minimum requirements!")],
+        render_kw={'placeholder': 'New Password'}
+    )
+    confirm_password = PasswordField(
+        'Confirm Password',
+        validators=[validators.EqualTo('password', message="The passwords must match!")],
+        render_kw={'placeholder': 'Retype New Password'}
+    )
+    change = SubmitField('Change Password', render_kw={'class': 'btn'})

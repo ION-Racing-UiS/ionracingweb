@@ -1,27 +1,30 @@
 import pywin32_system32
 import win32api
 from pyad import pyad, aduser, adobject, adgroup, addomain, adcontainer, adcomputer, adquery, adsearch
+from app.pylib.ad_settings import get_ad_settings
 import os
 import re
 from pathlib import Path
 import datetime
 
-ldap_server = "<server_fqdn>" # Fully qualified domain name of the ldap server
-username = "<accountop_username>" # Account operations account
-password = "<accountop_password>" # Password for the account above
-topLevelDomain = "<yourdomain.suffix>" # Top level domain name
-homeDrive = "<drive_letter>:" # User home drive letter
-homeProfileDirectoryPrefix = "<unc_path_to_profile_share>" # UNC Share path for profiles
-homeDirectorySuffix = ".V6" # Suffix to access the profile directory from homeDrive
-scriptPath = "<script_name>" # path to script in \\<servername>\sysvol\<topLevelDomain>\scripts
-physicalDeliveryOfficeName = "<office_name>" # Office name
-company = "<your_companyname>" # Official Company name
-userdomain = "<yourdomain>" # Just your domain name, ie. google, not google.com
-domainsuffix = "<suffix>" # What top level domain you have, ie. .com, .net, .eu, dk, .no, .se
-ous = [('<ou_name>', '<Ou_name>'), ('<ou_name2>', '<Ou_name2>')] # Organizational units list for the wtf form <type:list> of <type:tuple> or <type:str> and <type:str>
-path = str(Path(__file__).absolute()) # Absolute path to this file within the filesystem.
-user_groups = ["<group_name1>", "<group_name2>"] # Group name for users so that they can be local admins
-user_groups_d = {1: "<group_name1>", 2: "<group_name2>"} # Dict of groups names for users, works better than the list
+ad_settings = get_ad_settings()
+
+ldap_server = ad_settings["ldap_server"] # Fully qualified domain name of the ldap server
+username = ad_settings["username"] # Account operations account
+password = ad_settings["password"] # Password for the account above
+topLevelDomain = ad_settings["topLevelDomain"] # Top level domain name
+homeDrive = ad_settings["homeDrive"] # User home drive letter
+homeProfileDirectoryPrefix = ad_settings["homeProfileDirectoryPrefix"] # UNC Share path for profiles
+homeDirectorySuffix = ad_settings["homeDirectorySuffix"] # Suffix to access the profile directory from homeDrive
+scriptPath = ad_settings["scriptPath"] # path to script in \\<servername>\sysvol\<topLevelDomain>\scripts
+physicalDeliveryOfficeName = ad_settings["physicalDeliveryOfficeName"] # Office name
+company = ad_settings["company"] # Official Company name
+userdomain = ad_settings["userdomain"] # Just your domain name, ie. google, not google.com
+domainsuffix = ad_settings["domainsuffix"] # What top level domain you have, ie. .com, .net, .eu, dk, .no, .se
+ous = ad_settings["ous"] # Organizational units list for the wtf form <type:list> of <type:tuple> or <type:str> and <type:str>
+path = ad_settings["path"] # Absolute path to this file within the filesystem.
+user_groups = ad_settings["user_groups"] # Group name for users so that they can be local admins
+user_groups_d = ad_settings["user_groups_d"] # Dict of groups names for users, works better than the list
 
 def create_user_settings(user_input):
     '''
