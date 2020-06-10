@@ -394,7 +394,6 @@ def appuser_reportedit():
 
 @app.route("/appuser_reportonchange", methods=["POST"])
 def appuser_reportonchange():
-    request.
     print(data)
     return "Change Detected!"
 
