@@ -16,6 +16,7 @@
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/bootstrap.css') }}" />
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/general.css') }}" />
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/navbar.css') }}" />
+    {% block head %}{% endblock head %}
 </head>
 
 <body>
@@ -23,7 +24,7 @@
 
         <div id="navpad"></div>
 
-        <nav class="navbar navbar-default navbar-static-top" role="navigation">
+        <nav id = "navarea" class="navbar navbar-default navbar-static-top" role="navigation">
             <div class="container">
                 <!-- Brand and mobile menu toggle -->
                 <div class="navbar-header">

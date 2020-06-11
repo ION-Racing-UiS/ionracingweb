@@ -1,8 +1,15 @@
 {% extends "layout.html" %}
 {% block title %} | Home{% endblock %}
+{% block head %}
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/home.css') }}">
+{% endblock%}
 {% block content %}
-<div class="container">
-    <h1>content</h1>
+<div class="homecontainer">
+    <div class="nameModelContainer"></div>
+    <div class="carContainer" style="background-image: url({{ url_for('static', filename='images/test.png') }});">
+        <img src="{{ url_for('static', filename='images/2018.png') }}" alt="" srcset="">
+    </div>
+    <div class="specsContainer"></div>
 </div>
 {% endblock %}
 {% block footer %}
