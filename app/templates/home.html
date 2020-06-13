@@ -6,7 +6,9 @@
 {% block content %}
 <div class="homecontainer">
     <div class="nameModelContainer"></div>
-    <div class="carContainer" style="background-image: url({{ url_for('static', filename='images/test.png') }});">
+    <!-- <div class="carContainer" style="background-image: url({{ url_for('static', filename='images/test.png') }});"> -->
+    <div class="carContainer">
+        <h1>The 2018 car</h1>
         <img src="{{ url_for('static', filename='images/2018.png') }}" alt="" srcset="">
     </div>
     <div class="specsContainer"></div>
