@@ -23,9 +23,10 @@
     background-repeat: no-repeat;
     background-position: center;
     display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 .carContainer > img{
-    margin: auto;
     width: 85%;
 }
 .specsContainer{
