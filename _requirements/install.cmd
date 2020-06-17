@@ -1,5 +1,7 @@
 @ECHO OFF
 
+IF NOT EXIST "..\app\logs\" MD "..\app\logs\"
+ECHO #Edit this file>>"..\app\pylib\ad_settings.py"
 ECHO Install requirements for the app? (y/n)
 SET /P C=
 IF %C%==y GOTO y
