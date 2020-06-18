@@ -1,41 +1,90 @@
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@700&display=swap');
 *{
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
+    -webkit-box-sizing: border-box;
+            box-sizing: border-box;
 }
-
+#headarea{
+    height: 10vh;
+}
+#content{
+    height: 90vh;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+}
 .homecontainer{
     width: 100%;
+    display: -ms-grid;
     display: grid;
+    -ms-grid-columns: 1fr 3fr 1fr;
     grid-template-columns: 1fr 3fr 1fr;
     background: #011321;
-    height: 85vh;
-    /* background-image: url('/static/images/backgroundHomepage.png'); */
+    height: 65vh;
 
 }
-.nameModelContainer{
-    grid-column: 1/2;
-    /* background: #881717; */
+.namecontainer{
+    position: relative;
+    top: -34%;
+    right: -32%;
+    width: -webkit-max-content !important;
+    width: -moz-max-content !important;
+    width: max-content !important;
 }
 .carContainer{
+    -ms-grid-column: 2;
+    -ms-grid-column-span: 1;
     grid-column: 2/3;
     background-size: 90%;
     background-repeat: no-repeat;
     background-position: center;
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
-    flex-direction: column;
-    align-items: center;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    -webkit-box-pack: center;
+        -ms-flex-pack: center;
+            justify-content: center;
 }
 .carimg{
     width: 85%;
 }
 .carslides{
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
-    flex-direction: column;
-    align-items: center;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+        -ms-flex-direction: column;
+            flex-direction: column;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
+    transition: 3s;
 }
-.specsContainer{
+.nextContainer{
+    -ms-grid-column: 3;
     grid-column: 3/3;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-pack: start;
+        -ms-flex-pack: start;
+            justify-content: flex-start;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
     /* background: #f0f0f0; */
 }
 #navarea{
@@ -44,16 +93,22 @@
 .prev, .next {
     cursor: pointer;
     position: absolute;
-    top: 50%;
+    /* top: 50%; */
+    top: 45%;
     width: auto;
     margin-top: -22px;
     padding: 16px;
     color: white;
     font-weight: bold;
     font-size: 2em;
+    -webkit-transition: 0.6s ease;
+    -o-transition: 0.6s ease;
     transition: 0.6s ease;
     border-radius: 0 3px 3px 0;
-    user-select: none;
+    -webkit-user-select: none;
+       -moz-user-select: none;
+        -ms-user-select: none;
+            user-select: none;
 }
 .prev{
     margin-right: 3%;
@@ -61,8 +116,40 @@
 .next{
     margin-left: 3%;
 }
-.nameModelContainer{
+.prevContainer{
+    display: -webkit-box;
+    display: -ms-flexbox;
     display: flex;
-    justify-content: flex-end;
+    -webkit-box-pack: end;
+        -ms-flex-pack: end;
+            justify-content: flex-end;
+    -webkit-box-align: center;
+        -ms-flex-align: center;
+            align-items: center;
 
 }
+
+.specs-container{
+    /* background: rgb(196, 196, 196); */
+    height: 20vh;
+}
+
+.coolfont{
+    font-family: 'Oswald', sans-serif;
+    font-size: 90px !important;
+    line-height: 90px !important;
+    letter-spacing: 0 !important;
+    text-transform: uppercase !important;
+    font-weight: 800 !important;
+    -webkit-text-fill-color: transparent !important;
+    -webkit-background-clip: text !important;
+    text-shadow: unset !important;
+    -webkit-text-stroke-width: 1px;
+    -webkit-text-stroke-color: #fff;
+}
+
+@media only screen and (max-width: 600px) {
+    body {
+      background-color: lightblue;
+    }
+  }
