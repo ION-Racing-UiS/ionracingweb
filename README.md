@@ -16,3 +16,5 @@ Repo for ION Racing UiS' new website, continuation of Scadic's thesis
     * On the specs of each car, make the numbers count up/down, when changing cars
         * https://stackoverflow.com/questions/16994662/count-animation-from-number-a-to-b
         * Use cool font to make it look high tech
+    * Slider on mouseover event
+        * https://jsfiddle.net/hibbard_eu/GArs3/
