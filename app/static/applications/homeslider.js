@@ -32,28 +32,26 @@ document.addEventListener("DOMContentLoaded", () =>{
     var interval = 500;
     var i;
 
-    $(document).mousemove(function(e){
-        if (e.pageX > ele_rect.x && e.pageX < (ele_rect.right - (ele_rect.x / ele_rect.left)) 
-            && e.pageY > ele_rect.y && e.pageY < ele_rect.bottom) {
+    // $(document).mousemove(function(e){
+    //     if (e.pageX > ele_rect.x && e.pageX < (ele_rect.right - (ele_rect.x / ele_rect.left)) 
+    //         && e.pageY > ele_rect.y && e.pageY < ele_rect.bottom) {
             
-            if (e.pageX > ele_rect.right - ele_rect.width / 4) {
-                ele.style.background = "blue";
-                i = setInterval(function () {
-                    console.log("hei");
-                    
-                    slidechange(1);
-                }, interval);
+    //         if (e.pageX > ele_rect.right - ele_rect.width / 4) {
+    //             ele.style.background = "blue";
+    //             i = setInterval(function () {
+    //                 slidechange(1);
+    //             }, interval);
                 
-            } else if (e.pageX < ele_rect.x + ele_rect.width / 4) {
-                ele.style.background = "red";
-                
-                i = setInterval(function () {
-                    console.log("hei2");
-                    slidechange(-1);
-                }, interval);
-            }
-            clearInterval(i);
-        }
-        // setTimeout(this, 1000);
-    });
+    //         } else if (e.pageX < ele_rect.x + ele_rect.width / 4) {
+    //             ele.style.background = "red";
+    //             i = setInterval(function () {
+    //                 slidechange(-1);
+    //             }, interval);
+    //         }
+    //         clearInterval(i);
+    //     }
+    //     else{
+    //         ele.style.background = "#011321";
+    //     }
+    // });
 })
