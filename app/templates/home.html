@@ -3,6 +3,9 @@
 {% block head %}
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/home.css') }}">
     <script src="{{ url_for('static', filename='applications/jquery-3.4.1.min.js') }}"></script>
+    <script>
+        var all_cars = JSON.parse('{{ cars | tojson }}');
+    </script>
     <script src="{{ url_for('static', filename='applications/homeslider.js') }}"></script>
 {% endblock%}
 {% block content %}
@@ -10,26 +13,21 @@
     <div class="prevContainer">
         <div class="namecontainer">
             <h1>
-                <span class="coolfont carname">Mark</span>
-                <span class="coolfont">39</span>
+                <span class="coolfont carname">Mark 1</span>
+                <span class="coolfont carnumber">39</span>
             </h1>
         </div>
         <a class="prev" onclick="slidechange(-1)">&#10094;</a>
     </div>
     <!-- <div class="carContainer" style="background-image: url({{ url_for('static', filename='images/test.png') }});"> -->
+    
     <div class="carContainer">
         <div class="slidecontainer">
-            <div class="carslides">
-                <img class="carimg" src="{{ url_for('static', filename='images/2018.png') }}" alt="" srcset="">
-            </div>
-
-            <div class="carslides">
-                <img class="carimg" src="{{ url_for('static', filename='images/2017.png') }}" alt="" srcset="">
-            </div>
-
-            <div class="carslides">
-                <img class="carimg" src="{{ url_for('static', filename='images/2016.png') }}" alt="" srcset="">
-            </div>
+            {% for c in cars%}
+                <div class="carslides">
+                    <img class="carimg" src="{{ '/static/images/' + cars[c].img }}" alt="" srcset="">
+                </div>
+            {%endfor%}
         </div>
     </div>
     <div class="nextContainer">
@@ -59,6 +57,7 @@
             <span class="specName">Turbo Engine</span>
         </div>
     </div>
+</div>
 </div>
 <div class="down-arrow-container">
     <div class="chevron"></div>

@@ -51,8 +51,8 @@ hr{
 }
 .namecontainer{
     position: relative;
-    top: -28%;
-    right: -72%;
+    top: -30%;
+    right: -67%;
     width: -webkit-max-content !important;
     width: -moz-max-content !important;
     width: max-content !important;
@@ -60,8 +60,16 @@ hr{
     display: inline-table;
 }
 .carname {
-	-webkit-text-fill-color: white !important;
-	font-size: 1.4em !important;
+	/* -webkit-text-fill-color: white !important; */
+    font-size: 1.5em !important;
+    font-style: italic;
+    letter-spacing: 5px !important;
+    background: linear-gradient(#fff, #c2c1c1);
+    
+}
+.carnumber{
+    font-style: italic;
+    font-size: 3em !important;
 }
 .carContainer{
     -ms-grid-column: 2;
@@ -149,11 +157,12 @@ hr{
     display: -ms-flexbox;
     display: flex;
     -webkit-box-pack: end;
-        -ms-flex-pack: end;
-            justify-content: flex-end;
+    -ms-flex-pack: end;
+    justify-content: flex-end;
     -webkit-box-align: center;
-        -ms-flex-align: center;
-            align-items: center;
+    -ms-flex-align: center;
+    align-items: center;
+    max-width: 19vw !important;
 
 }
 

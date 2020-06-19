@@ -13,6 +13,7 @@ import time
 import pythoncom
 import pywin32_system32
 import re
+import json
 
 def get_remote_info(request=request):
     '''
@@ -122,7 +123,37 @@ def r():
 @app.route("/home/", methods=["GET", "POST"])
 def home():
     route_log()
-    return render_template("home.html", active=0, head_menu=app.config["head_menu"])
+
+    cars = {
+        "2018" : {
+            "name": "Bifrost",
+            "number": 39,
+            "img": '2018.png',
+            "engine": "V6",
+            "speed": 110,
+            "weight": 401,
+            "year": 2018,
+        },
+        "2017" : {
+            "name": "Fenrir",
+            "number": 39,
+            "img": '2017.png',
+            "engine": "V6",
+            "speed": 100,
+            "weight": 451,
+            "year": 2017,
+        },
+        "2016" : {
+            "name": "Embla",
+            "number": 67,
+            "img": '2016.png',
+            "engine": "V6",
+            "speed": 101,
+            "weight": 231,
+            "year": 2016,
+        }
+    }
+    return render_template("home.html", active=0, head_menu=app.config["head_menu"], cars=cars)
 
 @app.route("/user_reg/")
 @app.route("/user_reg/register", methods=["POST"])
