@@ -12,10 +12,8 @@
 <div class="homecontainer">
     <div class="prevContainer">
         <div class="namecontainer">
-            <h1>
-                <span class="coolfont carname">Mark 1</span>
-                <span class="coolfont carnumber">39</span>
-            </h1>
+            <ul class="carnamelistcontainer">
+            </ul>
         </div>
         <a class="prev" onclick="slidechange(-1)">&#10094;</a>
     </div>
@@ -23,11 +21,6 @@
     
     <div class="carContainer">
         <div class="slidecontainer">
-            {% for c in cars%}
-                <div class="carslides">
-                    <img class="carimg" src="{{ '/static/images/' + cars[c].img }}" alt="" srcset="">
-                </div>
-            {%endfor%}
         </div>
     </div>
     <div class="nextContainer">
@@ -40,19 +33,19 @@
 <div class="specs-container">
     <div class="specs_inner_container">
 
-        <div class="spec">
+        <div class="spec" id="engine">
             <p class="coolfont">V6</p>
             <span class="specName">Turbo Engine</span>
         </div>
-        <div class="spec">
+        <div class="spec" id="engine">
             <p class="coolfont">110 <sup class="supp">km/h</sup></p>
             <span class="specName">Top Speed</span>
         </div>
-        <div class="spec">
+        <div class="spec" id="engine">
             <p class="coolfont">401 <sup class="supp">kg</sup></p>
             <span class="specName">Weight</span>
         </div>
-        <div class="spec">
+        <div class="spec" id="engine">
             <p class="coolfont">V6</p>
             <span class="specName">Turbo Engine</span>
         </div>

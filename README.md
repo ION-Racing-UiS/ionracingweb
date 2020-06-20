@@ -18,3 +18,7 @@ Repo for ION Racing UiS' new website, continuation of Scadic's thesis
         * Use cool font to make it look high tech
     * Slider on mouseover event
         * https://jsfiddle.net/hibbard_eu/GArs3/
+
+    * Make sure that the menu animation works when using mousewheel, as well as scroll via touchpad on laptop
+        *To check if user is using mousewheel or touchpad:
+            https://stackoverflow.com/questions/10744645/detect-touchpad-vs-mouse-in-javascript

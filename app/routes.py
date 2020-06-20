@@ -125,16 +125,16 @@ def home():
     route_log()
 
     cars = {
-        "2018" : {
+        2018 : {
             "name": "Bifrost",
             "number": 39,
             "img": '2018.png',
-            "engine": "V6",
+            "engine": "V4",
             "speed": 110,
             "weight": 401,
             "year": 2018,
         },
-        "2017" : {
+        2017 : {
             "name": "Fenrir",
             "number": 39,
             "img": '2017.png',
@@ -143,11 +143,38 @@ def home():
             "weight": 451,
             "year": 2017,
         },
-        "2016" : {
+        2016 : {
             "name": "Embla",
             "number": 67,
             "img": '2016.png',
-            "engine": "V6",
+            "engine": "V5",
+            "speed": 101,
+            "weight": 231,
+            "year": 2016,
+        },
+        2015 : {
+            "name": "emax V1",
+            "number": 67,
+            "img": '2018.png',
+            "engine": "V8",
+            "speed": 101,
+            "weight": 231,
+            "year": 2016,
+        },
+        2014 : {
+            "name": "emax V2",
+            "number": 67,
+            "img": '2017.png',
+            "engine": "V2",
+            "speed": 101,
+            "weight": 231,
+            "year": 2016,
+        },
+        2013 : {
+            "name": "emax V3",
+            "number": 67,
+            "img": '2018.png',
+            "engine": "V2",
             "speed": 101,
             "weight": 231,
             "year": 2016,
