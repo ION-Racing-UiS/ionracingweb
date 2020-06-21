@@ -13,9 +13,15 @@ function slidechange(n) {
 function currentSlide(n) {
     showslide(slideIndex = n);
 }
-
 function showslide(n) {
     var i;
+    var engine = document.getElementById("engine");
+    var speed = document.getElementById("speed");
+    var weight = document.getElementById("weight");
+    var year = document.getElementById("year");
+    var km_h = '<sup class="supp">km/h</sup>'
+    var kg = '<sup class="supp">kg</sup>'
+
     var slides = document.getElementsByClassName("carslides");
     // var dots = document.getElementsByClassName("dot");
     if (n > slides.length) {slideIndex = 1 };
@@ -23,10 +29,22 @@ function showslide(n) {
     for(i = 0; i < slides.length; i++){
         slides[i].style.display = "none";
     }
+
     // for(i = 0; i < dots.length; i++){
     //     dots[i].className = dots[i].className.replace(" active", "");
     // }
     slides[slideIndex - 1].style.display = "flex";
+
+    engine.innerText = ion_cars[slideIndex - 1][1]["engine"];
+    
+    speed.innerHTML = ion_cars[slideIndex - 1][1]["speed"] + ' ' + km_h;
+    
+    weight.innerHTML = ion_cars[slideIndex - 1][1]["weight"] + ' ' + kg;
+    
+    year.innerText = ion_cars[slideIndex - 1][1]["year"];
+
+
+
     // dots[slideIndex - 1].className += "active";
 }
 
