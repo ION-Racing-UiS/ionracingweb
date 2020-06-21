@@ -244,10 +244,11 @@ def login():
             res = build_log("Trying login for: " + username)
             print(res)
             User.try_login(username, password)
-        except ldap.INVALID_CREDENTIALS: # Invalid username or password
+        except ldap.INVALID_CREDENTIALS as e: # Invalid username or password
             flash("Invalid username or password", "danger")
             res = build_log("Invalid user credentials for: " + username)
             print(res)
+            print(str(e))
             return render_template("login.html", active=5, head_menu=app.config["head_menu"], form=form)
         except ldap.INVALID_DN_SYNTAX or ldap.INVALID_SYNTAX: # Syntax error
             flash("Invalid syntax for login", "danger")

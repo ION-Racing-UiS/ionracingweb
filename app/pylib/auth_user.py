@@ -1,9 +1,6 @@
 import ldap
-from app.pylib import win_user
-from flask_wtf import Form
+from app.pylib.ad_settings import get_ad_settings
 from flask_login import UserMixin
-from wtforms import TextField, PasswordField
-from wtforms.validators import InputRequired
 from pyad import *
 import pythoncom
 
@@ -13,7 +10,7 @@ def get_ldap_connection():
     Arguments: None\n
     Returns a ldap connection.
     '''
-    conn = ldap.initialize("ldap://" + win_user.ldap_server + ":389/")
+    conn = ldap.initialize("ldap://" + get_ad_settings()['ldap_server'] + ":389/")
     return conn
 
 class User(UserMixin):
@@ -60,7 +57,8 @@ class User(UserMixin):
         :param username: Username for the user <type:str>\n
         :param password: Password for the user <type:str>
         '''
-        pyad.set_defaults(ldap_server=win_user.ldap_server, username=win_user.username, password=win_user.password)
+        ad_settings = get_ad_settings()
+        pyad.set_defaults(ldap_server=ad_settings['ldap_server'], username=ad_settings['username'], password=ad_settings['password'])
         dn = aduser.ADUser.from_cn(username).dn
         conn = get_ldap_connection()
         conn.simple_bind_s(
