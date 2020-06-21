@@ -78,6 +78,10 @@
     width: 45%;
 }
 
+#navarea>button[type=button] {
+    color: white;
+}
+
 /* Styling specific for large screens */
 
 @media(min-width:768px) {
@@ -129,7 +133,7 @@
 
 @media(max-width:767px) {
     #myCollapse.navbar-collapse {
-        background-color: #fff;
+        background-color: #000;
     }
     .navbar .nav .active a {
         background-color: #119ED9;
@@ -159,10 +163,10 @@
         height: 34px;
     }
     .navbar-default {
-        background-color: #000;
+        background-color: none;
     }
     .heading {
-        background-color: #000;
+        background-color: none;
         padding-top: 1em;
         padding-bottom: 1em;
     }

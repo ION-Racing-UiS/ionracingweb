@@ -24,7 +24,7 @@
 
         <div id="navpad"></div>
 
-        <nav id = "navarea" class="navbar navbar-default navbar-static-top" role="navigation">
+        <nav id="navarea" class="navbar navbar-default navbar-static-top navbar-expand-md navbar-dark" role="navigation">
             <div class="container">
                 <!-- Brand and mobile menu toggle -->
                 <div class="navbar-header">
@@ -33,29 +33,32 @@
                     </a>
                 </div>
 
+                <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".dual-collapse2">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
                 <!-- Collapsable nav items -->
-                <div id="" class="myCollapse">
-                    <ul class="nav" style="justify-content: space-evenly;">
+                <div id="myCollapse" class="navbar-collapse collapse w-100 dual-collapse2">
+                    <ul class="navbar-nav mr-auto nav" style="justify-content: space-evenly;">
                         {% for i in range(0, head_menu|length) %}
                         {% if active==i %}
-                        <li class="active"><a
+                        <li class="active nav-item"><a
                                 href="/{{ head_menu[i] | lower }}">{{ head_menu[i] | replace("_", " ") }}</a></li>
                         {% else %}
-                        <li><a href="/{{ head_menu[i] | lower }}">{{ head_menu[i] | replace("_", " ") }}</a></li>
+                        <li class="nav-item"><a href="/{{ head_menu[i] | lower }}">{{ head_menu[i] | replace("_", " ") }}</a></li>
                         {% endif %}
                         {% endfor %}
                     </ul>
                 </div>
             </div>
         </nav>
-        <!-- <div class="heading">
+        <div class="heading">
             <div class="container">
                 <h2>Welcome</h2>
                 <p>This is a local web-interface for <span
                         style="text-decoration: underline rgb(255, 255, 255);">ION</span> Racing UiS. <br />
                     For the official website please go to <a href="https://ionracing.no/">this</a> site instead. (Not working due to domain issues...)</p>
             </div>
-        </div> -->
+        </div>
     </div>
     <div id="content">
         {% with messages = get_flashed_messages() %}

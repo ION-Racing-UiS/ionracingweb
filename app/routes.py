@@ -106,7 +106,7 @@ def load_user(id):
     return User(id)
 @app.before_request
 def get_current_user():
-    g.user = current_user.get_id()
+    g.user = current_user
 
 # @app.route("/")
 # def landing():
