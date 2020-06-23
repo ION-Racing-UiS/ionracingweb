@@ -8,7 +8,6 @@ from app.pylib import win_user, StringTools
 from app.pylib.auth_user import User
 from pyad import pyad, adcontainer, aduser, adgroup, adobject
 from flask_ldap import ldap
-from markdown import markdown
 import os
 import time
 import pythoncom
