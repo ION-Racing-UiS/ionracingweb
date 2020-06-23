@@ -25,7 +25,8 @@
     justify-content: center;
 }
 #content{
-    height: 78vh;
+    height: -moz-fit-content;
+    min-height: 90vh;
     display: -webkit-box;
     display: -ms-flexbox;
     display: flex;
@@ -33,6 +34,11 @@
     -webkit-box-direction: normal;
         -ms-flex-direction: column;
             flex-direction: column;
+}
+.facebookcontainer{
+    height: 90vh;
+    min-height: 90vh;
+    background-color: #011321;
 }
 .homecontainer{
     width: 100%;

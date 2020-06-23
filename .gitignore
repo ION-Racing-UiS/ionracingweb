@@ -13,3 +13,4 @@ app\logs\*.*
 *.bat
 *.pem
 app/pylib/ad_settings.py
+ionracing.py
