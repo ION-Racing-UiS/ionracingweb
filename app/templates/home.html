@@ -7,10 +7,17 @@
         var all_cars = JSON.parse('{{ cars | tojson }}');
     </script>
     <script src="{{ url_for('static', filename='applications/homeslider.js') }}"></script>
-{% endblock%}
-{% block content %}
-<div class="facebookcontainer">
-    ds
+    {% endblock%}
+    {% block content %}
+    <div class="facebookcontainer">
+        <div id="fb-root"></div>
+        <div class="fb-page" data-href="https://www.facebook.com/IONRACING/" data-tabs="timeline" 
+        data-width="" data-height="" data-small-header="false" data-adapt-container-width="true" 
+        data-hide-cover="false" data-show-facepile="true">
+        <blockquote cite="https://www.facebook.com/IONRACING/" class="fb-xfbml-parse-ignore">
+            <a href="https://www.facebook.com/IONRACING/">ION Racing UIS</a></blockquote></div>
+    
+    <script async defer crossorigin="anonymous" src="https://connect.facebook.net/nb_NO/sdk.js#xfbml=1&version=v7.0" nonce="MtaBi4QA"></script>
 </div>
 
 <div class="homecontainer">
