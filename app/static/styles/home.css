@@ -44,6 +44,11 @@
     height: 65vh;
 
 }
+#scrollimg{
+    width: 10%;
+    position: relative;
+    left: 36%;
+}
 hr{
     border: 1px inset #bbb;
     width: 55%;
