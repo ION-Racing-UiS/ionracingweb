@@ -13,30 +13,52 @@
 {% block content %}
     <div class="postscontainer">
         <div class="postscaruselcontainer">
-            <div id="carouselIndicators" class="carousel slide">
+            <div id="carouselIndicators" class="carousel slide carousel-fade" data-ride="carousel">
                     <ol class="carousel-indicators">
-                        <li data-target="#carouselIndicators" data-slide-to="0" class="active"></li>
-                        <li data-target="#carouselIndicators" data-slide-to="1"></li>
-                        <li data-target="#carouselIndicators" data-slide-to="2"></li>
+                        
+                        <li data-target="#carouselIndicators" data-slide-to="0" class="active">
+                            <p class="minidesc">adsdasddddd sdasda</p>
+                        </li>
+                        <li data-target="#carouselIndicators" data-slide-to="1">
+                            <p class="minidesc">Test</p>
+                        </li>
+                        <li data-target="#carouselIndicators" data-slide-to="2">
+                            <p class="minidesc">test 2</p>
+                        </li>
+                        <li data-target="#carouselIndicators" data-slide-to="3">
+                            <p class="minidesc">test 2</p>
+                        </li>
+                        <li data-target="#carouselIndicators" data-slide-to="4">
+                            <p class="minidesc">test 2</p>
+                        </li>
                     </ol>
                     <div class="carousel-inner">
-                        <div class="carousel-item active">
+                        <div class="carousel-item active" style="background-image: url({{ url_for('static', filename='images/bcimg1.jpg') }});">
                             <div class="overlay"></div>
-                            <img class="d-block w-100" src="{{ url_for('static', filename='images/bcimg1.jpg')}}" alt="First slide">
                         </div>
-                        <div class="carousel-item">
+                        <div class="carousel-item" style="background-image: url({{ url_for('static', filename='images/bcimg2.png') }});">
                             <div class="overlay"></div>
-                            <img class="d-block w-100" src="{{ url_for('static', filename='images/bcimg2.png')}}" alt="Second slide">
                         </div>
-                        <div class="carousel-item">
+                        <div class="carousel-item" style="background-image: url({{ url_for('static', filename='images/bcimg3.jpg') }});">
                             <div class="overlay"></div>
-                            <img class="d-block w-100" src="{{ url_for('static', filename='images/bcimg3.jpg')}}" alt="Third slide">
+                        </div>
+                        <div class="carousel-item" style="background-image: url({{ url_for('static', filename='images/bcimg4.jpg') }});">
+                            <div class="overlay"></div>
+                        </div>
+                        <div class="carousel-item" style="background-image: url({{ url_for('static', filename='images/bcimg5.jpg') }});">
+                            <div class="overlay"></div>
                         </div>
                     </div>
             </div>
         </div>
-
     </div>
+
+    <div class="mainsponsorcontainer">
+        <img src="{{ url_for('static', filename='images/MECA_ALT.svg')}}" class="sponsorimg" alt="" srcset="">
+        <img src="{{ url_for('static', filename='images/Altium.svg')}}" class="sponsorimg" alt="" srcset="">
+        <img src="{{ url_for('static', filename='images/Ansys.svg')}}" class="sponsorimg" alt="" srcset="">
+    </div>
+
     <div class="carslider">
         <div class="carslidecontainer">
             <div class="prevContainer">

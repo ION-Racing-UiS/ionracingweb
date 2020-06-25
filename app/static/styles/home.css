@@ -25,7 +25,19 @@
     justify-content: center;
     position: fixed;
     width: 100%;
+    z-index: 10;
+    background-color: transparent;
 }
+
+#headarea::before{
+    position: absolute;
+    content: "";
+    height: 100%;
+    width: 100%;
+    z-index: 1;
+    background: linear-gradient(to bottom,rgba(19, 19, 19, 0.68) 27%,rgba(29, 29, 27, 0));
+}
+
 #content{
     height: -webkit-fit-content;
     height: -moz-fit-content;
@@ -40,19 +52,35 @@
 }
 .postscontainer{
     background: #011321;
-    height: 90vh;
-    margin-top: 10vh;
+    height: 80vh;
+    /* margin-top: 10vh; */
 }
 .postscaruselcontainer{
-    height: 85%;
+    height: 100%;
 }
 #carouselIndicators{
     height: 100%;
 }
 
-.carousel-indicators{
-    bottom: 23%;
+.carousel-item{
+    height: 100%;
+    background-repeat: no-repeat;
+    background-size: cover;
+    background-position: center;
+
 }
+.minidesc{
+    overflow-wrap: break-word;
+    margin-top: 5%;
+    font-size: 1rem;
+    font-weight: 700;
+    font-stretch: normal;
+    font-style: normal;
+    line-height: 1.5;
+    letter-spacing: normal;
+}
+
+
 
 .carousel-inner{
     height: 100%;
@@ -62,8 +90,47 @@
     width: 100%;
     height: 100%;
     z-index: 2;
-    background: linear-gradient(to bottom,rgba(29,29,27,0) 27%,rgba(29,29,27,.6));
+    /* background: linear-gradient(to bottom,rgba(29,29,27,0) 27%,rgba(29,29,27,.6)); */
+    background: linear-gradient(to bottom,rgba(19, 19, 19, 0.24) 27%,rgba(29,29,27,.6));
 }
+.carousel-indicators{
+    margin-right: 0;
+    margin-left: 0;
+    width: 58%;
+    margin: auto;
+    justify-content: left;
+    bottom: 15%;
+}
+.carousel-indicators li{
+    width: 17%;
+    text-indent: unset;
+    height: unset;
+    border-top: 4px solid white;
+    background: unset;
+    background-color: unset;
+    border-bottom: unset;
+    margin-right: 2%;
+}
+@-webkit-keyframes zoom {
+    from {
+      -webkit-transform: scale(1, 1);
+    }
+    to {
+      -webkit-transform: scale(1.15);
+    }
+}
+  
+@keyframes zoom {
+    from {
+        transform: scale(1, 1);
+    }
+}
+
+.carousel-inner .carousel-item {
+    transform: scale(1.15);
+    -webkit-animation: zoom 20s;
+    animation: zoom 20s;
+  }
 
 .carslidecontainer{
     width: 100%;
@@ -75,6 +142,15 @@
     height: 65vh;
 
 }
+.hdjsd{
+    display: flex;
+    height: 14vh;
+    justify-content: center;
+}
+.sponsorimg{
+    width: 20%;
+}
+
 #scrollimg{
     width: 10%;
     position: relative;
@@ -181,6 +257,8 @@ hr{
 #navarea{
     height: 10vh;
     width: 90%;
+    padding-top: 2em;
+    z-index: 5;
 }
 .prev, .next {
     cursor: pointer;
