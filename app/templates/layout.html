@@ -38,7 +38,7 @@
                 </button>
                 <!-- Collapsable nav items -->
                 <div id="myCollapse" class="navbar-collapse collapse w-100 dual-collapse2">
-                    <ul class="navbar-nav mr-auto nav" style="justify-content: space-evenly;">
+                    <ul class="navbar-nav mr-auto nav" id="ionnavbar" style="justify-content: space-evenly;">
                         {% for i in range(0, head_menu|length) %}
                         {% if active==i %}
                         <li class="active nav-item"><a
@@ -51,14 +51,6 @@
                 </div>
             </div>
         </nav>
-        <div class="heading">
-            <div class="container">
-                <h2>Welcome</h2>
-                <p>This is a local web-interface for <span
-                        style="text-decoration: underline rgb(255, 255, 255);">ION</span> Racing UiS. <br />
-                    For the official website please go to <a href="https://ionracing.no/">this</a> site instead. (Not working due to domain issues...)</p>
-            </div>
-        </div>
     </div>
     <div id="content">
         {% with messages = get_flashed_messages() %}

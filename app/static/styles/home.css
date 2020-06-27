@@ -377,6 +377,10 @@ hr{
     max-width: 19vw !important;
 
 }
+#ionnavbar{
+    justify-content: space-evenly;
+    width: 100%;
+}
 
 .specs-container{
     /* background: rgb(196, 196, 196); */
