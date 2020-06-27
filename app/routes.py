@@ -237,6 +237,39 @@ def home():
             "bgimg" : "bcimg3.jpg",
             "img" : "img1.jpg",
 
+        },
+        3 : {
+            "author" : "Ali Baba",
+            "title" : "2015 F1 latest news",
+            "date" : "24-01-2020",
+            "time" : "11:16",
+            "heading" : " It’s time for the Grand Finale of the F1 Virtual Grand Prix Series. This Sunday the race takes \
+                            place on the Montreal track layout with our own Pierre Gasly teamed up with Simon Neil of Biffy Clyro! ",
+
+            "text" :"  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. \
+                        Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure  \
+                        dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. \
+                        Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+            "bgimg" : "bcimg4.jpg",
+            "img" : "img1.jpg",
+
+        },
+        4 : {
+            "author" : "Ola Nordman",
+            "title" : "Thanks to our Virtual “Wild Cards”",
+            "date" : "01-06-2020",
+            "time" : "18:16",
+            "heading" : " The chequered flag has been waved to end the F1 Virtual Grand Prix Series. \
+                            After keeping millions of race fans entertained  \
+                            during this long period when the sound of race engines was silenced, now it’s time to look back at it all. ",
+
+            "text" : "  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. \
+                        Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure  \
+                        dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. \
+                        Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+            "bgimg" : "bcimg5.jpg",
+            "img" : "img1.jpg",
+
         }
     }
     return render_template("home.html", active=0, head_menu=app.config["head_menu"], cars=cars, posts=posts)

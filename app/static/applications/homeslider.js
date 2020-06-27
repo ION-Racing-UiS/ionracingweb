@@ -114,7 +114,6 @@ function update_active_car_menu(index) {
 }
 
 function check_wheel_Scroll_and_animate(event) {
-
     if (!checkwheelscrollIsUp(event)) {
         if (last_scroll_index !== ion_cars.length - 1){
             update_active_car_menu(last_scroll_index + 1)
@@ -154,6 +153,22 @@ function checkwheelscrollIsUp(event) {
 function addevents() {
     let listContainer = document.getElementsByClassName("carnamelistcontainer")[0];
     listContainer.addEventListener("wheel", check_wheel_Scroll_and_animate);
+    
+    listContainer.addEventListener("mouseenter", function(){
+        window.addEventListener("DOMMousescroll", function(e){
+            e.preventDefault();
+            console.log("her");
+            
+            e.returnValue = false;
+        }, false)
+    });
+    listContainer.addEventListener("mouseleave", function(){
+        window.removeEventListener("DOMMousescroll", function(e){
+            e.preventDefault();
+            console.log("her2");
+            e.returnValue = false;
+        }, false)
+    });
 }
 
 document.addEventListener("DOMContentLoaded", () =>{
