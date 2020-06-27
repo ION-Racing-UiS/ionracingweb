@@ -8,12 +8,12 @@ from app.pylib import win_user, StringTools
 from app.pylib.auth_user import User
 from pyad import pyad, adcontainer, aduser, adgroup, adobject
 from flask_ldap import ldap
-from markdown import markdown
 import os
 import time
 import pythoncom
 import pywin32_system32
 import re
+import json
 
 def get_remote_info(request=request):
     '''
@@ -123,7 +123,156 @@ def r():
 @app.route("/home/", methods=["GET", "POST"])
 def home():
     route_log()
-    return render_template("home.html", active=0, head_menu=app.config["head_menu"])
+
+    cars = {
+        2018 : {
+            "name": "Bifrost",
+            "number": 39,
+            "img": '2018.png',
+            "engine": "V4",
+            "speed": 110,
+            "weight": 401,
+            "year": 2018,
+        },
+        2017 : {
+            "name": "Fenrir",
+            "number": 39,
+            "img": '2017.png',
+            "engine": "V6",
+            "speed": 100,
+            "weight": 451,
+            "year": 2017,
+        },
+        2016 : {
+            "name": "Embla",
+            "number": 67,
+            "img": '2016.png',
+            "engine": "V5",
+            "speed": 101,
+            "weight": 231,
+            "year": 2016,
+        },
+        2015 : {
+            "name": "Mjölnir",
+            "number": "E39",
+            "img": '2015.png',
+            "engine": "V8",
+            "speed": 190,
+            "weight": 140,
+            "year": 2015,
+        },
+        2014 : {
+            "name": "MEEM 11",
+            "number": "E20",
+            "img": '2014.png',
+            "engine": "V2",
+            "speed": 156,
+            "weight": 201,
+            "year": 2014,
+        },
+        2013 : {
+            "name": "MEEM",
+            "number": 69,
+            "img": '2013.png',
+            "engine": "V2",
+            "speed": 123,
+            "weight": 331,
+            "year": 2013,
+        },
+        2012 : {
+            "name": "Lille Trille",
+            "number": 68,
+            "img": '2012.png',
+            "engine": "V2",
+            "speed": 90,
+            "weight": 122,
+            "year": 2012,
+        }
+    }
+    posts = {
+        0 : {
+            "author" : "Jens Hansen",
+            "title" : "Live: Canadian Virtual",
+            "date" : "24-06-2020",
+            "time" : "21:16",
+            "heading" : " It’s time for the Grand Finale of the F1 Virtual Grand Prix Series. This Sunday the race takes \
+                            place on the Montreal track layout with our own Pierre Gasly teamed up with Simon Neil of Biffy Clyro! ",
+            "text" : "  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. \
+                        Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure  \
+                        dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. \
+                        Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+            "bgimg" : "bcimg1.jpg",
+            "img" : "img1.jpg",
+
+        },
+        1 : {
+            "author" : "Ola Nordman",
+            "title" : "Thanks to our Virtual “Wild Cards”",
+            "date" : "01-06-2020",
+            "time" : "18:16",
+            "heading" : " The chequered flag has been waved to end the F1 Virtual Grand Prix Series. \
+                            After keeping millions of race fans entertained  \
+                            during this long period when the sound of race engines was silenced, now it’s time to look back at it all. ",
+
+            "text" : "  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. \
+                        Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure  \
+                        dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. \
+                        Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+            "bgimg" : "bcimg2.png",
+            "img" : "img1.jpg",
+
+        },
+        2 : {
+            "author" : "Ali Reza",
+            "title" : "2020 F1 latest news",
+            "date" : "24-01-2020",
+            "time" : "11:16",
+            "heading" : " It’s time for the Grand Finale of the F1 Virtual Grand Prix Series. This Sunday the race takes \
+                            place on the Montreal track layout with our own Pierre Gasly teamed up with Simon Neil of Biffy Clyro! ",
+
+            "text" :"  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. \
+                        Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure  \
+                        dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. \
+                        Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+            "bgimg" : "bcimg3.jpg",
+            "img" : "img1.jpg",
+
+        },
+        3 : {
+            "author" : "Ali Baba",
+            "title" : "2015 F1 latest news",
+            "date" : "24-01-2020",
+            "time" : "11:16",
+            "heading" : " It’s time for the Grand Finale of the F1 Virtual Grand Prix Series. This Sunday the race takes \
+                            place on the Montreal track layout with our own Pierre Gasly teamed up with Simon Neil of Biffy Clyro! ",
+
+            "text" :"  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. \
+                        Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure  \
+                        dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. \
+                        Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+            "bgimg" : "bcimg4.jpg",
+            "img" : "img1.jpg",
+
+        },
+        4 : {
+            "author" : "Ola Nordman",
+            "title" : "Thanks to our Virtual “Wild Cards”",
+            "date" : "01-06-2020",
+            "time" : "18:16",
+            "heading" : " The chequered flag has been waved to end the F1 Virtual Grand Prix Series. \
+                            After keeping millions of race fans entertained  \
+                            during this long period when the sound of race engines was silenced, now it’s time to look back at it all. ",
+
+            "text" : "  Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. \
+                        Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure  \
+                        dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. \
+                        Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+            "bgimg" : "bcimg5.jpg",
+            "img" : "img1.jpg",
+
+        }
+    }
+    return render_template("home.html", active=0, head_menu=app.config["head_menu"], cars=cars, posts=posts)
 
 @app.route("/user_reg/")
 @app.route("/user_reg/register", methods=["POST"])

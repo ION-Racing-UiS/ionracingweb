@@ -2,20 +2,118 @@
 {% block title %} | Home{% endblock %}
 {% block head %}
     <link rel="stylesheet" href="{{ url_for('static', filename='styles/home.css') }}">
+    <script src="{{ url_for('static', filename='applications/jquery-3.4.1.min.js') }}"></script>
+    <script>
+        var all_cars = JSON.parse('{{ cars | tojson }}');
+        var all_posts = JSON.parse('{{ posts | tojson }}');
+        
+    </script>
+    <script src="{{ url_for('static', filename='applications/homeslider.js') }}"></script>
 {% endblock%}
 {% block content %}
-<div class="homecontainer">
-    <div class="nameModelContainer"></div>
-    <!-- <div class="carContainer" style="background-image: url({{ url_for('static', filename='images/test.png') }});"> -->
-    <div class="carContainer">
-        <h1>The 2018 car</h1>
-        <img src="{{ url_for('static', filename='images/2018.png') }}" alt="" srcset="">
+    <div class="section">
+        <div class="postscontainer">
+            <div class="postscaruselcontainer">
+                <div id="carouselIndicators" class="carousel slide carousel-fade" data-ride="carousel">
+                <!-- <div id="carouselIndicators" class="carousel slide carousel-fade"> -->
+                        <ol class="carousel-indicators">
+    
+                            {% for post in posts %}
+                                {% if post == 0 %}
+                                <li data-target="#carouselIndicators" data-slide-to="{{post}}" class="active">
+                                {% else %}
+                                <li data-target="#carouselIndicators" data-slide-to="{{post}}">
+                                {% endif %}
+                                    <p class="minidesc">{{ posts[post].title }}</p>
+                                </li>
+    
+                            {% endfor %}
+                        </ol>
+                        <div class="carousel-inner">
+                            {% for post in posts  %}
+                                {% if post == 0 %}
+                                <div class="carousel-item active">
+                                {% else %}
+                                <div class="carousel-item">
+                                {% endif %}
+                                        <img src="{{ url_for('static', filename='images/' + posts[post].bgimg)}}" class="carimgggg" alt="" srcset="">
+                                        <div class="overlay"></div>
+                                        <div class="big-desc-and-btn">
+                                            <div class="desc-inner">
+                                                <h1 class="big-desc">{{ posts[post].title }}</h1>
+                                                <a href="#" class="btn btn-default ">Learn More</a>
+                                            </div>
+                                        </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                </div>
+            </div>
+        </div>
+    
+        <div class="mainsponsorcontainer">
+            <img src="{{ url_for('static', filename='images/MECA_ALT.svg')}}" class="sponsorimg" id="meca" alt="" srcset="">
+            <img src="{{ url_for('static', filename='images/Altium.svg')}}" class="sponsorimg" id="altium" alt="" srcset="">
+            <img src="{{ url_for('static', filename='images/Ansys.svg')}}" class="sponsorimg" id="ansys" alt="" srcset="">
+        </div>
     </div>
-    <div class="specsContainer"></div>
-</div>
+
+    <div class="section">
+        <div class="carslider">
+            <div class="carslidecontainer">
+                <div class="prevContainer">
+                    <div class="namecontainer">
+                        <ul class="carnamelistcontainer">
+                        </ul>
+                        <img src="{{ url_for('static', filename='images/scroll.png')}}" id="scrollimg" alt="" srcset="">
+                    </div>
+                    <a class="prev" onclick="slidechange(-1)">&#10094;</a>
+                </div>
+                <!-- <div class="carContainer" style="background-image: url({{ url_for('static', filename='images/test.png') }});"> -->
+                
+                <div class="carContainer">
+                    <div class="slidecontainer">
+                    </div>
+                </div>
+                <div class="nextContainer">
+                    <a class="next" onclick="slidechange(1)">&#10095;</a>
+                </div>
+            </div>
+        
+            <hr />
+        
+            <div class="specs-container">
+                <div class="specs_inner_container">
+        
+                    <div class="spec">
+                        <p class="coolfont" id="engine">V6</p>
+                        <span class="specName">Turbo Engine</span>
+                    </div>
+                    <div class="spec">
+                        <p class="coolfont" id="speed">110 <sup class="supp">km/h</sup></p>
+                        <span class="specName">Top Speed</span>
+                    </div>
+                    <div class="spec">
+                        <p class="coolfont" id="weight">401 <sup class="supp">kg</sup></p>
+                        <span class="specName">Weight</span>
+                    </div>
+                    <div class="spec">
+                        <p class="coolfont" id="year"></p>
+                        <span class="specName">Year</span>
+                    </div>
+                </div>
+            </div>
+        
+            <div class="down-arrow-container">
+                <div class="chevron"></div>
+                <div class="chevron"></div>
+                <div class="chevron"></div>
+            </div>
+        </div>
+    </div>
 {% endblock %}
 {% block footer %}
-    <div>
+    <div class="footer">
         <h5>Footer</h5>
     </div>
 {% endblock footer %}
