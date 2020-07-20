@@ -114,7 +114,7 @@ function update_active_car_menu(index) {
 }
 
 function check_wheel_Scroll_and_animate(event) {
-    event.preventDefault();
+    // event.preventDefault();
     console.log(event)
     if (!checkwheelscrollIsUp(event)) {
         if (last_scroll_index !== ion_cars.length - 1){
