@@ -114,6 +114,8 @@ function update_active_car_menu(index) {
 }
 
 function check_wheel_Scroll_and_animate(event) {
+    event.preventDefault();
+    console.log(event)
     if (!checkwheelscrollIsUp(event)) {
         if (last_scroll_index !== ion_cars.length - 1){
             update_active_car_menu(last_scroll_index + 1)
@@ -129,11 +131,61 @@ function check_wheel_Scroll_and_animate(event) {
   
 function checkwheelscrollIsUp(event) {
     if (event.wheelDelta) {
-        console.log(event.wheelDelta > 0);
+        // console.log(event.wheelDelta > 0);
         return event.wheelDelta > 0;
     }
-    console.log(event.deltaY < 0);
+    // console.log(event.deltaY < 0);
     return event.deltaY < 0;
+}
+
+function disable_scroll_and_wheel_scroll(event) {
+    console.log(event);
+    
+    event.preventDefault();
+    event.stopPropagation();
+    console.log(event.deltaY < 0);
+
+    return false;
+    
+}
+function throttle(cb, timeout) {
+    // You can rewrite this function by replacing the time limit with the
+    // scroll pitch. I think that would be the best solution.
+    // let delta = e.deltaY || e.detail || e.wheelDelta;
+    // ... sum delta and call callback by the number of steps: accumulator/step
+  
+    let lastCall = 0;
+  
+    return function() {
+      if (new Date() - lastCall > timeout) {
+        lastCall = new Date();
+  
+        cb(event);
+      }
+    }
+}
+function scrollParentToChild(parent, child) {
+
+    // Where is the parent on page
+    var parentRect = parent.getBoundingClientRect();
+    // What can you see?
+    var parentViewableArea = {
+      height: parent.clientHeight,
+      width: parent.clientWidth
+    };
+  
+    // Where is the child
+    var childRect = child.getBoundingClientRect();
+    // Is the child viewable?
+    var isViewable = (childRect.top >= parentRect.top) && (childRect.top <= parentRect.top + parentViewableArea.height);
+  
+    // if you can't see the child try to scroll parent
+    if (!isViewable) {
+      // scroll by offset relative to parent
+      parent.scrollTop = (childRect.top + parent.scrollTop) - parentRect.top
+    }
+  
+  
 }
 
 // function check_scroll(event) {
@@ -152,17 +204,20 @@ function checkwheelscrollIsUp(event) {
 
 function addevents() {
     let listContainer = document.getElementsByClassName("carnamelistcontainer")[0];
-    listContainer.addEventListener("wheel", check_wheel_Scroll_and_animate);
-    
+    listContainer.addEventListener("wheel", throttle(check_wheel_Scroll_and_animate, 250), false);
+    // listContainer.removeEventListener("scroll", disable_scroll_and_wheel_scroll)
+
     listContainer.addEventListener("mouseenter", function(){
+        console.log("her01");
         window.addEventListener("DOMMousescroll", function(e){
             e.preventDefault();
-            console.log("her");
+            console.log("her1");
             
             e.returnValue = false;
         }, false)
     });
     listContainer.addEventListener("mouseleave", function(){
+        console.log("her02");
         window.removeEventListener("DOMMousescroll", function(e){
             e.preventDefault();
             console.log("her2");
