@@ -80,8 +80,59 @@ body {
 /* FOOTER */
 #footer {
     margin-top: 2em;
-    background-color: black;
+    background: #011321;
+    min-height: 29vh;
+    color: white;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    position: relative;
 }
+
+#footerhr{
+    position: absolute;
+    top: 0;
+    margin: 0;
+}
+.inner-footer{
+    width: 70%;
+    height: 17em;
+    display: flex;
+    justify-content: space-between;
+    margin-top: 4%;
+
+}
+.footer-ion-social{
+    max-width: 15%;
+    display: flex;
+    flex-direction: column;
+}
+.footerionicon{
+    width: 100%;
+    display: flex;
+}
+.footerionicon .ionimg{
+    max-width: 75%;
+}
+
+.social_container{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    margin-top: 3%;
+}
+.face_svg{
+    background: white;
+    fill: #011321;
+    width: 100%;
+    height: 100%;
+    border-radius: 24%;
+    border: 1px solid #908b8b;
+}
+
 #footer .footer-bar {
     width: 100%;
     height: 30px;
