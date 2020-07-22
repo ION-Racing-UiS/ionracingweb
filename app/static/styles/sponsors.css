@@ -1,0 +1,47 @@
+#headarea{
+    height: 10vh;
+    display: flex;
+    justify-content: center;
+    position: fixed;
+    width: 100%;
+    z-index: 10;
+    background-color: transparent;
+    top: 0;
+}
+
+#headarea::before{
+    position: absolute;
+    content: "";
+    height: 100%;
+    width: 100%;
+    z-index: 1;
+    background: linear-gradient(to bottom,rgba(19, 19, 19, 0.68) 27%,rgba(29, 29, 27, 0));
+}
+
+#navarea{
+    height: 10vh;
+    width: 90%;
+    padding-top: 2em;
+    z-index: 5;
+}
+#ionnavbar{
+    justify-content: space-evenly;
+    width: 100%;
+}
+
+#content{
+    height: -webkit-fit-content;
+    height: -moz-fit-content;
+    height: fit-content;
+    display: -webkit-box;
+    display: -ms-flexbox;
+    display: flex;
+    -webkit-box-orient: vertical;
+    -webkit-box-direction: normal;
+    -ms-flex-direction: column;
+    flex-direction: column;
+    margin-top: 10vh;
+    /* height: 118vh; */
+    /* background: red; */
+}
+

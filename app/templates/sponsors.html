@@ -1,17 +1,9 @@
 {% extends "layout.html" %}
-{% block title %} | Home{% endblock %}
+{% block title %} | Sponsors{% endblock %}
 {% block head %}
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles/home.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/sponsors.css') }}">
     <script src="{{ url_for('static', filename='applications/jquery-3.4.1.min.js') }}"></script>
-    <script>
-        var all_cars = JSON.parse('{{ cars | tojson }}');
-        var all_posts = JSON.parse('{{ posts | tojson }}');
-        
-    </script>
-    <script src="{{ url_for('static', filename='applications/homeslider.js') }}"></script>
 {% endblock%}
 {% block content %}
-    <div>
-        h
-    </div>
+h
 {% endblock  %}

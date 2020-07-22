@@ -274,6 +274,10 @@ def home():
     }
     return render_template("home.html", active=0, head_menu=app.config["head_menu"], cars=cars, posts=posts)
 
+@app.route("/sponsor/", methods=["GET", "POST"])
+def sponsor():
+    return render_template("sponsors.html", head_menu=app.config["head_menu"])
+
 @app.route("/user_reg/")
 @app.route("/user_reg/register", methods=["POST"])
 def user_reg():
