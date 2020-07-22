@@ -14,8 +14,8 @@
     <script type="text/javascript" src="{{ url_for('static', filename='applicaitons/navbar.js') }}"></script>
     <script type="text/javascript" src="{{ url_for('static', filename='applications/app.js') }}"></script>
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/bootstrap.css') }}" />
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/general.css') }}" />
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/navbar.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/general.css') }}" />
     {% block head %}{% endblock head %}
 </head>
 
@@ -63,9 +63,9 @@
             {% endif %}
         {% endwith %}
         {% block content %}{% endblock %}
-    </div>
 
-    {% block footer %}{% endblock footer %}
+        {% block footer %}{% endblock footer %}
+    </div>
 </body>
 
 </html>
