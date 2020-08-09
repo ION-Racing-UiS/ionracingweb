@@ -381,11 +381,33 @@
 .sponsorsvg{
   height: 150px;
 }
+
+.bottomsvg{
+  position: absolute;
+  width: 100%;
+  bottom: 0;
+  transform: rotateX(180deg);
+}
+.topsvg{
+  position: absolute;
+  width: 100%;
+  top: 0;
+}
+
 .sponsortype > h1{
   font-family: 'Bebas Neue', cursive;
   letter-spacing: 8px;
   font-size: 2.7rem;
   margin-top: 2%;
+}
+
+.about{
+  position: absolute;
+  background: #bbb;
+  top: 0;
+  width: 10%;
+  height: 10%;
+  display: none;
 }
 
 .main{
