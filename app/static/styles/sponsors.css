@@ -1,4 +1,5 @@
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Russo+One&display=swap');
 *{
     box-sizing: border-box;
     margin: 0;
@@ -359,6 +360,10 @@
   max-height: 10%;
   flex-direction: column;
 }
+.sponsortypee {
+  font-family: 'Russo One', sans-serif !important;
+  text-transform: uppercase;
+}
 .logoinnercontainer{
   display: flex;
   flex-direction: column;
@@ -419,9 +424,9 @@
   display: flex;
   justify-content: center;
 }
-.main .logoinnercontainer{
+/* .main .logoinnercontainer{
   background: #119ed9;
-}
+} */
 
 .platinum{
   min-height: 100vh;
@@ -480,7 +485,7 @@
  * The "shine" element
  */
 
-.logoinnercontainer {
+/* .logoinnercontainer {
   position: relative;
   overflow: hidden;
   border-radius: 5px;
@@ -490,13 +495,13 @@
   line-height: 50px;
   font-size: 12px;
   font-family: sans-serif;
-}
+} */
 
 /**
  * The "shine" element
  */
 
-.logoinnercontainer:after {
+/* .logoinnercontainer:after {
   
   animation: shine 5s ease-in-out  infinite;
   animation-fill-mode: forwards;  
@@ -517,14 +522,14 @@
     rgba(255, 255, 255, 0.5) 92%,
     rgba(255, 255, 255, 0.0) 100%
   );
-}
+} */
 
 /* Hover state - trigger effect */
 
 
 /* Active state */
 
-.icon:active:after {
+/* .icon:active:after {
   opacity: 0;
 }
 
@@ -543,4 +548,4 @@
     left: -30%;
     transition-property: left, top, opacity;
   }
-}
+} */
