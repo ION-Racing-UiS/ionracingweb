@@ -30,12 +30,15 @@ main {
     transition-timing-function: ease-in-out;
     transition-delay: 50ms;
     transition-duration: 250ms;
-    transition-property: background-color, border-right;
+    transition-property: background-color, padding, border-left, border-right;
+    padding: 0 3px 0 3px;
 }
 
 .side-menu > a:hover {
-    border-right: 2px solid #FFFFFF;
-    border-bottom: 2px solid #FFFFFF;
+    padding: 0 2px 0 2px;
+    border-right: 1px inset #FFFFFF;
+    border-left: 1px inset #FFFFFF;
+    background-color: #333;
 }
 
 #content {

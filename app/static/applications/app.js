@@ -44,6 +44,22 @@ $(document).ready(function () {
                 }
             });
         });
+    } else if (document.title === "ION Racing | Delete Cars") {
+        cars = document.getElementsByClassName("car");
+        for (let i = 0; i < cars.length; i++) {
+            let e = cars[i];
+            e.addEventListener("click", function () {
+                if (e.classList.contains("selected")) {
+                    e.classList.remove("selected");
+                    removeFromSelection(e.children[0].textContent);
+                    console.log("Not selected");
+                } else {
+                    e.classList.add("selected");
+                    addToSelection(e.children[0].textContent);
+                    console.log("Selected");
+                }
+            });
+        }
     }
     $(window).resize(function () { resizeBg(); });
 });
@@ -112,4 +128,20 @@ function setUsername() {
     document.getElementById("username").value = username;
     document.getElementById("username").value = document.getElementById("username").value.replace(" .", ".");
     document.getElementById("fullname").value = fullname;
+}
+
+function addToSelection(id) {
+    if (document.getElementById("selected").value === ",") {
+        document.getElementById("selected").value = "";
+    }
+    document.getElementById("selected").value += id + ",";
+    console.log(id + " Added to selection.");
+}
+
+function removeFromSelection(id) {
+    document.getElementById("selected").value = document.getElementById("selected").value.replace(id, "").replace(",,", ",");
+    console.log(id + " Removed from selection.");
+    if (document.getElementById("selected").value === ",") {
+        document.getElementById("selected").value = "";
+    }
 }

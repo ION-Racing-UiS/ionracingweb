@@ -13,6 +13,34 @@ def get_ldap_connection():
     conn = ldap.initialize("ldap://" + get_ad_settings()['ldap_server'] + ":389/")
     return conn
 
+def is_web_admin(user):
+    '''
+    Checks if a user object from AD is part of the `web admin` group.\n
+    Arguments:\n
+    :param user: User object to check. <type:pyad.aduser.ADUser>
+    '''
+    if type(user) is not pyad.aduser.ADUser:
+        return False
+    g = adgroup.ADGroup.from_cn("Web Admin").get_members()
+    for m in g:
+        if user.guid_str == m.guid_str and user.dn == m.dn:
+            return True
+    return False
+
+def is_admin(user):
+    '''
+    Checks if a user object from AD is part of the `Administrators` group.\n
+    Arguments:\n
+    :param user: User object to check. <type:pyad.aduser.ADUser>
+    '''
+    if type(user) is not pyad.aduser.ADUser:
+        return False
+    g = adgroup.ADGroup.from_cn("Admins").get_members()
+    for m in g:
+        if user.guid_str == m.guid_str and user.dn == m.dn:
+            return True
+    return False
+
 class User(UserMixin):
     '''
     User object, inheriting from flask_login.UserMixin to use as a user object for `flask_login`.
@@ -35,6 +63,8 @@ class User(UserMixin):
         self.u = aduser.ADUser.from_cn(username)
         self.guid = self.u.get_attribute('objectGUID')[0].tobytes().hex()
         self.username = self.u.get_attribute('cn')[0]
+        self.is_web_admin = is_web_admin(self.u)
+        self.is_admin = is_admin(self.u)
 
     def __repr___(self):
         '''
@@ -47,7 +77,7 @@ class User(UserMixin):
         '''
         To string method for the User class.
         '''
-        return "<User ADUser=%s, username=%s, guid=%s>" %(self.u, self.username, self.guid)
+        return "<User ADUser=%s, username=%s, guid=%s, is_web_admin=%s, is_admin=%s>" % (self.u, self.username, self.guid, self.is_web_admin, self.is_admin)
     
     @staticmethod
     def try_login(username, password):
@@ -65,6 +95,21 @@ class User(UserMixin):
             dn,
             password
         )
+
+    @staticmethod
+    def try_admin_login(username, password):
+        ad_settings = get_ad_settings()
+        pyad.set_defaults(ldap_server=ad_settings['ldap_server'], username=ad_settings['username'], password=ad_settings['password'])
+        u = aduser.ADUser.from_cn(username)
+        if is_web_admin(u) or is_admin(u):
+            dn = u.dn
+            conn = get_ldap_connection()
+            conn.simple_bind_s(
+                dn,
+                password
+            )
+        else:
+            raise ldap.INVALID_CREDENTIALS("You do not have the required privileges required to access this area.")
     
     def get_id(self):
         '''

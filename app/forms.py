@@ -1,5 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, FormField, TextAreaField, FileField, SelectField, HiddenField, validators
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, FormField, TextAreaField, FileField, SelectField, HiddenField, validators, IntegerField, FloatField
+from flask_wtf.file import FileField, FileRequired, FileAllowed
 from wtforms.fields.html5 import DateField
 import app.pylib.win_user
 from app.pylib.auth_user import User
@@ -152,3 +153,100 @@ class UserChangePwd(FlaskForm):
         render_kw={'placeholder': 'Retype New Password'}
     )
     change = SubmitField('Change Password', render_kw={'class': 'btn'})
+
+class AdminAddCar(FlaskForm):
+    year = IntegerField(
+        'Year',
+        validators=[validators.DataRequired()],
+        render_kw={'placeholder': 'Year'}
+    )
+    name = StringField(
+        'Name',
+        validators=[],
+        render_kw={'placeholder': 'Name'}
+    )
+    number = IntegerField(
+        'Number',
+        validators=[],
+        render_kw={'placeholder': 'Number'}
+    )
+    img = FileField(
+        'Image',
+        validators=[FileAllowed(app.carimages, "Images only!")],
+    )
+    mass = StringField(
+        'Mass',
+        validators=[],
+        render_kw={'placeholder': 'Mass'}
+    )
+    engine = StringField(
+        'Engine',
+        validators=[],
+        render_kw={'placeholder': 'Engine'}
+    )
+    output = StringField(
+        'Output',
+        validators=[],
+        render_kw={'placeholder': 'Output kW/PS'}
+    )
+    torque = FloatField(
+        'Torque',
+        validators=[],
+        render_kw={'placeholder': 'Torque Nm'}
+    )
+    submit = SubmitField('Add car', render_kw={'class': 'btn'})
+
+class AdminEditCar(FlaskForm):
+    cid = HiddenField()
+    year = IntegerField(
+        'Year',
+        validators=[],
+        render_kw={'placeholder': 'Year'}
+    )
+    name = StringField(
+        'Name',
+        validators=[],
+        render_kw={'placeholder': 'Name'}
+    )
+    number = IntegerField(
+        'Number',
+        validators=[],
+        render_kw={'placeholder': 'Number'}
+    )
+    img = FileField(
+        'Image',
+        validators=[FileAllowed(app.carimages, "Images only!")],
+    )
+    mass = StringField(
+        'Mass',
+        validators=[],
+        render_kw={'placeholder': 'Mass'}
+    )
+    engine = StringField(
+        'Engine',
+        validators=[],
+        render_kw={'placeholder': 'Engine'}
+    )
+    output = StringField(
+        'Output',
+        validators=[],
+        render_kw={'placeholder': 'Output kW/PS'}
+    )
+    torque = FloatField(
+        'Torque',
+        validators=[],
+        render_kw={'placeholder': 'Torque Nm'}
+    )
+    confirm = BooleanField(
+        'Are you sure you want to make changes?',
+        validators=[validators.DataRequired()]
+    )
+    submit = SubmitField('Save', render_kw={'class': 'btn'})
+
+class AdminRemoveCar(FlaskForm):
+    cars = HiddenField(render_kw={'id': 'selected'})
+    confirm = BooleanField(
+        'Are you sure you want to delete these car(s)?',
+        validators=[validators.DataRequired()]
+    )
+    submit = SubmitField('Remove', render_kw={'class': 'btn'})

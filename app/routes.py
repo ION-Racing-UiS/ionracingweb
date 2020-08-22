@@ -2,10 +2,11 @@ from flask import render_template, flash, redirect, url_for, request, g, session
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.utils import secure_filename
 from app import app, limiter, login_manager
-from app.forms import RegisterForm, LoginForm, UserEdit, UserOldPwd, UserChangePwd
+from app.forms import RegisterForm, LoginForm, UserEdit, UserOldPwd, UserChangePwd, AdminAddCar, AdminEditCar, AdminRemoveCar
 from datetime import datetime
 from app.pylib import win_user, StringTools
 from app.pylib.auth_user import User
+from app.pylib.auth_admin import Admin
 from pyad import pyad, adcontainer, aduser, adgroup, adobject
 from flask_ldap import ldap
 import os
@@ -14,6 +15,7 @@ import pythoncom
 import pywin32_system32
 import re
 import json
+import mysql.connector
 
 def get_remote_info(request=request):
     '''
@@ -94,11 +96,42 @@ def build_log(data=None):
     return res + str(data)
 
 def route_log():
+    '''
+    Creates a log string and prints it to stdout and returns the log message.
+    '''
     remote_info = get_remote_info(request)
     req_time = get_date_time()
     res = remote_info["ip"] + " - - " + req_time + " " + remote_info["method"] + " " + remote_info["url"] + " Requested"
     print(res)
     return res
+
+def get_db():
+    '''
+    Get database connects to the database and returns the connection.
+    '''
+    if not hasattr(g, "_database"):
+        g._database = mysql.connector.connect(
+            host=app.config["DB_HOST"], user=app.config["DB_USER"],
+            password=app.config["DB_PWD"], database=app.config["DB_DB"]
+        )
+    return g._database
+
+@app.teardown_appcontext
+def teardown_db(error):
+    db = getattr(g, "_database", None)
+    if db is not None:
+        db.close()
+
+def admin_check(current_user=current_user):
+    '''
+    Checks if the current user is either an admin or web_admin. Meant to be used on routes that require admin privileges.
+    Unauthorized useres are redirected to `login`.\n
+    Arguments:\n
+    :param current_user: `current_user` of the session <type:User>
+    '''
+    if not current_user.is_web_admin or not current_user.is_admin:
+        flash("You are not authorized to access this page", 'warning')
+        return True
 
 @login_manager.user_loader
 def load_user(id):
@@ -123,72 +156,21 @@ def r():
 @app.route("/home/", methods=["GET", "POST"])
 def home():
     route_log()
-
-    cars = {
-        2018 : {
-            "name": "Bifrost",
-            "number": 39,
-            "img": '2018.png',
-            "engine": "V4",
-            "speed": 110,
-            "weight": 401,
-            "year": 2018,
-        },
-        2017 : {
-            "name": "Fenrir",
-            "number": 39,
-            "img": '2017.png',
-            "engine": "V6",
-            "speed": 100,
-            "weight": 451,
-            "year": 2017,
-        },
-        2016 : {
-            "name": "Embla",
-            "number": 67,
-            "img": '2016.png',
-            "engine": "V5",
-            "speed": 101,
-            "weight": 231,
-            "year": 2016,
-        },
-        2015 : {
-            "name": "Mjölnir",
-            "number": "E39",
-            "img": '2015.png',
-            "engine": "V8",
-            "speed": 190,
-            "weight": 140,
-            "year": 2015,
-        },
-        2014 : {
-            "name": "MEEM 11",
-            "number": "E20",
-            "img": '2014.png',
-            "engine": "V2",
-            "speed": 156,
-            "weight": 201,
-            "year": 2014,
-        },
-        2013 : {
-            "name": "MEEM",
-            "number": 69,
-            "img": '2013.png',
-            "engine": "V2",
-            "speed": 123,
-            "weight": 331,
-            "year": 2013,
-        },
-        2012 : {
-            "name": "Lille Trille",
-            "number": 68,
-            "img": '2012.png',
-            "engine": "V2",
-            "speed": 90,
-            "weight": 122,
-            "year": 2012,
+    db = get_db()
+    cursor = db.cursor()
+    q = "SELECT year, name, number, img, engine, torque, mass FROM car"
+    cursor.execute(q)
+    cars = {}
+    for car in cursor.fetchall():
+        cars[int(car[0])] = {
+            'name': str(car[1]),
+            'number': int(car[2]),
+            'img': str(car[3]),
+            'engine': str(car[4]),
+            'speed': int(car[5]),
+            'weight': int(car[6]),
+            'year': int(car[0])
         }
-    }
     posts = {
         0 : {
             "author" : "Jens Hansen",
@@ -411,7 +393,7 @@ def login():
         except ldap.SERVER_DOWN: # Unable to contact dc
             flash("The Domain Controller could not be contacted at this time, please try again later.")
             res = build_log("Domain Controller could no be contacted!")
-            return redirect(url_for('appuser_password'))
+            return render_template("login.html", active=5, head_menu=app.config["head_menu"], form=form)
         user = User(username)
         #print("User: " + str(user))
         login_user(user)
@@ -432,6 +414,9 @@ def logout():
     route_log()
     if current_user.is_authenticated:
         flash("You are now logged out.", 'success')
+    if current_user.is_admin or current_user.is_web_admin:
+        logout_user()
+        return redirect(url_for("admin"))
     logout_user()
     return redirect(url_for("login"))
 
@@ -549,6 +534,226 @@ def appuser_reportedit():
 def appuser_reportonchange():
     # print(data)
     return "Change Detected!"
+
+@app.route("/admin", methods=["GET", "POST"])
+def admin():
+    route_log()
+    print("Current_user: " + str(current_user))
+    if current_user.is_authenticated:
+        flash("You are already logged in.")
+        return redirect(url_for("admin_home"))
+    form = LoginForm()
+    pythoncom.CoInitialize()
+    if request.method == "POST" and form.validate() and form.is_submitted():
+        username = form.username.data
+        password = form.password.data
+        try:
+            res = build_log("Trying admin login for: " + username)
+            print(res)
+            User.try_admin_login(username, password)
+        except ldap.INVALID_CREDENTIALS as e:
+            flash("Invalid username or password", "danger")
+            res = build_log("Invalid user credential for: " + username)
+            print(res)
+            return render_template("admin_login.html", head_menu=app.config["head_menu"], form=form)
+        except ldap.INVALID_DN_SYNTAX or ldap.INVALID_SYNTAX:
+            flash("Invalid syntax for login", "danger")
+            res = build_log("Invalid syntax for login, user: ", "danger")
+            print(res)
+            return render_template("")
+        except pyad.invalidResults:
+            flash("Invalid username or password", "danger")
+            res = build_log("Invalid username or password for user: " + username)
+            return render_template("admin_login.html", head_menu=app.config["head_menu"], form=form)
+        except ldap.SERVER_DOWN:
+            flash("The Domain Controller could not be contacted at this time, please try again later.")
+            res = build_log("Domain Controller could no be contacted!")
+            return render_template("admin_login.html", head_menu=app.config["head_menu"], form=form)
+        admin = User(username)
+        login_user(admin)
+        flash("You have been logged in.", "success")
+        res = build_log("Successful login for: " + username)
+        print(res)
+        return redirect(url_for("admin_home"))
+    if form.errors:
+        flash(str(form.errors), 'danger')
+        res = build_log("Form error: " + str(form.errors))
+        print(res)
+    return render_template("admin_login.html", head_menu=app.config["head_menu"], form=form)
+
+@app.route("/admin_home")
+@login_required
+def admin_home():
+    route_log()
+    if admin_check(current_user):
+        return redirect(url_for('login'))
+    print("Current user: is_web_admin=%s, is_admin=%s" % (current_user.is_web_admin, current_user.is_admin))
+    return render_template("admin_layout.html", user=current_user)
+
+@app.route("/admin_car")
+@login_required
+def admin_car():
+    route_log()
+    if admin_check(current_user):
+        return redirect(url_for('appuser_home'))
+    db = get_db()
+    cursor = db.cursor()
+    cars = {}
+    try:
+        q = "SELECT * FROM car ORDER BY `year` ASC"
+        cursor.execute(q)
+        for (id, year, name, number, img, mass, engine, output, torque) in cursor.fetchall():
+            cars[int(id)] = {
+                'id': str(id),
+                'year': int(year),
+                'name': str(name),
+                'number': str(number),
+                'img': str(img),
+                'mass': str(mass),
+                'engine': str(engine),
+                'output': str(output),
+                'torque': str(torque)
+            }
+    except ValueError as e:
+        flash("An error occurred when casting values from the database, please inform the dev team about the issue: " + str(e), 'error')
+        return render_template("admin_layout.html", user=current_user)
+    return render_template("admin_car.html", user=current_user, cars=cars)
+
+@app.route("/admin_car/add", methods=["GET", "POST"])
+@login_required
+def admin_car_add():
+    route_log()
+    if admin_check(current_user):
+        return redirect(url_for('appuser_home'))
+    form = AdminAddCar()
+    if request.method == "POST" and form.is_submitted() and form.validate() and form.submit.data:
+        db = get_db()
+        cursor = db.cursor()
+        try:
+            data = {
+                'year': int(form.year.data),
+                'name': str(form.name.data),
+                'number': int(form.number.data),
+                'mass': float(form.mass.data),
+                'engine': str(form.engine.data),
+                'output': str(form.output.data),
+                'torque': float(form.torque.data)
+            }
+        except ValueError as e:
+            flash("An error was encountered when parsing the data:\t" + str(e))
+            res = build_log("ValueError when parsing data:\t" + str(e))
+            print(res)
+            return render_template("admin_car_add.html", user=current_user)
+        if form.img.data:
+            sec_filename = secure_filename(form.img.data.filename)
+            data['img'] = str(app.config["CAR_IMG_PATH"] + sec_filename)
+            path = os.path.join(app.config["CAR_IMAGES"], sec_filename)
+            form.img.data.save(path)
+            q = "INSERT INTO car (`year`, `name`, `number`, `img`, `mass`, `engine`, `output`, `torque`) VALUES (%s, %s, %s, %s, %s, %s, %s, %s)"
+            cursor.execute("START TRANSACTION")
+            cursor.execute(q,  (data['year'], data['name'], data['number'], data['img'], data['mass'], data['engine'], data['output'], data['torque']))
+            cursor.execute("COMMIT")
+        else:
+            q = "INSERT INTO car (`year`, `name`, `number`, `mass`, `engine`, `output`, `torque`) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+            cursor.execute("START TRANSACTION")
+            cursor.execute(q,  (data['year'], data['name'], data['number'], data['mass'], data['engine'], data['output'], data['torque']))
+            cursor.execute("COMMIT")
+        flash("Car for the year: " + str(data['year']) + " named: " + data['name'] + " has been successfully added!", 'success')
+        res = build_log("Car for the year: " + str(data['year']) + " named: "  + data['name'] + " has been added by: " + current_user.username)
+        return redirect(url_for("admin_car"))
+    return render_template("admin_car_add.html", user=current_user, form=form)
+
+@app.route("/admin_car/<int:id>", methods=["GET", "POST"])
+@login_required
+def admin_car_i(id):
+    if admin_check(current_user):
+        return redirect(url_for('appuser_home'))
+    form = AdminEditCar()
+    try:
+        i = int(id)
+    except ValueError as e:
+        flash("Error while parsing argument id as an integer:\t" + str(e))
+        res = build_log("Error while parsing argument id as integer:\t" + str(e))
+        print(res)
+        return redirect(url_for("admin_car"))
+    db = get_db()
+    cursor = db.cursor()
+    q = "SELECT * FROM car WHERE id=%s"
+    cursor.execute(q, (i,))
+    car = cursor.fetchone()
+    if request.method == "POST" and form.is_submitted() and form.validate() and form.submit.data and (str(form.cid.data)==str(i)):
+        try:
+            data = {
+                'id': int(form.cid.data),
+                'year': int(form.year.data),
+                'name': str(form.name.data),
+                'number': str(form.number.data),
+                'mass': float(form.mass.data),
+                'engine': str(form.engine.data),
+                'output': str(form.output.data),
+                'torque': float(form.torque.data)
+            }
+        except ValueError as e:
+            flash("An error was encountered when parsing the data:\t" + str(e))
+            res = build_log("ValueError when parsing data:\t" + str(e))
+            print(res)
+        if form.img.data:
+            if form.img.data.filename == car[4]:
+                return redirect(url_for('admin_car'))
+            sec_filename = secure_filename(form.img.data.filename)
+            data['img'] = str(app.config["CAR_IMG_PATH"] + sec_filename)
+            path = os.path.join(app.config["CAR_IMAGES"], sec_filename)
+            if car[4]:
+                old_img = os.path.join(app.config["CAR_IMAGES"], StringTools.getFileName(car[4]).replace("/", "\\"))
+                os.remove(old_img)
+            form.img.data.save(path)
+            q = "UPDATE car SET year=%s, name=%s, number=%s, img=%s, mass=%s, engine=%s, output=%s, torque=%s WHERE id=%s"
+            cursor.execute("START TRANSACTION")
+            cursor.execute(q, (data['year'], data['name'], data['number'], data['img'], data['mass'], data['engine'], data['output'], data['torque'], data['id']))
+            cursor.execute("COMMIT")
+        else:
+            q = "UPDATE car SET year=%s, name=%s, number=%s, mass=%s, engine=%s, output=%s, torque=%s WHERE id=%s"
+            cursor.execute("START TRANSACTION")
+            cursor.execute(q, (data['year'], data['name'], data['number'], data['mass'], data['engine'], data['output'], data['torque'], data['id']))
+            cursor.execute("COMMIT")
+            res = build_log("Car updated! ID: " + str(data['id']) + " Year: " + str(data['year']) + " by: " + current_user.username)
+            print(res)
+            flash("Car ID: " + str(data['id']) + " year: " + str(data['year']) + " has successfully been updated!", 'success')
+        return redirect(url_for("admin_car"))
+    print(str(car))
+    form.cid.data = car[0]
+    form.year.data = int(car[1])
+    form.name.data = str(car[2])
+    form.number.data = int(car[3])
+    if str(car[4]) and len(str(car[4])) > 0:
+        img = str(car[4])
+    #form.img.data.filename = str(car[4])
+    form.mass.data = float(car[5])
+    form.engine.data = str(car[6])
+    form.output.data = str(car[7])
+    form.torque.data = float(car[8])
+    return render_template("admin_car_edit.html", user=current_user, form=form, img=img)
+
+@app.route("/admin_car/remove", methods=["GET", "POST"])
+@login_required
+def admin_car_remove():
+    if admin_check(current_user):
+        return redirect(url_for('appuser_home'))
+    form = AdminRemoveCar()
+    db = get_db()
+    cursor = db.cursor()
+    q = "SELECT id, year, name, number, img FROM car"
+    cursor.execute(q)
+    cars = {}
+    for car in cursor.fetchall():
+        cars[int(car[1])] = {
+            'id': car[0],
+            'year': car[1],
+            'name': car[2],
+            'number': car[3],
+            'img': car[4]
+        }
+    return render_template("admin_car_remove.html", form=form, user=current_user, cars=cars)
 
 @app.route("/show/<template_file>")
 def show_template(template_file):
