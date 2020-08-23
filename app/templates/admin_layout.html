@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="ION Racing Website" />
+    <meta name="author" content="ION Racing" />
+    <meta name="csrf-token" content="{{ csrf_token() }}">
+    <title>ION Racing{% block title %}{% endblock %}</title>
+    <link rel="icon" href="{{ url_for('static', filename='images/favicon.png') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/bootstrap.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/user_style.css') }}" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/admin_style.css') }}" />
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/font-awesome.css') }}" />
+    <script type="text/javascript" src="{{ url_for('static', filename='applications/jquery-3.4.1.min.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='applications/app.js') }}"></script>
+    <script type="text/javascript" src="{{ url_for('static', filename='applications/bootstrap.js') }}"></script>
+</head>
+
+<body><!--
+    <header>
+        <div class="container-fluid">
+        <div class="navbar-header">
+            <a class="navbar-brand" href="/appuser_home">
+                <i class="fa fa-home" aria-hidden="true"></i>
+            </a>
+            <a href="/logout" class="navbar-brand">
+                <i class="fa fa-sign-out" aria-hidden="true"></i>
+            </a>
+        </div>
+        </div>
+    </header>-->
+    <nav class="navbar navbar-expand-md navbar-dark bg-dark">
+        <div class="navbar-collapse collapse w-100 order-1 order-md-0 dual-collapse2">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item">
+                    <a href="/admin_home" class="navbar-brand">
+                        <i class="fa fa-home" aria-hidden="true"></i> User Home
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="mx-auto order-0">
+            <a class="navbar-brand mx-auto" href="/gohome"><img src="{{ url_for('static', filename='images/ION_ICON_BL.png') }}" /></a>
+            <button class="navbar-toggler" type="button" data-toggle="collapse" data-target=".dual-collapse2">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+        </div>
+        <div class="navbar-collapse collapse w-100 order-3 dual-collapse2">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a href="/logout" class="navbar-brand">
+                        <i class="fa fa-sign-out" aria-hidden="true"></i> Logout
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+    <main class="row">
+        {% with messages = get_flashed_messages() %}
+        {% if messages %}
+        <ul class="flashes">
+            {% for message in messages %}
+            <li>{{ message }}</li>
+            {% endfor %}
+        </ul>
+        {% endif %}
+        {% endwith %}
+        <aside class="side-menu col-s-12 col-md-2">
+            <h3>Menu</h3>
+            {% if user.is_web_admin %}
+            <a href="/admin_car"><i class="fa fa-car" aria-hidden="true"></i> Manage Cars</a><br />
+            <a href="/admin_post"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit Posts </a>
+            {% endif %}
+            {% if user.is_admin %}
+            <br />
+            <a href="/admin_user"><i class="fa fa-users" aria-hidden="true"></i> Manage Users </a>
+            <br />
+            <a href="/admin_team"><i class="fa fa-flag-checkered" aria-hidden="true"></i> Manage Teams</a>
+            <br />
+            <a href="/admin_groups"><i class="fa fa-shield" aria-hidden="true"></i> Manage Groups</a>
+            {% endif %}
+        </aside>
+        <div id="content" class="col-s-12 col-md-10">
+            {% block content %}
+            {% endblock %}
+        </div>
+    </main>
+</body>
+
+</html>

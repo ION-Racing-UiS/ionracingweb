@@ -1,0 +1,106 @@
+div.header {
+    width: 100%;
+    background-color: whitesmoke;
+    display: flex;
+}
+
+div.header * {
+    width: 50%;
+    text-align: center;
+    padding: 0;
+    margin: 0;
+    height: 30px;
+}
+
+div.header *:hover {
+    border-bottom: 1px solid blue;
+    background-color: gray;
+}
+
+div.car-list {
+    width: 100%;
+}
+
+div.car-list-head-row {
+    font-weight: bold;
+    background-color: darkslateblue;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+}
+
+div.car-list-head {
+    padding: 0;
+    margin: 0;
+}
+
+div.car-list-head-row * {
+    display: inline-block;
+    width: 10%;
+    border-right: solid 1px white;
+    height: 40px;
+    padding: 5px 0 5px 0;
+    margin: 0;
+    vertical-align: middle;
+}
+
+div.car-list-head-row *:last-child {
+    border-right: none;
+}
+
+div.car-list-body {
+    background-color: darkslategray;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+}
+
+div.car-list-body > a, div.car-list-body > div {
+    display: block;
+    transition-property: background-color;
+    transition-delay: 75ms;
+    transition-duration: 350ms;
+    transition-timing-function: ease-in-out;
+}
+
+div.car-list-body > a:nth-child(2n), div.car-list-body > div:nth-child(2n) {
+    background-color: rgb(112, 112, 112);
+}
+
+div.car-list-body > a * , div.car-list-body > div * {
+    display: inline-block;
+    width: 10%;
+    border-right: solid 1px white;
+    color: white;
+    height: 100%;
+}
+
+div.car-list-body > a:hover, div.car-list-body > div:hover {
+    background-color: black;
+}
+
+div.car-list-body > a *:last-child, div.car-list-body > div *:last-child {
+    border-right: none;
+}
+
+#content {
+    margin: 0;
+    padding: 0;
+}
+
+form > img {
+    width: 100%;
+}
+
+.allign-middle {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+div.selected {
+    background-color: black !important;
+}

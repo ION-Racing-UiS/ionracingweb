@@ -1,0 +1,42 @@
+{% extends "admin_layout.html" %}
+{% block title %} | Manage Cars{% endblock %}
+{% block content %}
+<div id="" class="">
+    <div class="row">
+        <div class="header">
+            <a href="/admin_car/add"><i class="fa fa-plus-square" aria-hidden="true"></i></a>
+            <a href="/admin_car/remove"><i class="fa fa-trash"></i></a>
+        </div>
+        <div class="car-list">
+            <div class="car-list car-list-head">
+                <div class="car-list-head-row">
+                    <p>ID</p>
+                    <p>Year</p>
+                    <p>Name</p>
+                    <p>Number</p>
+                    <p>Image</p>
+                    <p>Mass [Kg]</p>
+                    <p>Engine</p>
+                    <p>Output [kW/PS]</p>
+                    <p>Torque [Nm]</p>
+                </div>
+            </div>
+            <div class="car-list car-list-body">
+                {% for car in cars.keys() %}
+                <a href="/admin_car/{{ cars[car]['id'] }}">
+                    <p>{{ cars[car]['id'] }}</p>
+                    <p>{{ cars[car]['year'] }}</p>
+                    <p>{{ cars[car]['name'] }}</p>
+                    <p>{{ cars[car]['number'] }}</p>
+                    <img src="{{ url_for('static', filename=cars[car]['img']) }}" alt="{{ cars[car]['name'] }}" />
+                    <p>{{ cars[car]['mass'] }}</p>
+                    <p>{{ cars[car]['engine'] }}</p>
+                    <p>{{ cars[car]['output'] }}</p>
+                    <p>{{ cars[car]['torque'] }}</p>
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
