@@ -539,7 +539,7 @@ def appuser_reportonchange():
 def admin():
     route_log()
     print("Current_user: " + str(current_user))
-    if current_user.is_authenticated:
+    if current_user.is_authenticated and (current_user.is_web_admin or current_user.is_admin):
         flash("You are already logged in.")
         return redirect(url_for("admin_home"))
     form = LoginForm()
@@ -705,7 +705,12 @@ def admin_car_i(id):
             path = os.path.join(app.config["CAR_IMAGES"], sec_filename)
             if car[4]:
                 old_img = os.path.join(app.config["CAR_IMAGES"], StringTools.getFileName(car[4]).replace("/", "\\"))
-                os.remove(old_img)
+                try:
+                    os.remove(old_img)
+                except FileNotFoundError as e:
+                    flash("Unable to delete the imgage file for the car: %s, file: %s does not exist" % (str(i), StringTools.getFileName(car[4].replace("/", "\\"))))
+                    res = build_log("Unable to delete the imgage file for the car: %s, file: %s does not exist" % (str(i), StringTools.getFileName(car[4].replace("/", "\\"))))
+                    print(res)
             form.img.data.save(path)
             q = "UPDATE car SET year=%s, name=%s, number=%s, img=%s, mass=%s, engine=%s, output=%s, torque=%s WHERE id=%s"
             cursor.execute("START TRANSACTION")
@@ -742,6 +747,30 @@ def admin_car_remove():
     form = AdminRemoveCar()
     db = get_db()
     cursor = db.cursor()
+    if request.method == "POST" and form.is_submitted() and form.validate() and form.submit.data:
+        car_ids = form.cars.data
+        if car_ids[-1] == ",":
+            car_ids = car_ids[0:-1].split(',')
+        for car_id in car_ids:
+            q = "SELECT img, year FROM car WHERE id=%s"
+            cursor.execute(q, (car_id,))
+            img = cursor.fetchone()
+            print("q = " + str(q % car_id) + "; img: " + str(img))
+            img = img[0]
+            if img:
+                img = StringTools.getFileName(img).replace("/", "\\")
+                img = os.path.join(app.config["CAR_IMAGES"], img)
+                try:
+                    os.remove(img)
+                except FileNotFoundError as e:
+                    flash("Unable to delete the imgage file for the car: %s, file: %s does not exist" % (str(car_id), StringTools.getFileName(img.replace("/", "\\"))))
+                    res = build_log("Unable to delete the imgage file for the car: %s, file: %s does not exist" % (str(car_id), StringTools.getFileName(img.replace("/", "\\"))))
+                    print(res)
+            cursor.execute("START TRANSACTION")
+            q = "DELETE FROM car WHERE id=%s"
+            cursor.execute(q, (car_id,))
+            cursor.execute("COMMIT")
+        return redirect(url_for("admin_car"))
     q = "SELECT id, year, name, number, img FROM car"
     cursor.execute(q)
     cars = {}

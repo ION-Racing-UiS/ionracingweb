@@ -29,6 +29,7 @@
     </div>
     <div class="row">
         <form action="/admin_car/remove" method="POST" class="allign-middle">
+            {{ form.csrf_token }}
             {{ form.cars }}
             {{ wtf.form_field(form.confirm) }}<br />
             {{ wtf.form_field(form.submit) }}

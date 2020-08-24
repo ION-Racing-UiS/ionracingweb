@@ -52,11 +52,9 @@ $(document).ready(function () {
                 if (e.classList.contains("selected")) {
                     e.classList.remove("selected");
                     removeFromSelection(e.children[0].textContent);
-                    console.log("Not selected");
                 } else {
                     e.classList.add("selected");
                     addToSelection(e.children[0].textContent);
-                    console.log("Selected");
                 }
             });
         }
@@ -136,6 +134,7 @@ function addToSelection(id) {
     }
     document.getElementById("selected").value += id + ",";
     console.log(id + " Added to selection.");
+    console.log("Selected:\t" + document.getElementById("selected").value);
 }
 
 function removeFromSelection(id) {
@@ -144,4 +143,5 @@ function removeFromSelection(id) {
     if (document.getElementById("selected").value === ",") {
         document.getElementById("selected").value = "";
     }
+    console.log("Selected:\t" + document.getElementById("selected").value);
 }
