@@ -14,3 +14,4 @@ app\logs\*.*
 *.pem
 app/pylib/ad_settings.py
 ionracing.py
+app/static/uploads/images/members/*.*
