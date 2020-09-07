@@ -41,6 +41,15 @@ def is_admin(user):
             return True
     return False
 
+def get_images(images=[]):
+    i = {}
+    if len(images) == 0:
+        return None
+    for image in images:
+        img = image.split(':')
+        i[int(img[0])] = img[1]
+    return i
+
 class User(UserMixin):
     '''
     User object, inheriting from flask_login.UserMixin to use as a user object for `flask_login`.
@@ -61,10 +70,11 @@ class User(UserMixin):
         if username is None or username=="":
             return None
         self.u = aduser.ADUser.from_cn(username)
-        self.guid = self.u.get_attribute('objectGUID')[0].tobytes().hex()
-        self.username = self.u.get_attribute('cn')[0]
+        self.guid = self.u.get_attribute('objectGUID', False).tobytes().hex()
+        self.username = self.u.get_attribute('cn', False)
         self.is_web_admin = is_web_admin(self.u)
         self.is_admin = is_admin(self.u)
+        self.image = get_images(self.u.get_attribute('wbemPath', True))
 
     def __repr___(self):
         '''

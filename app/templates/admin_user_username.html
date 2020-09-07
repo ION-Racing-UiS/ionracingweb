@@ -1,0 +1,53 @@
+{% extends "admin_layout.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block title %} | Manage {{ edit_user.cn }}{% endblock %}
+{% block content %}
+<h2>Edit user {{ edit_user.cn }}</h2>
+<div class="img">
+    <div id="overlay" class="overlay"></div>
+{% if form.imgPath.data %}
+<img id="member_img" src="{{ url_for('static', filename=form.imgPath.data) }}" alt="{{ edit_user.get_attribute('displayName', False) }}">
+{% else %}
+<img id="member_img" src="" alt="{{ edit_user.get_attribute('displayName', False) }}">
+{% endif %}
+</div>
+<div class="img">
+    <button type="button" id="toggle" value="{{ edit_user.get_user_account_control_settings()['ACCOUNTDISABLE'] }}">Disable</button>
+</div>
+<form action="/admin_user/user/{{ edit_user.get_attribute('cn', False) }}" method="POST" enctype="multipart/form-data">
+    {% for field in form %}
+    {% if field.id != "imgPath" and field.id != "csrf_token" %}
+    {{ wtf.form_field(field) }}
+    {% else %}
+    {{ field }}
+    {% endif %}
+    {% endfor %}
+</form>
+<script>
+    function changeUserYear() {
+        let year = $("#year_select").val();
+        let username = $("#cn").val();
+        $.ajax({
+            url: "/get/" + username + "/" + year,
+            type: "POST",
+            success: function(resp) {
+                let v = JSON.parse(resp);
+                console.log(v);
+                for (let k in v) {
+                    let id = k;
+                    let val = v[k];
+                    if (k === "wbemPath") {
+                        if (val === "") {
+                            $("#member_img").attr("src", "");
+                        } else {
+                            $("#member_img").attr("src", "/static/" + val);
+                        }
+                    } else {
+                        $("#" + id).val(val);
+                    }
+                }
+            }
+        })
+    }
+</script>
+{% endblock %}

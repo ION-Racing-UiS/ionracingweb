@@ -10,7 +10,7 @@ create table if not exists car (
     `img` text /* path for the picture of the car */,
     `mass` float /* mass of the car in kg */,
     `engine` varchar(64) /* type of the engine in the car */,
-    `output` varchar(16) /* output of the car in kW and/or PS */,
+    `output` varchar(32) /* output of the car in kW and/or PS */,
     `torque` float /* torque of the car in Nm */,
     primary key(`id`)
 );
@@ -25,4 +25,10 @@ create table if not exists post (
     `bgimg` text /* path to the background image */,
     `img` text /* path to the main image */,
     primary key(`pid`, `author`, `title`, `datetime`)
+);
+
+create table if not exists c (
+	`code` VARCHAR(2) NOT NULL, /* Country Code. */
+    `name` VARCHAR(64) NOT NULL,  /* Country Name */
+    primary key (`code`)
 );

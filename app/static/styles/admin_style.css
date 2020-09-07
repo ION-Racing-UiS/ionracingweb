@@ -104,3 +104,233 @@ form > img {
 div.selected {
     background-color: black !important;
 }
+
+div.sub-menu {
+    text-align: center;
+    background-color: #111;
+    border-right: 2px inset white;
+    border-left: 2px inset white;
+    text-transform: capitalize;
+    width: 8ch;
+}
+
+div.row.split > div.sub-menu {
+    width: auto;
+}
+
+div.team-list-head {
+    background-color: #646464;
+    margin: 0;
+    padding: 0;
+}
+
+div.team-list-body {
+    margin: 0;
+    padding: 0;
+}
+
+div.team-list-body > p, div.team-list-body > a {
+    transition-delay: 50ms;
+    transition-duration: 150ms;
+    transition-property: background-color;
+    transition-timing-function: ease-in-out;
+    background-color: #222;
+    margin:0;
+    padding: 5px;
+    color: #FFFFFF;
+    display: block;
+    text-decoration: none;
+}
+
+div.team-list-body > p:nth-child(2n), div.team-list-body > a:nth-child(2n) {
+    background-color: #353535;
+}
+
+div.team-list-body > p:hover, div.team-list-body > a:hover {
+    background-color: #050505;
+    cursor: pointer;
+}
+
+div#view {
+    text-align: center;
+    width: calc(100% - 8ch);
+    vertical-align: middle;
+}
+
+div#view > h2 {
+    background-color: darkslateblue;
+    margin: 0;
+    border-bottom: 2px solid white;
+}
+
+div#view > table {
+    width: 100%;
+}
+
+div#view > table > thead > tr:first-child {
+    background-color: darkslateblue;
+    border-bottom: 2px solid white;
+}
+
+div#view > table > tbody > tr:nth-child(2n) {
+    background-color: #222;
+}
+
+div#view > table > thead > tr > th {
+    border-right: 2px solid white;
+}
+
+div#view > table > thead > tr > th:last-child {
+    border-right: none;
+}
+
+div#view > table > tbody > tr > td {
+    border-right: 2px solid white;
+}
+
+div#view > table > tbody > tr > td:last-child {
+    border-right: none;
+}
+
+div#view > table > tbody > tr:last-child {
+    background-color: black;
+}
+
+div#view > table > tbody > tr:last-child> td:nth-child(2) {
+    position: relative;
+}
+
+div#view > table > tbody > tr > td > img {
+    max-height: 125px;
+}
+
+div#view > table > tbody > tr {
+    transition-property: background-color;
+    transition-delay: 25ms;
+    transition-duration: 175ms;
+    transition-timing-function: ease-in-out;
+}
+
+div#view > table > tbody > tr.selected {
+    background-color: darkred;
+}
+
+div#view > table > tbody > tr > td > p {
+    display: inline-block;
+    vertical-align: middle;
+    margin: auto;
+}
+
+td > input[type=text] {
+    width: 100%;
+}
+
+td > button[type=button] {
+    width: 100%;
+}
+
+.autocomplete-items {
+    position: absolute;
+    border: 1px solid #d4d4d4;
+    border-bottom: none;
+    border-top: none;
+    z-index: 99;
+    /*position the autocomplete items to be the same width as the container:*/
+    top: 100%;
+    left: 0;
+    right: 0;
+}
+
+.autocomplete-items div {
+    padding: 10px;
+    cursor: pointer;
+    background-color: #151515;
+    border-bottom: 1px solid #d4d4d4;
+    transition-delay: 25ms;
+    transition-duration: 100ms;
+    transition-timing-function: ease-in-out;
+    transition-property: background-color;
+}
+
+.autocomplete-items div:hover {
+    /*when hovering an item:*/
+    background-color: #444;
+}
+
+.autocomplete-active {
+    /*when navigating through the items using the arrow keys:*/
+    background-color: DodgerBlue !important;
+    color: #000;
+}
+
+div.row.split {
+    flex-wrap: nowrap;
+}
+
+input[type=text]#search {
+    position: relative;
+}
+
+#content > h2 {
+    text-align: center;
+}
+
+#content > div.img > img {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    border: solid 5px black;
+    border-radius: 5px;
+    box-shadow: 3px 3px 2px 2px darkgray;
+    max-height: 10%;
+}
+
+#content > div.img {
+    position: relative;
+    width: fit-content;
+    width: -webkit-fit-content;
+    width: -moz-fit-content;
+    margin: 10px auto;
+}
+
+div.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 100;
+    background-color: rgba(0, 0, 0, 0.0);
+    transition-property: background-color;
+    transition-delay: 25ms;
+    transition-duration: 175ms;
+    transition-timing-function: ease-in-out;
+}
+
+div.overlay:hover {
+    background-color: rgba(0, 0, 0, 0.0);
+}
+
+div.overlay-color {
+    background-color: rgba(0, 0, 0, 0.75);
+}
+
+#content > form {
+    width: 90%;
+    margin: 10px auto 0 auto;
+}
+
+#content > form > input[type=submit] {
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    width: 75%;
+    display: block;
+    box-shadow: 3px 3px 2px 2px black;
+    margin-bottom: 2px;
+}
+
+#content > form > div > input[type=text], #content > form > div > select {
+    box-shadow: 4px 4px 2px 2px black;
+}

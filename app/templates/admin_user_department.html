@@ -1,0 +1,27 @@
+{% extends "admin_user.html" %}
+{% block view %}
+<h2>Users in {{ department.cn }}</h2>
+<table>
+    <thead>
+        <tr>
+            <th>CN</th>
+            <th>givenName</th>
+            <th>SN</th>
+            <th>memberOf</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for member in members %}
+        <tr class="clickable-row" data-href="/admin_user/user/{{ member.cn }}">
+            <td>{{ member.cn }}</td>
+            <td>{{ member.givenName }}</td>
+            <td>{{ member.sn }}</td>
+            <td>{% for group in member.get_attribute('memberOf', False) %}
+                {% if group.split(',')[0].strip("CN=").isnumeric() %}
+                <p>{{ group.split(',')[0].strip("CN=") }}</p>
+            {% endif %}{% endfor %}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

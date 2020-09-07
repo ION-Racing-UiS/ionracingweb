@@ -1,10 +1,11 @@
-from flask import render_template, flash, redirect, url_for, request, g, session
+from flask import render_template, flash, redirect, url_for, request, g, session, abort, Response
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.utils import secure_filename
 from app import app, limiter, login_manager
-from app.forms import RegisterForm, LoginForm, UserEdit, UserOldPwd, UserChangePwd, AdminAddCar, AdminEditCar, AdminRemoveCar
+from app.forms import RegisterForm, LoginForm, UserEdit, UserOldPwd, UserChangePwd, AdminAddCar, AdminEditCar, AdminRemoveCar, AdminTeamAdd, AdminTeamRemove, AdminUser
 from datetime import datetime
 from app.pylib import win_user, StringTools
+from app.pylib.ad_settings import get_ous, get_teams
 from app.pylib.auth_user import User
 from app.pylib.auth_admin import Admin
 from pyad import pyad, adcontainer, aduser, adgroup, adobject
@@ -16,6 +17,7 @@ import pywin32_system32
 import re
 import json
 import mysql.connector
+import shutil
 
 def get_remote_info(request=request):
     '''
@@ -132,6 +134,23 @@ def admin_check(current_user=current_user):
     if not current_user.is_web_admin or not current_user.is_admin:
         flash("You are not authorized to access this page", 'warning')
         return True
+    user_agent = request.user_agent
+    if 'mobile' in str(user_agent).lower():
+        flash("Admin interface is not available on mobile devices. Sorry you're SOL.", 'info')
+        return True
+
+def get_countries():
+    '''
+    Returns a list of tuples for use with wtforms SelectField.
+    '''
+    db = get_db()
+    cur = db.cursor()
+    q = "SELECT * FROM c"
+    cur.execute(q)
+    l = []
+    for c in cur.fetchall():
+        l.append((c[0], c[-1]))
+    return l
 
 @login_manager.user_loader
 def load_user(id):
@@ -141,10 +160,10 @@ def load_user(id):
 def get_current_user():
     g.user = current_user
 
-# @app.route("/")
-# def landing():
-#     route_log()
-#     return render_template("landing.html")
+@app.route("/")
+def landing():
+    route_log()
+    return render_template("landing.html")
 
 @app.route("/r/", methods=["POST"])
 def r():
@@ -152,7 +171,7 @@ def r():
     time.sleep(3.2)
     return url_for("home")
 
-@app.route("/")
+#@app.route("/")
 @app.route("/home/", methods=["GET", "POST"])
 def home():
     route_log()
@@ -266,11 +285,13 @@ def user_reg():
     '''Regular expressions to allow all latin characthers and remove two or more sequential spaces.'''
     text_regexp = '[^\u0041-\u005A\u0061-\u007A\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u024F\u1E00-\u1EFF ]'
     space_regexp = '\s{2,}'
-    form = RegisterForm()
+    pythoncom.CoInitialize()
+    form = RegisterForm(get_ous(), get_countries())
+    pythoncom.CoUninitialize()
     if form.is_submitted() and form.validate() and form.submit.data:
         pythoncom.CoInitialize()
-        fname = re.sub(space_regexp, "", re.sub(text_regexp, "", form.first_name.data))
-        lname = re.sub(space_regexp, "", re.sub(text_regexp, "", form.last_name.data))
+        fname = re.sub(space_regexp, "", re.sub(text_regexp, "", form.givenName.data))
+        lname = re.sub(space_regexp, "", re.sub(text_regexp, "", form.sn.data))
         if len(fname) == 0 or len(lname) == 0:
             msg = "Invalid input data in first or last name."
             pythoncom.CoUninitialize()
@@ -283,12 +304,17 @@ def user_reg():
         while lname[-1] == " ": # Remove trailing spaces at the end
             lname = lname[0:-1]
         user_data={
-        "department": form.department.data,
-        "role": form.role.data,
+        "department": form.ou.data,
+        "role": form.description.data,
         "fname": fname,
         "lname": lname,
-        "email": form.email.data,
-        "passw": form.password.data
+        "email": form.mail.data,
+        "passw": form.password.data,
+        "c": form.c.data,
+        "st": form.st.data,
+        "postalCode": form.postalCode.data,
+        "l": form.l.data,
+        "streetAddress": form.streetAddress.data,
         }
         user_settings = win_user.create_user_settings(user_data)
         if not win_user.name_check(user_settings["sAMAccountName"]):
@@ -316,7 +342,10 @@ def user_reg():
             print("New User:\t" + str(aduser.ADUser.from_cn(user_settings['sAMAccountName'])))
         except:
             #print("Unable to get user from AD, user non existent.")
-            user.delete()
+            try:
+                user.delete()
+            except UnboundLocalError as e:
+                pass
             msg = "An error occoured when creating the user account " + user_settings["sAMAccountName"] + ". If the problem persists, don't include your middle name. Max length is 20 characters including periods. If your username is within the limits, then your password do not meet the password policy."
             res = build_log("An error occured when creating the user account: " + user_settings["sAMAccountName"])
             print(res)
@@ -783,6 +812,345 @@ def admin_car_remove():
             'img': car[4]
         }
     return render_template("admin_car_remove.html", form=form, user=current_user, cars=cars)
+
+@app.route("/admin_team")
+@login_required
+def admin_team():
+    if admin_check(current_user):
+        return redirect(url_for("appuser_home"))
+    teams_g = adcontainer.ADContainer.from_cn("Teams").get_children()
+    teams = []
+    for t in teams_g:
+        teams.append(t.cn)
+    return render_template("admin_team.html", user=current_user, teams=sorted(teams))
+
+@app.route("/admin_team/<int:i>", methods=["POST"])
+@login_required
+def admin_team_i(i):
+    team = []
+    for m in adgroup.ADGroup.from_cn(str(i)).get_members():
+        team.append(User(m.get_attribute('cn', False)))
+    return render_template("admin_team_i.html", team=team, year=i)
+
+@app.route("/admin_team/add", methods=["GET", "POST"])
+@login_required
+def admin_team_add():
+    if admin_check(current_user):
+        return redirect(url_for("appuser_home"))
+    form = AdminTeamAdd()
+    if request.method == "POST" and form.is_submitted() and form.validate() and form.submit.data:
+        team = str(form.year.data)
+        g = adgroup.ADGroup.create(team, adcontainer.ADContainer.from_cn("Teams"), True, "GLOBAL", optional_attributes={'cn': team})
+        basedir = app.config["MEMBER_IMAGES"]
+        if not os.path.exists(os.path.join(basedir, str(team))):
+            os.makedirs(os.path.join(basedir, str(team)))
+        msg = "Team: %s added by %s" % (team, current_user.u.cn)
+        flash(msg)
+        res = build_log(msg)
+        print(res)
+        return redirect(url_for("admin_team"))
+    teams_g = adcontainer.ADContainer.from_cn("Teams").get_children()
+    teams = []
+    for t in teams_g:
+        teams.append(t.cn)
+    return render_template("admin_team_add.html", user=current_user, teams=teams, form=form)
+
+@app.route("/admin_team/delete", methods=["GET", "POST"])
+@login_required
+def admin_team_remove():
+    if admin_check(current_user):
+        return redirect(url_for("appuser_home"))
+    form = AdminTeamRemove()
+    form.team.choices = get_teams()
+    if request.method == "POST" and form.is_submitted() and form.validate() and form.submit.data:
+        team = str(form.team.data)
+        g = adgroup.ADGroup.from_cn(team)
+        members = g.get_members()
+        for m in members:
+            attr = m.get_attribute("wbemPath", True)
+            img = ""
+            for a in attr:
+                if a.split(':')[0] == str(team):
+                    img = a
+            m.remove_from_attribute("wbemPath", img)
+            keys = ["department", "description", "title"]
+            for k in keys:
+                a = json.loads(m.get_attribute(k, False))
+                a.pop(str(team))
+                m.update_attribute(k, json.dumps(a))
+        basedir = app.config["MEMBER_IMAGES"]
+        if os.path.exists(os.path.join(basedir, team)):
+            shutil.rmtree(os.path.join(basedir, team))
+        g.delete()
+        msg = "Team: %s deleted by %s" % (team, current_user.u.cn)
+        flash(msg)
+        res = build_log(msg)
+        print(res)
+        return redirect(url_for("admin_team"))
+    teams_g = adcontainer.ADContainer.from_cn("Teams").get_children()
+    teams = []
+    for t in teams_g:
+        teams.append(t.cn)
+    return render_template("admin_team_remove.html", user=current_user, teams=teams, form=form)
+
+@app.route("/query/<attrib>/<who>", methods=["POST"])
+@login_required
+def query(attrib, who="all"):
+    if admin_check(current_user):
+        return redirect(url_for("appuser_home"))
+    route_log()
+    pythoncom.CoInitialize()
+    result = {}
+    i = 0
+    ion_users = adgroup.ADGroup.from_cn("ION Users").get_members()
+    if who.lower() == "all":
+        for u in ion_users:
+            result[i] = u.get_attribute(str(attrib), False, 'LDAP')
+            i = i + 1
+    else:
+        for u in ion_users:
+            if who.lower() == str(u.parent_container.get_attribute('cn', False, 'LDAP')).lower():
+                result[i] = u.get_attribute(str(attrib), False, 'LDAP')
+                i = i + 1
+    pythoncom.CoUninitialize()
+    return result
+
+@app.route("/group/<action>/<to_from>/<whom>", methods=["POST"])
+@login_required
+def group_whom(action, to_from, whom):
+    if admin_check(current_user):
+        return redirect(url_for("appuser_home"))
+    route_log()
+    pythoncom.CoInitialize()
+    try:
+        g = adgroup.ADGroup.from_cn(str(to_from))
+    except pyad.invalidResults as e:
+        return str(e)
+    try:
+        u = aduser.ADUser.from_cn(str(whom))
+    except pyad.invalidResults as e:
+        return str(e)
+    if action.lower() == "add":
+        g.add_members([u])
+    elif action.lower() == "remove":
+        g.remove_members([u])
+        attr = u.get_attribute("wbemPath", True)
+        basedir = app.config["MEMBER_IMAGES"]
+        for a in attr:
+            if a.split(':')[0] == str(to_from):
+                u.remove_from_attribute("wbemPath", a)
+                filename = StringTools.getFileName(a)
+                try:
+                    os.remove(os.path.join(basedir, str(to_from), filename))
+                except FileNotFoundError as e:
+                    pass
+        keys = ["department", "description", "title"]
+        for k in keys:
+            a = json.loads(user.get_attribute(k, False))
+            a.pop(str(to_from))
+            user.update_attribute(k, json.dumps(a))
+    return str(u.get_attribute('cn', False, 'LDAP'))
+
+@app.route("/group/<action>/<to_from>", methods=["POST"])
+@login_required
+def group(action, to_from):
+    if admin_check(current_user):
+        return redirect(url_for("appuser_home"))
+    route_log()
+    pythoncom.CoInitialize()
+    try:
+        g = adgroup.ADGroup.from_cn(str(to_from))
+    except pyad.invalidResults as e:
+        return str(e)
+    data = request.data.decode("utf-8", "strict").replace("%2C", ",")
+    usernames = data.split("=")[-1].split(",")
+    u = []
+    for username in usernames:
+        u.append(aduser.ADUser.from_cn(username))
+        user = aduser.ADUser.from_cn(username)
+        attr = user.get_attribute("wbemPath", True)
+        for a in attr:
+            if a.split(':')[0] == str(to_from):
+                user.remove_from_attribute("wbemPath", a)
+        keys = ["department", "description", "title"]
+        for k in keys:
+            a = json.loads(user.get_attribute(k, False))
+            a.pop(str(to_from))
+            user.update_attribute(k, json.dumps(a))
+    if action.lower() == "remove":
+        g.remove_members(u)
+        return str(u)
+    else:
+        return ""
+
+@app.route("/admin_user")
+@login_required
+def admin_user():
+    if admin_check(current_user):
+        return redirect(url_for("appuser_home"))
+    route_log()
+    ionracing = adcontainer.ADContainer.from_cn("IONRacing").get_children()
+    departments = []
+    for c in ionracing:
+        if type(c) is adcontainer.ADContainer and c.cn.lower() != "teams":
+            departments.append(c)
+    return render_template("admin_user.html", user=current_user, departments=departments)
+
+@app.route("/admin_user/<department>")
+@login_required
+def admin_user_department(department):
+    if admin_check(current_user):
+        return redirect(url_for("appuser_home"))
+    route_log()
+    ionracing = adcontainer.ADContainer.from_cn("IONRacing").get_children()
+    departments = []
+    for c in ionracing:
+        if type(c) is adcontainer.ADContainer and c.cn.lower() != "teams":
+            departments.append(c)
+    dept = adcontainer.ADContainer.from_cn(str(department))
+    members = dept.get_children(filter_=[aduser.ADUser])
+    return render_template("admin_user_department.html", user=current_user, department=dept, members=members, departments=departments)
+
+@app.route("/admin_user/user/<username>", methods=["GET", "POST"])
+@login_required
+def admin_user_username(username):
+    if admin_check(current_user):
+        return redirect(url_for("appuser_home"))
+    route_log()
+    ion_users = adgroup.ADGroup.from_cn("ION Users").get_members()
+    pythoncom.CoInitialize()
+    user = None
+    for u in ion_users:
+        if u.get_attribute('cn', False).split('.') == username.split('.'):
+            username = u.get_attribute('distinguishedName', False)
+            user = aduser.ADUser.from_dn(str(username))
+    if user is None:
+        flash("There is no user by the username: " + str(username))
+        return redirect(url_for("admin_user"))
+    teams = []
+    choises = []
+    country = user.get_attribute("c", False)
+    for team in sorted(user.get_attribute("memberOf", True)):
+        t = adgroup.ADGroup.from_dn(str(team))
+        if t.get_attribute("cn", False).isnumeric():
+            teams.append(t.get_attribute("cn", False))
+            choises.append((t.get_attribute("cn", False), t.get_attribute("cn", False)))
+    form = AdminUser(teams=choises, country=country)
+    print(choises)
+    if request.method == "POST" and form.is_submitted() and form.validate() and form["submit"].data:
+        basedir = app.config["MEMBER_IMAGES"]
+        directory = app.config["MEMBER_IMG_PATH"]
+        try:
+            data = {
+                'displayName': str(form.displayName.data),
+                'givenName': str(form.givenName.data),
+                'sn': str(form.sn.data)
+            }
+            year_select = str(form.year_select.data)
+            other_data = {
+                'department': str(form.department.data),
+                'description': str(form.description.data),
+                'title': str(form.title.data)
+            }
+        except ValueError as e:
+            flash("There was an error during parsing of the data: " + str(e))
+            return redirect(url_for("admin_user"))
+        user.update_attributes(data)
+        for k, v in other_data.items():
+            d = json.loads(user.get_attribute(k, False))
+            d[year_select] = v
+            user.update_attribute(k, json.dumps(d))
+        if form.wbemPath.data:
+            imgPaths = user.get_attribute("wbemPath", True)
+            for imgP in imgPaths:
+                if imgP.split(':')[0] == str(year_select):
+                    img = StringTools.getFileName(imgP.split(':')[-1])
+                    try:
+                        os.remove(os.path.join(basedir, year_select, img))
+                    except FileNotFoundError as e:
+                        flash("Unable to locate the image to delete.")
+                    finally:
+                        user.remove_from_attribute("wbemPath", imgP)
+            filename = user.get_attribute("cn", False) + StringTools.getFileExt(form.wbemPath.data.filename)
+            path = os.path.join(basedir, year_select, filename)
+            form.wbemPath.data.save(path)
+            user.append_to_attribute("wbemPath", year_select + ":" + directory + year_select + "/" + filename)
+            msg = "User: %s has been updated by: %s" % (user.get_attribute("cn", False), current_user.username)
+            flash(msg, 'info')
+            res = build_log(msg)
+            print(res)
+            return redirect(url_for("admin_user"))
+    for field in form:
+        if field.id.lower() == "year_select":
+            #field.choices = choises
+            pass
+        elif field.id in ["department", "description", "title", "wbemPath", "imgPath"]:
+            if field.id not in ["wbemPath", "imgPath"]:
+                data = json.loads(user.get_attribute(field.id, False))
+                try:
+                    field.data = data[str(teams[0])]
+                except KeyError as e:
+                    field.data = ""
+                except IndexError as e:
+                    field.data = ""
+            else:
+                if field.id == "imgPath":
+                    for p in user.get_attribute("wbemPath", True):
+                        if p.split(':')[0] == str(teams[0]):
+                            imgPath = p.split(':')[-1]
+                            field.data = imgPath
+        elif field.id in ["confirm", "submit", "csrf_token"]:
+            pass
+        else:
+            field.data = user.get_attribute(field.id, False)
+    return render_template("admin_user_username.html", user=current_user, edit_user=user, form=form, teams=teams)
+
+@app.route("/admin_user/add", methods=["GET", "POST"])
+@login_required
+def admin_user_add():
+    if admin_check(current_user):
+        return redirect(url_for("appuser_home"))
+    route_log()
+    flash(str(request.url) + " has not been implemented yet.")
+    return redirect(url_for("admin_user"))
+
+@app.route("/admin_user/remove", methods=["GET", "POST"])
+@login_required
+def admin_user_remove():
+    if admin_check(current_user):
+        return redirect(url_for("appuser_home"))
+    route_log()
+    flash(str(request.url) + " has not been implemented yet.")
+    return redirect(url_for("admin_user"))
+
+@app.route("/get/<username>/<year>", methods=["POST"])
+@login_required
+def get_username_year(username, year):
+    if admin_check(current_user):
+        return redirect(url_for("appuser_home"))
+    route_log()
+    user = aduser.ADUser.from_cn(username)
+    attributes = ["department", "description", "title", "wbemPath"]
+    kwvals = {}
+    for a in attributes:
+        if a == "wbemPath":
+            kwvals[a] = ""
+            for p in user.get_attribute("wbemPath", True):
+                if p.split(':')[0] == str(year):
+                    kwvals[a] = p.split(':')[-1]
+        else:
+            try:
+                kwvals[a] = json.loads(user.get_attribute(a, False))[str(year)]
+            except KeyError as e:
+                kwvals[a] = ""
+    return json.dumps(kwvals)
+
+@app.route("/test/json", methods=["POST"])
+def test_json():
+    data = request.data.decode("utf-8", "strict").replace("%2C", ",")
+    username = data.split("=")[-1].split(",")
+    print(str(username))
+    return str(username)
 
 @app.route("/show/<template_file>")
 def show_template(template_file):

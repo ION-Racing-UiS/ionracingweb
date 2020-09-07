@@ -6,10 +6,12 @@ basedir = os.path.abspath(os.path.dirname(__file__)) + "\\app\\"
 
 class Config(object):
     SECRET_KEY = os.urandom(24).hex()
-    ENABLE_LOG = 0
+    ENABLE_LOG = 1
     DB_USER = ad_settings.db_user
     DB_PWD = ad_settings.db_pwd
     DB_HOST = ad_settings.db_host
     DB_DB = ad_settings.db_db
     CAR_IMAGES = os.path.join(basedir, 'static\\uploads\\images\\cars')
     CAR_IMG_PATH = 'uploads/images/cars/'
+    MEMBER_IMAGES = os.path.join(basedir, 'static\\uploads\\images\\members')
+    MEMBER_IMG_PATH = 'uploads/images/members/'

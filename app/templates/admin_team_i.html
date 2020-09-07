@@ -1,0 +1,39 @@
+<h2>Team {{ year }}</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Icon</th>
+            <th>CN</th>
+            <th>givenName</th>
+            <th>sn</th>
+            <th>Department</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for member in team %}
+            <tr class="member">
+                <td><img src="{{ url_for('static', filename=member.image[year]) }}" alt="{{ member.u.get_attribute('displayName', False, 'LDAP') }}"></td>
+                <td>{{ member.u.get_attribute('cn', False, 'LDAP') }}</td>
+                <td>{{ member.u.get_attribute('givenName', False, 'LDAP') }}</td>
+                <td>{{ member.u.get_attribute('sn', False, 'LDAP') }}</td>
+                <td>{{ member.u.parent_container.get_attribute('cn', False, 'LDAP') }}</td>
+            </tr>
+        {% endfor %}
+            <tr>
+                <td>
+                    <span id="addMemberLabel" style="display: block;">Add member:</span>
+                    <span id="removeMembersLabel" style="display: none;">Remove member</span>
+                </td>
+                <td colspan="3">
+                    <input id="search" style="display: block;" placeholder="Search" autocomplete="off" name="search" type="text">
+                    <input id="selected" style="display: none;" name="selected" type="hidden">
+                </td>
+                <td>
+                    <button id="addMember" type="button" style="display: block;">Add</button>
+                    <button id="removeMembers" type="button" style="display: none;">Remove</button>
+                </td>
+            </tr>
+    </tbody>
+</table>
+<script type="text/javascript">autocomplete(document.getElementById("search"), usernames);</script>
+<!--<script type="text/javascript" src="{{ url_for('static', filename='applications/team.js') }}"></script>-->
