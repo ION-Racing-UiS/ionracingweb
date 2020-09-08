@@ -114,7 +114,7 @@ def get_db():
     if not hasattr(g, "_database"):
         g._database = mysql.connector.connect(
             host=app.config["DB_HOST"], user=app.config["DB_USER"],
-            password=app.config["DB_PWD"], database=app.config["DB_DB"]
+            password=app.config["DB_PWD"], database=app.config["DB_DB"], port=app.config["DB_PORT"]
         )
     return g._database
 

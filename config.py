@@ -13,6 +13,7 @@ class Config(object):
     DB_PWD = ad_settings.db_pwd
     DB_HOST = ad_settings.db_host
     DB_DB = ad_settings.db_db
+    DB_PORT = ad_settings.db_port
     CAR_IMAGES = os.path.join(basedir, 'static\\uploads\\images\\cars')
     CAR_IMG_PATH = 'uploads/images/cars/'
     MEMBER_IMAGES = os.path.join(basedir, 'static\\uploads\\images\\members')
