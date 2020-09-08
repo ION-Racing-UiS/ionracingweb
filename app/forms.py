@@ -79,13 +79,13 @@ class RegisterForm(FlaskForm):
         id="streetAddress"
     )
     password = PasswordField(
-        "Password",
+        "* Password",
         validators=[validators.DataRequired("You need to enter a password."), validators.Length(min=4, max=128, message="A minimum length of 4 is required for the password.")],
         render_kw={},
         id="password"
     )
     confirm_password = PasswordField(
-        "Confirm Password",
+        "* Confirm Password",
         validators=[validators.EqualTo('password', message="The passwords must match!")],
         render_kw={},
         id="confirm_password"
@@ -492,3 +492,92 @@ class AdminUser(FlaskForm):
         super(AdminUser, self).__init__(*args, **kwargs)
         self.year_select.choices = teams
         self.c.data = country
+
+class AdminCreateUser(FlaskForm):
+    ou = SelectField(
+        "* Department",
+        validators=[validators.DataRequired("You have to pick a department.")],
+        render_kw={},
+        id="ou"
+    )
+    description = StringField(
+        "Description/Role",
+        validators=[],
+        render_kw={'placeholder': 'Description'},
+        id="description"
+    )
+    givenName = StringField(
+        "* Given Name",
+        validators=[validators.DataRequired("You need to enter your first name.")],
+        render_kw={'placeholder': 'Given Name', 'oninput': 'setUsername()', 'onchange': 'setUsername()'},
+        id="givenName"
+    )
+    sn = StringField(
+        "* Surname",
+        validators=[validators.DataRequired("You need to enter your last name.")],
+        render_kw={'placeholder': 'Last Name', 'oninput': 'setUsername()', 'onchange': 'setUsername()'},
+        id="sn"
+    )
+    full_name = StringField(
+        "Full Name",
+        validators=[],
+        render_kw={'placeholder': 'Generated full name', 'disabled': 'true'},
+        id="fullname"
+    )
+    username = StringField(
+        "Username",
+        validators=[],
+        render_kw={'placeholder': 'Generated username', 'disabled': 'true'},
+        id="username"
+    )
+    mail = StringField(
+        "* Email",
+        validators=[validators.DataRequired("You need to enter your email."), validators.Email("Has to be a valid email.")],
+        render_kw={'placeholder': 'Email'},
+        id="mail"
+    )
+    c = SelectField(
+        "Country Code",
+        validators=[],
+        render_kw={'placeholder': 'Country Code'},
+        id="c"
+    )
+    l = StringField(
+        "Location (City)",
+        validators=[],
+        render_kw={'placeholder': 'Location (City)'},
+        id="l"
+    )
+    st = StringField(
+        "State/Province",
+        validators=[],
+        render_kw={'placeholder': 'State/Province'},
+        id="st"
+    )
+    postalCode = StringField(
+        'Postal Code',
+        validators=[],
+        render_kw={'placeholder': 'Postal Code'},
+        id="postalCode"
+    )
+    streetAddress = StringField(
+        "Street Address",
+        validators=[],
+        render_kw={'placeholder': 'Street Address'},
+        id="streetAddress"
+    )
+    submit = SubmitField(
+        "Register User",
+        render_kw={'class': 'btn'}
+    )
+
+    def __init__(self, ous=[()], countries=[()], *args, **kwargs):
+        '''
+        This form need a list of tuples for the department field.\n
+        Example: `[('IT', 'IT'), ('Electronics', 'Electronics')]`\n
+        The departments <type:pyad.adcontainer.ADContainer> can be found in the `IONRacing` ou on a DC.
+        '''
+        super(AdminCreateUser, self).__init__(*args, **kwargs)
+        self.ou.choices = ous
+        self.c.choices = countries
+        self.c.data = "NO"

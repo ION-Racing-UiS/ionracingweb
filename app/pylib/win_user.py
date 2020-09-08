@@ -347,5 +347,8 @@ if __name__=="__main__":
         #print(str(user))
         group = adgroup.ADGroup.from_cn(user_groups)
         group.add_members([user])
+    elif len(os.sys.argv) == 2:
+        res = name_check(os.sys.argv[-1])
+        print("Username: %s is available %b" % (os.sys.argv[-1], res))
     else:
         print("Usage: win_user.py \"First_name Last_name\" \"Password\" \"Department\" \"Role\" \"Mail\"\nOr: win_user.py \"First_name Last_name\" \"Department\"")

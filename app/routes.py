@@ -2,7 +2,7 @@ from flask import render_template, flash, redirect, url_for, request, g, session
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.utils import secure_filename
 from app import app, limiter, login_manager
-from app.forms import RegisterForm, LoginForm, UserEdit, UserOldPwd, UserChangePwd, AdminAddCar, AdminEditCar, AdminRemoveCar, AdminTeamAdd, AdminTeamRemove, AdminUser
+from app.forms import RegisterForm, LoginForm, UserEdit, UserOldPwd, UserChangePwd, AdminAddCar, AdminEditCar, AdminRemoveCar, AdminTeamAdd, AdminTeamRemove, AdminUser, AdminCreateUser
 from datetime import datetime
 from app.pylib import win_user, StringTools
 from app.pylib.ad_settings import get_ous, get_teams
@@ -283,8 +283,8 @@ def user_reg():
     Route for user register page.
     '''
     '''Regular expressions to allow all latin characthers and remove two or more sequential spaces.'''
-    text_regexp = '[^\u0041-\u005A\u0061-\u007A\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u024F\u1E00-\u1EFF ]'
-    space_regexp = '\s{2,}'
+    text_regexp = app.config["TEXT_REGEXP"]
+    space_regexp = app.config["SPACE_REGEXP"]
     pythoncom.CoInitialize()
     form = RegisterForm(get_ous(), get_countries())
     pythoncom.CoUninitialize()
@@ -391,7 +391,7 @@ def form_type(form_type):
 @app.route("/login", methods=["GET", "POST"])
 def login():
     route_log()
-    print("Current_user: " + str(current_user))
+    # print("Current_user: " + str(current_user))
     if current_user.is_authenticated:
         flash("You are already logged in.")
         return redirect(url_for("appuser_home"))
@@ -505,10 +505,10 @@ def appuser_password():
     adu = current_user.u
     old_form = UserOldPwd()
     new_form = UserChangePwd()
-    try: 
+    '''try: 
         print("Change_Pwd_Stage: " + str(session["change_pwd_stage"]))
     except:
-        print("Change_Pwd_stage: " + str(0))
+        print("Change_Pwd_stage: " + str(0))'''
     if request.method == "GET":
         session["change_pwd_stage"] = 0
         old_form.username.data = adu.cn
@@ -567,7 +567,7 @@ def appuser_reportonchange():
 @app.route("/admin", methods=["GET", "POST"])
 def admin():
     route_log()
-    print("Current_user: " + str(current_user))
+    #print("Current_user: " + str(current_user))
     if current_user.is_authenticated and (current_user.is_web_admin or current_user.is_admin):
         flash("You are already logged in.")
         return redirect(url_for("admin_home"))
@@ -754,7 +754,7 @@ def admin_car_i(id):
             print(res)
             flash("Car ID: " + str(data['id']) + " year: " + str(data['year']) + " has successfully been updated!", 'success')
         return redirect(url_for("admin_car"))
-    print(str(car))
+    #print(str(car))
     form.cid.data = car[0]
     form.year.data = int(car[1])
     form.name.data = str(car[2])
@@ -784,7 +784,7 @@ def admin_car_remove():
             q = "SELECT img, year FROM car WHERE id=%s"
             cursor.execute(q, (car_id,))
             img = cursor.fetchone()
-            print("q = " + str(q % car_id) + "; img: " + str(img))
+            #print("q = " + str(q % car_id) + "; img: " + str(img))
             img = img[0]
             if img:
                 img = StringTools.getFileName(img).replace("/", "\\")
@@ -1036,7 +1036,7 @@ def admin_user_username(username):
             teams.append(t.get_attribute("cn", False))
             choises.append((t.get_attribute("cn", False), t.get_attribute("cn", False)))
     form = AdminUser(teams=choises, country=country)
-    print(choises)
+    #print(choises)
     if request.method == "POST" and form.is_submitted() and form.validate() and form["submit"].data:
         basedir = app.config["MEMBER_IMAGES"]
         directory = app.config["MEMBER_IMG_PATH"]
@@ -1111,8 +1111,80 @@ def admin_user_add():
     if admin_check(current_user):
         return redirect(url_for("appuser_home"))
     route_log()
-    flash(str(request.url) + " has not been implemented yet.")
-    return redirect(url_for("admin_user"))
+    text_regexp = app.config["TEXT_REGEXP"]
+    space_regexp = app.config["SPACE_REGEXP"]
+    pythoncom.CoInitialize()
+    form = AdminCreateUser(get_ous(), get_countries())
+    pythoncom.CoUninitialize()
+    if form.is_submitted() and form.validate() and form.submit.data:
+        pythoncom.CoInitialize()
+        fname = re.sub(space_regexp, "", re.sub(text_regexp, "", form.givenName.data))
+        lname = re.sub(space_regexp, "", re.sub(text_regexp, "", form.sn.data))
+        if len(fname) == 0 or len(lname) == 0:
+            pythoncom.CoUninitialize()
+            msg = "Failed user registration due to wrong input data in either fname or lname."
+            res = build_log(msg)
+            print(res)
+            flash(msg)
+            return render_template("admin_user_create.html", user=current_user, form=form)
+        while fname[-1] == " ":
+            fname = fname[0:-1]
+        while lname[-1] == " ":
+            lname = lname[0:-1]
+        user_data = {
+            "department": form.ou.data,
+            "role": form.description.data,
+            "fname": fname,
+            "lname": lname,
+            "email": form.mail.data,
+            "passw": None,
+            "c": form.c.data,
+            "st": form.st.data,
+            "postalCode": form.postalCode.data,
+            "l": form.l.data,
+            "streetAddress": form.streetAddress.data
+        }
+        user_settings = win_user.create_user_settings(user_data)
+        if not win_user.name_check(user_settings["sAMAccountName"]):
+            pythoncom.CoUninitialize()
+            msg = "User registration failed, username: %s allready exists in the Active Directory database!" % (user_settings["sAMAccountName"])
+            res = build_log(msg)
+            print(res)
+            flash(msg)
+            return render_template("admin_user_create.html", user=current_user, form=form)
+        try:
+            ou = adcontainer.ADContainer.from_cn(user_data["department"].upper())
+        except:
+            msg = "An error occoured when getting the organizational unit from the Domain Controller."
+            res = build_log(msg + " Make sure that OUs have the cn attributes set.")
+            print(res) # Print to log file
+            pythoncom.CoUninitialize()
+            return render_template("admin_user_create.html", user=current_user, form=form)
+        try:
+            user = aduser.ADUser.create(user_settings["sAMAccountName"], ou, None)
+            user.set_user_account_control_setting("ACCOUNTDISABLE", True)
+            time.sleep(0.25)
+            print("New User:\t%s" % str(aduser.ADUser.from_cn(user_settings["sAMAccountName"])))
+        except:
+            try:
+                user.delete()
+            except UnboundLocalError as e:
+                pass
+            msg = "An error occoured when creating the account %s. If the problem presists, don't include your middle name. Max length is 20 charaters including preiods. If your username is within the limits, the your password do not meet the password policy." % user_settings["sAMAccountName"]
+            res = build_log(msg)
+            print(res)
+            pythoncom.CoUninitialize()
+            flash(msg)
+            return render_template("admin_user_create.html", user=current_user, form=form)
+        win_user.update_attributes(user_settings["sAMAccountName"], user_settings, None)
+        win_user.join_group(user_settings["sAMAccountName"])
+        pythoncom.CoUninitialize()
+        res = build_log("New User created successfully: %s." % user_settings["sAMAccountName"])
+        print(res)
+        msg = "%s, created successfully by %s" % (user_settings["sAMAccountName"], current_user.username)
+        flash(msg)
+        return redirect("/admin_user/user/%s" % user_settings["sAMAccountName"])
+    return render_template("admin_user_create.html", user=current_user, form=form)
 
 @app.route("/admin_user/remove", methods=["GET", "POST"])
 @login_required
@@ -1120,7 +1192,6 @@ def admin_user_remove():
     if admin_check(current_user):
         return redirect(url_for("appuser_home"))
     route_log()
-    flash(str(request.url) + " has not been implemented yet.")
     return redirect(url_for("admin_user"))
 
 @app.route("/get/<username>/<year>", methods=["POST"])
@@ -1131,19 +1202,36 @@ def get_username_year(username, year):
     route_log()
     user = aduser.ADUser.from_cn(username)
     attributes = ["department", "description", "title", "wbemPath"]
-    kwvals = {}
+    kw = {}
     for a in attributes:
         if a == "wbemPath":
-            kwvals[a] = ""
+            kw[a] = ""
             for p in user.get_attribute("wbemPath", True):
                 if p.split(':')[0] == str(year):
-                    kwvals[a] = p.split(':')[-1]
+                    kw[a] = p.split(':')[-1]
         else:
             try:
-                kwvals[a] = json.loads(user.get_attribute(a, False))[str(year)]
+                kw[a] = json.loads(user.get_attribute(a, False))[str(year)]
             except KeyError as e:
-                kwvals[a] = ""
-    return json.dumps(kwvals)
+                kw[a] = ""
+    return json.dumps(kw)
+
+@app.route("/disable/<username>/<b>", methods=["POST"])
+@login_required
+def disable_username_b(username, b):
+    if admin_check():
+        return redirect(url_for("appuser_home"))
+    route_log()
+    user = aduser.ADUser.from_cn(username)
+    if b.lower() == "true":
+        msg = "User: %s has been disabled by %s" % (username, current_user.username)
+        user.set_user_account_control_setting("ACCOUNTDISABLE", True)
+    else:
+        msg = "User: %s has been enabled by %s" % (username, current_user.username)
+        user.set_user_account_control_setting("ACCOUNTDISABLE", False)
+    res = build_log(msg)
+    print(res)
+    return str(b)
 
 @app.route("/test/json", methods=["POST"])
 def test_json():

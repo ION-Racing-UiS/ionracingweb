@@ -226,12 +226,39 @@ $(document).ready(function () {
         }
     } else if (document.title.includes("ION Racing | Manage ")) {
         let toggle = document.getElementById("toggle");
-        if (toggle.value) {
+        if (toggle.value.toLowerCase() === "true") {
             $("#overlay").addClass("overlay-color");
+            $("#overlay").addClass("disabled");
             toggle.textContent = "Enable";
+        } else if (toggle.value.toLowerCase() === "false") {
+            $("#overlay").removeClass("overlay-color");
+            $("#overlay").removeClass("disabled");
+            toggle.textContent = "Disable";
         }
         toggle.addEventListener("click", function() {
-            console.log(toggle.value);
+            let val = document.getElementById("toggle").value;
+            if (document.getElementById("toggle").value.toLowerCase() === "true") {
+                document.getElementById("toggle").value = "False";
+                document.getElementById("toggle").textContent = "Disable";
+                console.log("Toggle.value set to: " + document.getElementById("toggle").value);
+                $("#overlay").removeClass("overlay-color");
+                $("#overlay").removeClass("disabled");
+            } else if (document.getElementById("toggle").value.toLowerCase() === "false") {
+                document.getElementById("toggle").value = "True";
+                document.getElementById("toggle").textContent = "Enable";
+                console.log("Toggle.value set to: " + document.getElementById("toggle").value);
+                $("#overlay").addClass("overlay-color");
+                $("#overlay").addClass("disabled");
+            }
+            console.log("Toggle.value before send: " + document.getElementById("toggle").value);
+            $.ajax({
+                url: "/disable/" + $("#cn").val() + "/" + document.getElementById("toggle").value,
+                type: "POST",
+                success: function(resp) {
+                    console.log("Reponse: " + resp);
+                    document.getElementById("toggle").value = resp;
+                }
+            })
         })
     }
     $(window).resize(function () { resizeBg(); });
@@ -339,9 +366,8 @@ function autocomplete(inp, arr) {
         /*append the DIV element as a child of the autocomplete container:*/
         this.parentNode.appendChild(a);
         /*for each item in the array...*/
-        for (i = 0; i < arr.length; i++) {
-          /*check if the item starts with the same letters as the text field value:*/
-          if (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
+        if (val === "*") {
+            for (i = 0; i < arr.length; i++) {
                 /*create a DIV element for each matching element:*/
                 b = document.createElement("DIV");
                 /*make the matching letters bold:*/
@@ -361,7 +387,32 @@ function autocomplete(inp, arr) {
                 }
             });
             a.appendChild(b);
-          }
+            }
+        } else {
+            for (i = 0; i < arr.length; i++) {
+                /*check if the item starts with the same letters as the text field value:*/
+                if (arr[i].substr(0, val.length).toUpperCase() == val.toUpperCase()) {
+                        /*create a DIV element for each matching element:*/
+                        b = document.createElement("DIV");
+                        /*make the matching letters bold:*/
+                        b.innerHTML = "<strong>" + arr[i].substr(0, val.length) + "</strong>";
+                        b.innerHTML += arr[i].substr(val.length);
+                        /*insert a input field that will hold the current array item's value:*/
+                        b.innerHTML += "<input type='hidden' value='" + arr[i] + "'>";
+                        /*execute a function when someone clicks on the item value (DIV element):*/
+                        b.addEventListener("click", function(e) {
+                        /*insert the value for the autocomplete text field:*/
+                        inp.value = this.getElementsByTagName("input")[0].value;
+                        /*close the list of autocompleted values,
+                        (or any other open lists of autocompleted values:*/
+                        closeAllLists();
+                        if (document.title === "ION Racing | Manage Users") {
+                            window.location.href = "/admin_user/user/" + inp.value;
+                        }
+                    });
+                    a.appendChild(b);
+                }
+            }
         }
     });
     /*execute a function presses a key on the keyboard:*/

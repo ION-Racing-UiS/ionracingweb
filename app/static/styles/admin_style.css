@@ -280,10 +280,8 @@ input[type=text]#search {
     margin-left: auto;
     margin-right: auto;
     display: block;
-    border: solid 5px black;
-    border-radius: 5px;
-    box-shadow: 3px 3px 2px 2px darkgray;
     max-height: 10%;
+    height: 300px;
 }
 
 #content > div.img {
@@ -292,6 +290,8 @@ input[type=text]#search {
     width: -webkit-fit-content;
     width: -moz-fit-content;
     margin: 10px auto;
+    border: outset 5px black;
+    border-radius: 5px;
 }
 
 div.overlay {
@@ -314,6 +314,17 @@ div.overlay:hover {
 
 div.overlay-color {
     background-color: rgba(0, 0, 0, 0.75);
+}
+
+div.disabled {
+    background-image: url("/static/images/disabled.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+div.disabled:hover {
+    background-image: none;
 }
 
 #content > form {

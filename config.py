@@ -6,7 +6,9 @@ basedir = os.path.abspath(os.path.dirname(__file__)) + "\\app\\"
 
 class Config(object):
     SECRET_KEY = os.urandom(24).hex()
-    ENABLE_LOG = 1
+    ENABLE_LOG = 0
+    TEXT_REGEXP = '[^\u0041-\u005A\u0061-\u007A\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u024F\u1E00-\u1EFF ]'
+    SPACE_REGEXP = '\s{2,}'
     DB_USER = ad_settings.db_user
     DB_PWD = ad_settings.db_pwd
     DB_HOST = ad_settings.db_host

@@ -12,7 +12,7 @@
 {% endif %}
 </div>
 <div class="img">
-    <button type="button" id="toggle" value="{{ edit_user.get_user_account_control_settings()['ACCOUNTDISABLE'] }}">Disable</button>
+    <button type="button" id="toggle" class="btn btn-primary" value="{{ edit_user.get_user_account_control_settings()['ACCOUNTDISABLE'] }}">Disable</button>
 </div>
 <form action="/admin_user/user/{{ edit_user.get_attribute('cn', False) }}" method="POST" enctype="multipart/form-data">
     {% for field in form %}
