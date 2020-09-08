@@ -5,7 +5,7 @@ from app import app, limiter, login_manager
 from app.forms import RegisterForm, LoginForm, UserEdit, UserOldPwd, UserChangePwd, AdminAddCar, AdminEditCar, AdminRemoveCar, AdminTeamAdd, AdminTeamRemove, AdminUser, AdminCreateUser
 from datetime import datetime
 from app.pylib import win_user, StringTools
-from app.pylib.ad_settings import get_ous, get_teams
+from app.pylib.ad_settings import get_ous, get_teams, get_ad_settings
 from app.pylib.auth_user import User
 from app.pylib.auth_admin import Admin
 from pyad import pyad, adcontainer, aduser, adgroup, adobject
@@ -902,7 +902,7 @@ def query(attrib, who="all"):
     pythoncom.CoInitialize()
     result = {}
     i = 0
-    ion_users = adgroup.ADGroup.from_cn("ION Users").get_members()
+    ion_users = adgroup.ADGroup.from_cn(get_ad_settings()["usergroup"]).get_members()
     if who.lower() == "all":
         for u in ion_users:
             result[i] = u.get_attribute(str(attrib), False, 'LDAP')
@@ -989,7 +989,7 @@ def admin_user():
     if admin_check(current_user):
         return redirect(url_for("appuser_home"))
     route_log()
-    ionracing = adcontainer.ADContainer.from_cn("IONRacing").get_children()
+    ionracing = adcontainer.ADContainer.from_cn(get_ad_settings()["base_ou"]).get_children()
     departments = []
     for c in ionracing:
         if type(c) is adcontainer.ADContainer and c.cn.lower() != "teams":
@@ -1002,7 +1002,7 @@ def admin_user_department(department):
     if admin_check(current_user):
         return redirect(url_for("appuser_home"))
     route_log()
-    ionracing = adcontainer.ADContainer.from_cn("IONRacing").get_children()
+    ionracing = adcontainer.ADContainer.from_cn(get_ad_settings()["base_ou"]).get_children()
     departments = []
     for c in ionracing:
         if type(c) is adcontainer.ADContainer and c.cn.lower() != "teams":
@@ -1017,7 +1017,7 @@ def admin_user_username(username):
     if admin_check(current_user):
         return redirect(url_for("appuser_home"))
     route_log()
-    ion_users = adgroup.ADGroup.from_cn("ION Users").get_members()
+    ion_users = adgroup.ADGroup.from_cn(get_ad_settings()["usergroup"]).get_members()
     pythoncom.CoInitialize()
     user = None
     for u in ion_users:
