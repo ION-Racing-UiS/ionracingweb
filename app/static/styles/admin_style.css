@@ -345,3 +345,7 @@ div.disabled:hover {
 #content > form > div > input[type=text], #content > form > div > select {
     box-shadow: 4px 4px 2px 2px black;
 }
+
+td#selection > p {
+    display: block !important;
+}

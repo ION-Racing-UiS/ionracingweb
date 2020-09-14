@@ -23,8 +23,9 @@ def get_remote_info(request=request):
     '''
     Returns information about a remote host in a dict.\n
     Keys: \"ip\", \"method\", \"url\"\n
-    Arguments:\n
-    :param request: Request object from Flask <type:flask.request>
+    Parameters:\n
+    :request (flask.request): Request object from Flask\n
+    get_remote_info(`request`) -> dict{\'ip\': str, \'method\': str, \'url\': url}
     '''
     if request.headers.getlist("X-Forwarded-For"): # Try to get ip if a proxy is used
         ip = request.headers.getlist("X-Forwarded-For")[0]
@@ -40,8 +41,9 @@ def get_remote_info(request=request):
 def get_remote_addr(request=request):
     '''
     Returns the layer 3 address of a remote host.\n
-    Arguments:\n
-    :param request: Request object from Flask <type:flask.request>
+    Parameters:\n
+    :request (flask.request): Request object from Flask.\n
+    get_remote_addr(`request`) -> str(ip)
     '''
     if request.headers.getlist("X-Forwarded-For"):
         ip = request.headers.getlist("X-Forwarded-For")[0]
@@ -55,7 +57,8 @@ def get_remote_addr(request=request):
 def get_date_time():
     '''
     Return the current date and time in the format:\n
-    [dd/mmm/yyyy hh:MM:SS]
+    [dd/mmm/yyyy hh:MM:SS]\n
+    get_date_time() -> str(dd/mmm/yyy hh:MM:SS)
     '''
     int_to_str = {
         1: "JAN",
@@ -89,8 +92,9 @@ def get_date_time():
 def build_log(data=None):
     '''
     Returns a logstring with data from a route that is appended to `app\\__logs__\\filename.txt`\n
-    Arguments:\n
-    :param data: String of data from a route to be used in the log message <type:str>
+    Parameters:\n
+    :data (str): String of data from a route to be used in the log message.\n
+    build_log(`data`) -> str(log_msg)
     '''
     remote_info = get_remote_info(request)
     req_time = get_date_time()
@@ -99,7 +103,8 @@ def build_log(data=None):
 
 def route_log():
     '''
-    Creates a log string and prints it to stdout and returns the log message.
+    Creates a log string and prints it to stdout and returns the log message.\n
+    route_log() -> str(log_msg)
     '''
     remote_info = get_remote_info(request)
     req_time = get_date_time()
@@ -109,7 +114,8 @@ def route_log():
 
 def get_db():
     '''
-    Get database connects to the database and returns the connection.
+    Get database connects to the database and returns the connection.\n
+    get_db() -> MySQLConnection
     '''
     if not hasattr(g, "_database"):
         g._database = mysql.connector.connect(
@@ -128,8 +134,9 @@ def admin_check(current_user=current_user):
     '''
     Checks if the current user is either an admin or web_admin. Meant to be used on routes that require admin privileges.
     Unauthorized useres are redirected to `login`.\n
-    Arguments:\n
-    :param current_user: `current_user` of the session <type:User>
+    Parameters:\n
+    :current_user (app.pylib.auth_user.User): `current_user` of the session.\n
+    admin_check(`current_user`) -> bool
     '''
     if not current_user.is_web_admin or not current_user.is_admin:
         flash("You are not authorized to access this page", 'warning')
@@ -141,7 +148,8 @@ def admin_check(current_user=current_user):
 
 def get_countries():
     '''
-    Returns a list of tuples for use with wtforms SelectField.
+    Returns a list of tuples for use with wtforms SelectField.\n
+    get_countries() -> tuple(str, str)
     '''
     db = get_db()
     cur = db.cursor()
@@ -1192,7 +1200,13 @@ def admin_user_remove():
     if admin_check(current_user):
         return redirect(url_for("appuser_home"))
     route_log()
-    return redirect(url_for("admin_user"))
+    departments = []
+    for cn, _ in get_ous():
+        departments.append(adgroup.ADGroup.from_cn(cn))
+    g = adgroup.ADGroup.from_cn(get_ad_settings()["usergroup"]).get_members()
+    if request.method == "POST":
+        pass
+    return render_template("admin_user_delete.html", user=current_user, departments=departments, users=g)
 
 @app.route("/get/<username>/<year>", methods=["POST"])
 @login_required

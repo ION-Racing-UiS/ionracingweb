@@ -260,6 +260,40 @@ $(document).ready(function () {
                 }
             })
         })
+    } else if (document.title === "ION Racing | Delete User(s)") {
+        $.ajax({
+            url: "/query/cn/all",
+            method: "POST",
+            success: function(resp) {
+                for (let k in resp) {
+                    usernames[usernames.length] = resp[k];
+                }
+            }
+        });
+        let search = document.getElementById("search");
+        let removeMembers = document.getElementById("removeMembers");
+        let members = document.getElementsByClassName("member");
+        let selection = document.getElementById("selection");
+        for (let i = 0; i < members.length; i++) {
+            let member = members[i];
+            let selected = document.getElementById("selected");
+            member.addEventListener("click", function() {
+                if (member.classList.contains("selected")) {
+                    member.classList.remove("selected");
+                    removeFromSelection(member.children[0].textContent);
+                    for (let i = 0; i < selection.children.length; i++) {
+                        if (selection.children[i].id === member.children[0].textContent) {
+                            selection.children[i].remove();
+                        }
+                    }
+                } else {
+                    member.classList.add("selected");
+                    addToSelection(member.children[0].textContent);
+                    selection.innerHTML += "<p id=" + member.children[0].textContent + ">" + member.children[0].textContent + "</p>"
+                }
+            });
+        }
+
     }
     $(window).resize(function () { resizeBg(); });
 });
@@ -384,6 +418,15 @@ function autocomplete(inp, arr) {
                 closeAllLists();
                 if (document.title === "ION Racing | Manage Users") {
                     window.location.href = "/admin_user/user/" + inp.value;
+                } else if (document.title === "ION Racing | Delete User(s)") {
+                    addToSelection(inp.value);
+                    document.getElementById("selection").innerHTML += "<p id=" + inp.value + ">" + inp.value + "</p>";
+                    for (let i = 0; i < document.getElementsByClassName("member").length; i++) {
+                        if (document.getElementsByClassName("member")[i].children[0].textContent === inp.value) {
+                            document.getElementsByClassName("member")[i].classList.add("selected");
+                        }
+                    }
+                    inp.value = "";
                 }
             });
             a.appendChild(b);
@@ -408,6 +451,15 @@ function autocomplete(inp, arr) {
                         closeAllLists();
                         if (document.title === "ION Racing | Manage Users") {
                             window.location.href = "/admin_user/user/" + inp.value;
+                        } else if (document.title === "ION Racing | Delete User(s)") {
+                            addToSelection(inp.value);
+                            document.getElementById("selection").innerHTML += "<p id=" + inp.value + ">" + inp.value + "</p>";
+                            for (let i = 0; i < document.getElementsByClassName("member").length; i++) {
+                                if (document.getElementsByClassName("member")[i].children[0].textContent === inp.value) {
+                                    document.getElementsByClassName("member")[i].classList.add("selected");
+                                }
+                            }
+                            inp.value = "";
                         }
                     });
                     a.appendChild(b);
