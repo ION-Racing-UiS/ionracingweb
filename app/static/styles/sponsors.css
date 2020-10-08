@@ -360,9 +360,17 @@
   max-height: 10%;
   flex-direction: column;
 }
+.main > .logocontainer{
+  justify-content: unset;
+  height: fit-content;
+  height: -moz-fit-content;
+  height: -webkit-fit-content;
+}
 .sponsortypee {
   font-family: 'Russo One', sans-serif !important;
   text-transform: uppercase;
+  margin-top: 23%;
+  font-size: 2em;
 }
 .logoinnercontainer{
   display: flex;
@@ -407,12 +415,10 @@
 }
 
 .about{
-  position: absolute;
   background: #bbb;
-  top: 0;
-  width: 10%;
-  height: 10%;
-  display: none;
+  width: 78%;
+  height: 100%;
+  min-height: 80vh;
 }
 
 .main{
@@ -422,7 +428,8 @@
   width: 100%;
   position: relative;
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  align-items: center;
 }
 /* .main .logoinnercontainer{
   background: #119ed9;
