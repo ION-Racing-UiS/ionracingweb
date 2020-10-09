@@ -16,3 +16,7 @@ ionracing.py
 app/static/uploads/images/members/*.*
 app/static/uploads/images/members/*/
 app/static/uploads/images/cars/*.*
+.vscode/
+.vscode/*
+.vscode\
+.vscode\*
