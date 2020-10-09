@@ -14,3 +14,7 @@ app\logs\*.*
 *.pem
 app/pylib/ad_settings.py
 ionracing.py
+/venv
+\venv
+venv/
+venv\
