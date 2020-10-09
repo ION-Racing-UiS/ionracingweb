@@ -1,3 +1,7 @@
+td, th {
+    text-align: center;
+}
+
 div.header {
     width: 100%;
     background-color: whitesmoke;
@@ -79,8 +83,9 @@ div.car-list-body > a * , div.car-list-body > div * {
     height: 100%;
 }
 
-div.car-list-body > a:hover, div.car-list-body > div:hover {
+div.car-list-body > a:hover, div.car-list-body > div:hover, div > table > tbody > tr:hover, div > table > tbody > tr.post:hover, div > table > tbody > tr.member:hover, div > table > tbody > tr:last-child:hover {
     background-color: black;
+    cursor: pointer;
 }
 
 div.car-list-body > a *:last-child, div.car-list-body > div *:last-child {
@@ -102,7 +107,7 @@ form > img {
 }
 
 div.selected {
-    background-color: black !important;
+    background-color: darkred !important;
 }
 
 div.sub-menu {
@@ -157,65 +162,67 @@ div#view {
     vertical-align: middle;
 }
 
-div#view > h2 {
+div > h2 {
     background-color: darkslateblue;
     margin: 0;
-    border-bottom: 2px solid white;
+    /*border-bottom: 2px solid white;*/
 }
 
-div#view > table {
+div > table {
     width: 100%;
 }
 
-div#view > table > thead > tr:first-child {
+div > table > thead > tr:first-child {
     background-color: darkslateblue;
+    border-top: 2px solid white;
     border-bottom: 2px solid white;
 }
 
-div#view > table > tbody > tr:nth-child(2n) {
+div > table > tbody > tr:nth-child(2n) {
     background-color: #222;
 }
 
-div#view > table > thead > tr > th {
+div > table > thead > tr > th {
     border-right: 2px solid white;
 }
 
-div#view > table > thead > tr > th:last-child {
+div > table > thead > tr > th:last-child {
     border-right: none;
 }
 
-div#view > table > tbody > tr > td {
+div > table > tbody > tr > td {
     border-right: 2px solid white;
 }
 
-div#view > table > tbody > tr > td:last-child {
+div > table > tbody > tr > td:last-child {
     border-right: none;
 }
 
-div#view > table > tbody > tr:last-child {
+div > table > tbody > tr#r-row:last-child {
     background-color: black;
+    cursor: default;
 }
 
-div#view > table > tbody > tr:last-child> td:nth-child(2) {
+div > table > tbody > tr:last-child> td:nth-child(2) {
     position: relative;
 }
 
-div#view > table > tbody > tr > td > img {
+div > table > tbody > tr > td > img {
     max-height: 125px;
 }
 
-div#view > table > tbody > tr {
+div > table > tbody > tr {
     transition-property: background-color;
     transition-delay: 25ms;
     transition-duration: 175ms;
     transition-timing-function: ease-in-out;
 }
 
-div#view > table > tbody > tr.selected {
-    background-color: darkred;
+div > table > tbody > tr.selected {
+    background-color: darkred !important;
 }
 
-div#view > table > tbody > tr > td > p {
+div > table > tbody > tr > td > p {
     display: inline-block;
     vertical-align: middle;
     margin: auto;
@@ -342,10 +349,32 @@ div.disabled:hover {
     margin-bottom: 2px;
 }
 
-#content > form > div > input[type=text], #content > form > div > select {
+#content > form > div > input[type=text], #content > form > div > select, div#content > form  textarea.form-control {
     box-shadow: 4px 4px 2px 2px black;
 }
 
 td#selection > p {
     display: block !important;
+    cursor: default;
+}
+
+div#view > table > tbody > tr.member {
+    cursor: pointer;
+}
+
+.clickable-row {
+    cursor: pointer;
+}
+
+div.page-header > h2 {
+    display: block;
+    text-align: center;
+    margin: 0 auto;
+}
+
+div.page-header {
+    background-color: darkslateblue;
+    text-align: center;
+    border-bottom: 2px solid white;
+    width: 100%;
 }

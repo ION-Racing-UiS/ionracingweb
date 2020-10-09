@@ -21,6 +21,8 @@ scriptPath = ad_settings["scriptPath"] # path to script in \\<servername>\sysvol
 physicalDeliveryOfficeName = ad_settings["physicalDeliveryOfficeName"] # Office name
 company = ad_settings["company"] # Official Company name
 userdomain = ad_settings["userdomain"] # Just your domain name, ie. google, not google.com
+base_ou = ad_settings["base_ou"]
+usergroup = ad_settings["usergroup"]
 domainsuffix = ad_settings["domainsuffix"] # What top level domain you have, ie. .com, .net, .eu, dk, .no, .se
 ous = ad_settings["ous"] # Organizational units list for the wtf form <type:list> of <type:tuple> or <type:str> and <type:str>
 path = ad_settings["path"] # Absolute path to this file within the filesystem.
@@ -300,6 +302,10 @@ def name_check(name):
     :param name: Name of new user <type:str>
     '''
     usernames = loop_addomain()
+    g = adgroup.ADGroup.from_cn(usergroup).get_members()
+    for user in g:
+        if user.get_attribute("cn", False).lower() == name.lower():
+            return False
     #print(str(usernames))
     if name in usernames:
         return False

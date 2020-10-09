@@ -3,6 +3,9 @@
 {% block title %} | Delete Cars{% endblock %}
 {% block content %}
 <div id="" class="">
+    <div class="row page-header">
+        <h2>Delete Car(s)</h2>
+    </div>
     <div class="row">
         <div class="car-list">
             <div class="car-list car-list-head">
@@ -21,7 +24,11 @@
                     <p>{{ cars[car]['year'] }}</p>
                     <p>{{ cars[car]['name'] }}</p>
                     <p>{{ cars[car]['number'] }}</p>
+                    {% if cars[car]['img'] %}
                     <img src="{{ url_for('static', filename=cars[car]['img']) }}" alt="{{ cars[car]['name'] }}" />
+                    {% else %}
+                    <img src="" alt="{{ cars[car]['name'] }}" />
+                    {% endif %}
                 </div>
                 {% endfor %}
             </div>

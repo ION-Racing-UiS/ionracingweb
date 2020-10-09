@@ -32,3 +32,13 @@ create table if not exists c (
     `name` VARCHAR(64) NOT NULL,  /* Country Name */
     primary key (`code`)
 );
+
+create table if not exists sponsor (
+	`sid` integer not null auto_increment /* int for id of the sponsor */,
+    `type` VARCHAR(12) not null /* Type of the sponsor Main|Platinum|Gold|Silver|Bronze */,
+    `name` VARCHAR(32) not null /* Name of the sponsor */,
+    `url` TEXT /* URL to the sponsor's website */,
+    `logo` TEXT /* Path to image of the logo[svg] */,
+    `desc` TEXT /* Description of the sponsor [MAIN and Platinum] */,
+    primary key (`sid`)
+);

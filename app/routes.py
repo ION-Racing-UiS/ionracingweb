@@ -2,12 +2,13 @@ from flask import render_template, flash, redirect, url_for, request, g, session
 from flask_login import current_user, login_user, logout_user, login_required
 from werkzeug.utils import secure_filename
 from app import app, limiter, login_manager
-from app.forms import RegisterForm, LoginForm, UserEdit, UserOldPwd, UserChangePwd, AdminAddCar, AdminEditCar, AdminRemoveCar, AdminTeamAdd, AdminTeamRemove, AdminUser, AdminCreateUser
+from app.forms import RegisterForm, LoginForm, UserEdit, UserOldPwd, UserChangePwd, AdminAddCar, AdminEditCar, AdminRemoveCar, AdminTeamAdd, AdminTeamRemove, AdminUser, AdminCreateUser, AdminPostCreate, AdminPostEdit, AdminPostDelete
 from datetime import datetime
 from app.pylib import win_user, StringTools
 from app.pylib.ad_settings import get_ous, get_teams, get_ad_settings
 from app.pylib.auth_user import User
-from app.pylib.auth_admin import Admin
+from app.pylib.StringTools import getTableFields, getSingleResult, getMultipleResults, decodeJSONAndSplit
+from app.pylib.FileOperations import delete_file
 from pyad import pyad, adcontainer, aduser, adgroup, adobject
 from flask_ldap import ldap
 import os
@@ -806,6 +807,9 @@ def admin_car_remove():
             cursor.execute("START TRANSACTION")
             q = "DELETE FROM car WHERE id=%s"
             cursor.execute(q, (car_id,))
+            cursor.execute("SELECT @`id`:=MAX(`id`)+1 FROM car")
+            auto_inc = cursor.fetchone()[0]
+            cursor.execute("ALTER TABLE car AUTO_INCREMENT = %s", (auto_inc,))
             cursor.execute("COMMIT")
         return redirect(url_for("admin_car"))
     q = "SELECT id, year, name, number, img FROM car"
@@ -977,14 +981,15 @@ def group(action, to_from):
         u.append(aduser.ADUser.from_cn(username))
         user = aduser.ADUser.from_cn(username)
         attr = user.get_attribute("wbemPath", True)
-        for a in attr:
-            if a.split(':')[0] == str(to_from):
-                user.remove_from_attribute("wbemPath", a)
-        keys = ["department", "description", "title"]
-        for k in keys:
-            a = json.loads(user.get_attribute(k, False))
-            a.pop(str(to_from))
-            user.update_attribute(k, json.dumps(a))
+        if action.lower() == "remove":
+            for a in attr:
+                if a.split(':')[0] == str(to_from):
+                    user.remove_from_attribute("wbemPath", a)
+            keys = ["department", "description", "title"]
+            for k in keys:
+                a = json.loads(user.get_attribute(k, False))
+                a.pop(str(to_from))
+                user.update_attribute(k, json.dumps(a))
     if action.lower() == "remove":
         g.remove_members(u)
         return str(u)
@@ -1205,7 +1210,20 @@ def admin_user_remove():
         departments.append(adgroup.ADGroup.from_cn(cn))
     g = adgroup.ADGroup.from_cn(get_ad_settings()["usergroup"]).get_members()
     if request.method == "POST":
-        pass
+        usernames = decodeJSONAndSplit(request.data, ",")
+        for username in usernames:
+            print("Username=%s" % username)
+            user = aduser.ADUser.from_cn(username)
+            image_paths = user.get_attribute("wbemPath", True)
+            base_dir = app.config["MEMBER_IMAGES"]
+            for image_path in image_paths:
+                del_file = delete_file(image_path.split(":")[-1], image_path.split(":")[0], base_dir)
+            user.delete()
+        msg = "User(s) %s have been deleted from ad by %s." % (usernames, current_user.username)
+        flash(msg, "info")
+        res = build_log(msg)
+        print(res)
+        return res
     return render_template("admin_user_delete.html", user=current_user, departments=departments, users=g)
 
 @app.route("/get/<username>/<year>", methods=["POST"])
@@ -1246,6 +1264,205 @@ def disable_username_b(username, b):
     res = build_log(msg)
     print(res)
     return str(b)
+
+@app.route("/admin_post")
+@login_required
+def admin_post():
+    if admin_check():
+        return redirect(url_for("appuser_home"))
+    route_log()
+    db = get_db()
+    cur = db.cursor()
+    q = "SELECT pid, author, title, datetime FROM post"
+    cur.execute(q)
+    posts = {}
+    for p in cur.fetchall():
+        posts[int(p[0])] = {
+            "author": p[1],
+            "title": p[2],
+            "datetime": p[3]
+        }
+    return render_template("admin_post.html", user=current_user, posts=posts)
+
+@app.route("/admin_post/<int:pid>", methods=["GET", "POST"])
+@login_required
+def admin_post_i(pid):
+    if admin_check():
+        return redirect(url_for("appuser_home"))
+    route_log()
+    user = current_user
+    db = get_db()
+    cur = db.cursor()
+    q = "SELECT * FROM post WHERE pid=%s"
+    cur.execute(q, (pid,))
+    r = getSingleResult(cur.fetchone(), cur, "post")
+    #print("r:\t" + str(r))
+    form = AdminPostEdit(pid=r["pid"], author=r["author"], title=r["title"], heading=r["heading"], text=r["text"], bgimgh=r["bgimg"], imgh=r["img"])
+    #print("Form test (type(%s)%s==(type(%s)%s)): " % (type(form.pid.data), form.pid.data, type(pid), pid) + str(form.pid.data==pid))
+    if request.method == "POST" and form.is_submitted() and form.validate() and form.submit.data and form.pid.data == pid:
+        try:
+            data = {
+                'pid': str(form.pid.data),
+                'author': str(form.author.data),
+                'title': request.form["title"],
+                'heading': request.form["heading"],
+                'text': request.form["text"]
+            }
+        except ValueError as e:
+            flash("An error was encountered when parsing the data:\t" + str(e))
+            res = build_log("ValueError when parsing data:\t" + str(e))
+            print(res)
+        #print("form.img.data:\t%s\nform.bgim.data:\t%s" % (form.img.data, form.bgimg.data))
+        if form.img.data and form.bgimg.data:
+            img = form.img
+            bgimg = form.bgimg
+            data["img"] = str(app.config["POST_IMG_PATH"] + str(data["pid"]) + "-img" + StringTools.getFileExt(img.data.filename))
+            data["bgimg"] = str(app.config["POST_IMG_PATH"] + str(data["pid"]) + "-bgimg" + StringTools.getFileExt(bgimg.data.filename))
+            delete_file(StringTools.getFileName(r["img"]), "", app.config["POST_IMAGES"])
+            delete_file(StringTools.getFileName(r["bgimg"]), "", app.config["POST_IMAGES"])
+            img_path = os.path.join(app.config["POST_IMAGES"], str(data["pid"]) + "-img" + StringTools.getFileExt(img.data.filename))
+            print("img_path:\t" + str(img_path))
+            form.img.data.save(img_path)
+            bgimg_path = os.path.join(app.config["POST_IMAGES"], str(data["pid"]) + "-bgimg" + StringTools.getFileExt(bgimg.data.filename))
+            print("bgimg_path:\t" + str(bgimg_path))
+            form.bgimg.data.save(bgimg_path)
+            q = "UPDATE post SET author=%s, title=%s, heading=%s, text=%s, img=%s, bgimg=%s WHERE pid=%s"
+            cur.execute("START TRANSACTION")
+            cur.execute(q, (data["author"], data["title"], data["heading"], data["text"], data["img"], data["bgimg"], data["pid"]))
+            cur.execute("COMMIT")
+        elif form.img.data:
+            img = form.img
+            data["img"] = str(app.config["POST_IMG_PATH"] + str(data["pid"]) + "-img" + StringTools.getFileExt(img.data.filename))
+            delete_file(StringTools.getFileName(r["img"]), "", app.config["POST_IMAGES"])
+            img_path = os.path.join(app.config["POST_IMAGES"], str(data["pid"]) + "-img" + StringTools.getFileExt(img.data.filename))
+            form.img.data.save(img_path)
+            q = "UPDATE post SET author=%s, title=%s, heading=%s, text=%s, img=%s WHERE pid=%s"
+            cur.execute("START TRANSACTION")
+            cur.execute(q, (data["author"], data["title"], data["heading"], data["text"], data["img"], data["pid"]))
+            cur.execute("COMMIT")
+        elif form.bgimg.data:
+            bgimg = form.bgimg
+            data["bgimg"] = str(app.config["POST_IMG_PATH"] + str(data["pid"]) + "-bgimg" + StringTools.getFileExt(bgimg.data.filename))
+            delete_file(StringTools.getFileName(r["bgimg"]), "", app.config["POST_IMAGES"])
+            bgimg_path = os.path.join(app.config["POST_IMAGES"], str(data["pid"]) + "-bgimg" + StringTools.getFileExt(bgimg.data.filename))
+            print("bgimg_path:\t" + str(bgimg_path))
+            form.bgimg.data.save(bgimg_path)
+            q = "UPDATE post SET author=%s, title=%s, heading=%s, text=%s, bgimg=%s WHERE pid=%s"
+            cur.execute("START TRANSACTION")
+            cur.execute(q, (data["author"], data["title"], data["heading"], data["text"], data["img"], data["pid"]))
+            cur.execute("COMMIT")
+        else:
+            q = "UPDATE post SET author=%s, title=%s, heading=%s, text=%s WHERE pid=%s"
+            cur.execute("START TRANSACTION")
+            cur.execute(q, (data["author"], data["title"], data["heading"], data["text"], data["pid"]))
+            cur.execute("COMMIT")
+        res = build_log("Post updated! PID: " + str(data["pid"]) + " Title: " + str(data["title"]) + " by: " + current_user.username)
+        print(res)
+        flash("Post PID: " + str(data["pid"]) + " title: " + str(data["title"]) + " has successfully been updated!", 'success')
+        return redirect(url_for("admin_post"))
+    return render_template("admin_post_i.html", user=current_user, form=form, post=r)
+
+@app.route("/admin_post/add", methods=["GET", "POST"])
+@login_required
+def admin_post_add():
+    if admin_check():
+        return redirect(url_for("appuser_home"))
+    route_log()
+    user = current_user
+    db = get_db()
+    cur = db.cursor()
+    form = AdminPostCreate(user.username)
+    if request.method == "POST" and form.is_submitted() and form.validate() and form.submit.data:
+        q = "SELECT @`pid`:=MAX(`pid`)+1 FROM post"
+        cur.execute(q)
+        n_pid = cur.fetchone()[0]
+        if not n_pid:
+            n_pid = "1"
+        now = datetime.now()
+        date_time = now.strftime("%Y-%m-%d %H:%M:%S")
+        try:
+            data = {
+                'pid': str(n_pid),
+                'author': str(form.author.data),
+                'title': str(form.title.data),
+                'heading': str(form.heading.data),
+                'text': str(form.text.data)
+            }
+        except ValueError as e:
+            flash("An error was encountered when parsing the data:\t" + str(e))
+            res = build_log("ValueError when parsing data:\t" + str(e))
+            print(res)
+        print("form.img.data:\t%s\nform.bgim.data:\t%s" % (form.img.data, form.bgimg.data))
+        if form.img.data and form.bgimg.data:
+            img = form.img
+            bgimg = form.bgimg
+            data["img"] = str(app.config["POST_IMG_PATH"] + str(data["pid"]) + "-img" + StringTools.getFileExt(img.data.filename))
+            data["bgimg"] = str(app.config["POST_IMG_PATH"] + str(data["pid"]) + "-bgimg" + StringTools.getFileExt(bgimg.data.filename))
+            #delete_file(StringTools.getFileName(r["img"]), "", app.config["POST_IMAGES"])
+            #delete_file(StringTools.getFileName(r["bgimg"]), "", app.config["POST_IMAGES"])
+            img_path = os.path.join(app.config["POST_IMAGES"], str(data["pid"]) + "-img" + StringTools.getFileExt(img.data.filename))
+            print("img_path:\t" + str(img_path))
+            form.img.data.save(img_path)
+            bgimg_path = os.path.join(app.config["POST_IMAGES"], str(data["pid"]) + "-bgimg" + StringTools.getFileExt(bgimg.data.filename))
+            print("bgimg_path:\t" + str(bgimg_path))
+            form.bgimg.data.save(bgimg_path)
+            q = "INSERT INTO post (author, title, heading, text, img, bgimg, datetime) VALUES (%s, %s, %s, %s, %s, %s, %s)"
+            cur.execute("START TRANSACTION")
+            cur.execute(q, (data["author"], data["title"], data["heading"], data["text"], data["img"], data["bgimg"], date_time))
+            cur.execute("COMMIT")
+        elif form.img.data:
+            img = form.img
+            data["img"] = str(app.config["POST_IMG_PATH"] + str(data["pid"]) + "-img" + StringTools.getFileExt(img.data.filename))
+            #delete_file(StringTools.getFileName(r["img"]), "", app.config["POST_IMAGES"])
+            img_path = os.path.join(app.config["POST_IMAGES"], str(data["pid"]) + "-img" + StringTools.getFileExt(img.data.filename))
+            print("img_path:\t" + str(img_path))
+            form.img.data.save(img_path)
+            q = "INSERT INTO post (author, title, heading, text, img, datetime) VALUES (%s, %s, %s, %s, %s, %s)"
+            cur.execute("START TRANSACTION")
+            cur.execute(q, (data["author"], data["title"], data["heading"], data["text"], data["img"], date_time))
+            cur.execute("COMMIT")
+        elif form.bgimg.data:
+            bgimg = form.bgimg
+            data["bgimg"] = str(app.config["POST_IMG_PATH"] + str(data["pid"]) + "-bgimg" + StringTools.getFileExt(bgimg.data.filename))
+            #delete_file(StringTools.getFileName(r["bgimg"]), "", app.config["POST_IMAGES"])
+            bgimg_path = os.path.join(app.config["POST_IMAGES"], str(data["pid"]) + "-bgimg" + StringTools.getFileExt(bgimg.data.filename))
+            print("bgimg_path:\t" + str(bgimg_path))
+            form.bgimg.data.save(bgimg_path)
+            q = "INSERT INTO post (author, title, heading, text, bgimg, datetime) VALUES (%s, %s, %s, %s, %s, %s)"
+            cur.execute("START TRANSACTION")
+            cur.execute(q, (data["author"], data["title"], data["heading"], data["text"], data["bgimg"], date_time))
+            cur.execute("COMMIT")
+        else:
+            q = "INSERT INTO post (author, title, heading, text, datetime) VALUES (%s, %s, %s, %s, %s)"
+            cur.execute("START TRANSACTION")
+            cur.execute(q, (data["author"], data["title"], data["heading"], data["text"], date_time))
+            cur.execute("COMMIT")
+        res = build_log("Post created! PID: " + str(data["pid"]) + " Title: " + str(data["title"]) + " by: " + current_user.username)
+        print(res)
+        flash("Post PID: " + str(data["pid"]) + " title: " + str(data["title"]) + " has successfully been created!", 'success')
+        return redirect(url_for("admin_post"))
+    return render_template("admin_post_add.html", user=current_user, form=form)
+
+@app.route("/admin_post/delete", methods=["GET", "POST"])
+@login_required
+def admin_post_delete():
+    if admin_check(current_user):
+        return redirect(url_for("appuser_home"))
+    db = get_db()
+    cur = db.cursor()
+    q = "SELECT pid, author, title, datetime FROM post"
+    cur.execute(q)
+    form = AdminPostDelete()
+    if request.method == "POST" and form.is_submitted() and form.validate() and form.submit.data:
+        pass
+    posts = {}
+    for post in cur.fetchall():
+        posts[int(post[0])] = {
+            'author': post[1],
+            'title': post[2],
+            'datetime': post[3]
+        }
+    return render_template("admin_post_delete.html", user=current_user, posts=posts, form=form)
 
 @app.route("/test/json", methods=["POST"])
 def test_json():

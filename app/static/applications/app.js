@@ -44,8 +44,9 @@ $(document).ready(function () {
             $.ajax({
                 url: "/appuser_reportonchange",
                 type: "POST",
+                data: {"text": d},
                 dataType: "json",
-                data: JSON.stringify({'text': d}),
+                contentType: "application/json; charset=utf-8",
                 success: function (resp) {
                     console.log("Sent Data: " + d)
                     console.log("Response: " + resp)
@@ -201,7 +202,7 @@ $(document).ready(function () {
     } else if (document.title === "ION Racing | Manage Users") {
         $.ajax({
             url: "/query/cn/all",
-            method: "POST",
+            type: "POST",
             success: function(resp) {
                 for (let k in resp) {
                     usernames[usernames.length] = resp[k];
@@ -219,6 +220,10 @@ $(document).ready(function () {
                     console.log(resp);
                 }
             })
+        });
+    } else if (document.title === "ION Racing | Manage Posts") {
+        $(".clickable-row").click(function() {
+            window.location = $(this).data("href");
         });
     } else if (document.title === "ION Racing | User Reg") {
         if ($("#c").val() !== "NO") {
@@ -263,7 +268,7 @@ $(document).ready(function () {
     } else if (document.title === "ION Racing | Delete User(s)") {
         $.ajax({
             url: "/query/cn/all",
-            method: "POST",
+            type: "POST",
             success: function(resp) {
                 for (let k in resp) {
                     usernames[usernames.length] = resp[k];
@@ -293,7 +298,33 @@ $(document).ready(function () {
                 }
             });
         }
-
+        removeMembers.addEventListener("click", function() {
+            let m = document.getElementById("selected");
+            let s = "";
+            if (m.value[m.value.length-1] === ",") {
+                s = m.value.substring(0, m.value.length-1);
+            } else {
+                s = m.value
+            }
+            let d = {"username": s}
+            $.ajax({
+                url: "/admin_user/remove",
+                type: "POST",
+                data: d,
+                dataType: "json",
+                contentType: "application/json; charset=utf-8",
+                success: function(resp) {
+                    console.log(resp);
+                    window.location.href = resp;
+                    window.location.href = "/admin_user";
+                },
+                error: function(resp) {
+                    console.log(resp);
+                    window.location.href = "/admin_user";
+                }
+            });
+            //window.location.href = "/admin_user";
+        });
     }
     $(window).resize(function () { resizeBg(); });
 });
@@ -364,7 +395,11 @@ function addToSelection(id) {
         let e = document.getElementById("selected");
         $("#selected").val(e.value.substring(1, e.value.length)).trigger("change");
     }
-    $("#selected").val(document.getElementById("selected").value += id + ",").trigger("change");
+    if (!document.getElementById("selected").value.includes(id)) {
+        $("#selected").val(document.getElementById("selected").value += id + ",").trigger("change");
+    } else {
+        console.log(id + " Already in selection!");
+    }
     console.log(id + " Added to selection.");
     console.log("Selected:\t" + document.getElementById("selected").value);
 }
@@ -452,8 +487,10 @@ function autocomplete(inp, arr) {
                         if (document.title === "ION Racing | Manage Users") {
                             window.location.href = "/admin_user/user/" + inp.value;
                         } else if (document.title === "ION Racing | Delete User(s)") {
-                            addToSelection(inp.value);
-                            document.getElementById("selection").innerHTML += "<p id=" + inp.value + ">" + inp.value + "</p>";
+                            if (!document.getElementById("selected").value.includes(inp.value)) {
+                                addToSelection(inp.value);
+                                document.getElementById("selection").innerHTML += "<p id=" + inp.value + ">" + inp.value + "</p>";
+                            }
                             for (let i = 0; i < document.getElementsByClassName("member").length; i++) {
                                 if (document.getElementsByClassName("member")[i].children[0].textContent === inp.value) {
                                     document.getElementsByClassName("member")[i].classList.add("selected");

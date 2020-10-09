@@ -18,3 +18,5 @@ class Config(object):
     CAR_IMG_PATH = 'uploads/images/cars/'
     MEMBER_IMAGES = os.path.join(basedir, 'static\\uploads\\images\\members')
     MEMBER_IMG_PATH = 'uploads/images/members/'
+    POST_IMAGES = os.path.join(basedir, 'static\\uploads\\images\\posts')
+    POST_IMG_PATH = 'uploads/images/posts/'

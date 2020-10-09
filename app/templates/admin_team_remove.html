@@ -1,7 +1,7 @@
 {% extends "admin_team.html" %}
 {% import "bootstrap/wtf.html" as wtf %}
 {% block view %}
-<h2>Create New Team</h2>
+<h2>Delete Team</h2>
 <form action="/admin_team/delete" method="post">
     {{ form.csrf_token() }}
     <div class="form-group">

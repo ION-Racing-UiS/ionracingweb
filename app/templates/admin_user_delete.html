@@ -20,7 +20,7 @@
                 <td>{{ u.parent_container.get_attribute('cn', False, 'LDAP') }}</td>
             </tr>
         {% endfor %}
-            <tr>
+            <tr id="r-row">
                 <td colspan="0">
                     <span id="removeMembersLabel" style="display: block;">Remove member</span>
                 </td>

@@ -32,6 +32,8 @@ main {
     transition-duration: 250ms;
     transition-property: background-color, padding, border-left, border-right;
     padding: 0 3px 0 3px;
+    display: block;
+    width: 100%;
 }
 
 .side-menu > a:hover {

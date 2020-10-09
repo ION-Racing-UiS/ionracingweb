@@ -1,0 +1,39 @@
+{% extends "admin_layout.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block title %} | Delete Cars{% endblock %}
+{% block content %}
+<div id="" class="row">
+    <div class="page-header">
+        <h2>Remove Post(s)</h2>
+    </div>
+        <table>
+            <thead>
+                <tr>
+                    <th>PID</th>
+                    <th>Author</th>
+                    <th>Title</th>
+                    <th>Date Time</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for k, v in posts.items() %}
+                <tr class="post">
+                    <td>{{ k }}</td>
+                    <td>{{ v['author'] }}</td>
+                    <td>{{ v['title'] }}</td>
+                    <td>{{ v['datetime'] }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    <form class="allign-middle" action="/admin_post/delete" method="POST">
+        {% for field in form %}
+        {% if field.id != "csrf_token" and field.id != "selected" %}
+        {{ wtf.form_field(field) }}
+        {% else %}
+        {{ field }}
+        {% endif %}
+        {% endfor %}
+    </form>
+</div>
+{% endblock %}

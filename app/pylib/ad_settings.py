@@ -2,20 +2,20 @@ import datetime
 from pathlib import Path
 from pyad import adgroup, adcontainer
 
-ldap_server = "ionracingonazure.azurewebsites.net"
-username = ""
-password = ""
-topLevelDomain = "ionracingonazure.azurewebsites.net"
-homeDrive = ""
-profileDirectoryPrefix = ""
-homeDirectoryPrefix = ""
+ldap_server = "ION-S1.DEV.IONRACING.NO"
+username = "Administrator"
+password = "1998"
+topLevelDomain = "DEV.IONRACING.NO"
+homeDrive = "H:"
+profileDirectoryPrefix = "\\\\ION-S1\\$profiles\\"
+homeDirectoryPrefix = "\\\\ION-S1\\$home\\"
 scriptPath = ""
-physicalDeliveryOfficeName = "Somewhere in Norway"
-company = "ION Racing"
-userdomain = "IONRACINGONAZURE"
+physicalDeliveryOfficeName = "KE D-121"
+company = "ION Racing UiS"
+userdomain = "DEV"
 base_ou = "IONRacing"
 usergroup = "ION Users"
-domainsuffix = "IONRACINGONAZURE"
+domainsuffix = "IONRACING.NO"
 path = (str(Path(__file__).absolute()))
 user_groups = [usergroup, str((datetime.datetime.now() + datetime.timedelta(weeks=4*6)).year)]
 user_groups_d = {1: usergroup, 2: str((datetime.datetime.now() + datetime.timedelta(weeks=4*6)).year)}
@@ -23,12 +23,9 @@ user_groups_d = {1: usergroup, 2: str((datetime.datetime.now() + datetime.timede
 def get_ous():
     '''
     Queries ad for all departments int the `base_ou` and returns a list of tuples for use with FlaskForm.\n
-    get_ous() -> 2-tuple(str, str)
+    get_ous() -> tuple(str, str)
     '''
-    try:
-        p = adcontainer.ADContainer.from_cn(base_ou).get_children()
-    except:
-        return [('InAccAD', 'AD not available')]
+    p = adcontainer.ADContainer.from_cn(base_ou).get_children()
     ous = []
     for c in p:
         if type(c) is adcontainer.ADContainer:
@@ -43,12 +40,9 @@ ous = get_ous()
 def get_teams():
     '''
     Queries ad for all teams in `Teams` and returns a list of type:tuples for use with FlaskForm.\n
-    get_teams() -> 2-tuple(str, str)
+    get_teams() -> tuple(str, str)
     '''
-    try:
-        t = adcontainer.ADContainer.from_cn("Teams").get_children()
-    except:
-        return [('InAccAD', 'AD not available')]
+    t = adcontainer.ADContainer.from_cn("Teams").get_children()
     teams = []
     for g in t:
         if type(g) is adgroup.ADGroup:
@@ -60,10 +54,7 @@ def get_groups():
     Queries ad for all groups in the base OU and returns a list of type:pyad.adgroup.ADGroup for use with group management.\n
     get_groups() -> list[pyad.adgroup.ADGroup]
     '''
-    try:
-        ou = adcontainer.ADContainer.from_cn(base_ou).get_children()
-    except:
-        return []
+    ou = adcontainer.ADContainer.from_cn(base_ou).get_children()
     g = []
     for c in ou:
         if type(c) is adgroup.ADGroup:
@@ -92,9 +83,8 @@ def get_ad_settings():
         'user_groups_d': user_groups_d
     }
 
-db_user = ""
-db_pwd = ""
-db_host = "ux.uis.no"
+db_user = "ionracing"
+db_pwd = "1998"
+db_host = "k122-189.ux.uis.no"
 db_db = "ionracing"
 db_port = 3306
-

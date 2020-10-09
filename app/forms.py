@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField, FormField, TextAreaField, FileField, SelectField, HiddenField, validators, IntegerField, FloatField
+from wtforms import StringField, PasswordField, BooleanField, SubmitField, FormField, TextAreaField, FileField, SelectField, HiddenField, validators, IntegerField, FloatField, DateField, TimeField
 from flask_wtf.file import FileField, FileRequired, FileAllowed
 from wtforms.fields.html5 import DateField
 import app.pylib.win_user
@@ -295,7 +295,10 @@ class AdminEditCar(FlaskForm):
     submit = SubmitField('Save', render_kw={'class': 'btn'})
 
 class AdminRemoveCar(FlaskForm):
-    cars = HiddenField(render_kw={'id': 'selected'})
+    cars = HiddenField(
+        id='selected',
+        validators=[]
+        )
     confirm = BooleanField(
         'Are you sure you want to delete these car(s)?',
         validators=[validators.DataRequired()]
@@ -581,3 +584,132 @@ class AdminCreateUser(FlaskForm):
         self.ou.choices = ous
         self.c.choices = countries
         self.c.data = "NO"
+
+class AdminPostCreate(FlaskForm):
+    author = StringField(
+        "Author",
+        validators=[],
+        render_kw={'placeholder': 'Author', 'disabled': 'true'},
+        id="author"
+    )
+    title = StringField(
+        "Title",
+        validators=[validators.DataRequired()],
+        render_kw={'placeholder': 'Title'},
+        id="title"
+    )
+    heading = TextAreaField(
+        "Heading",
+        validators=[validators.DataRequired()],
+        render_kw={},
+        id="heading"
+    )
+    text = TextAreaField(
+        "Text",
+        validators=[validators.DataRequired()],
+        render_kw={},
+        id="text"
+    )
+    bgimg = FileField(
+        "Backgroud Image",
+        validators=[FileAllowed(app.carimages, "Images Only!")],
+        render_kw={},
+        id="bgimg"
+    )
+    img = FileField(
+        "Image",
+        validators=[FileAllowed(app.carimages, "Images Only!")],
+        render_kw={},
+        id="img"
+    )
+    submit = SubmitField(
+        "Create",
+        render_kw={'class': 'btn'}
+    )
+    def __init__(self, author="", *args, **kwargs):
+        super(AdminPostCreate, self).__init__(*args, **kwargs)
+        self.author.data = author
+
+class AdminPostEdit(FlaskForm):
+    author = StringField(
+        "Author",
+        validators=[],
+        render_kw={'placeholder': 'Author', 'disabled': 'true'},
+        id="author"
+    )
+    title = StringField(
+        "Title",
+        validators=[validators.DataRequired()],
+        render_kw={'placeholder': 'Title'},
+        id="title"
+    )
+    heading = TextAreaField(
+        "Heading",
+        validators=[validators.DataRequired()],
+        render_kw={},
+        id="heading"
+    )
+    text = TextAreaField(
+        "Text",
+        validators=[validators.DataRequired()],
+        render_kw={},
+        id="text"
+    )
+    bgimg = FileField(
+        "Backgroud Image",
+        validators=[FileAllowed(app.carimages, "Images Only!")],
+        render_kw={},
+        id="bgimg"
+    )
+    img = FileField(
+        "Image",
+        validators=[FileAllowed(app.carimages, "Images Only!")],
+        render_kw={},
+        id="img"
+    )
+    bgimgh = HiddenField(
+        validators=[],
+        render_kw={},
+        id="bgimgh"
+    )
+    imgh = HiddenField(
+        validators=[],
+        render_kw={},
+        id="imgh"
+    )
+    pid = HiddenField(
+        validators=[],
+        render_kw={},
+        id="pid"
+    )
+    confirm = BooleanField(
+        "Are you sure you want to apply these changes?",
+        validators=[validators.DataRequired("You need to apply the changes")],
+        render_kw={},
+        id="confirm"
+    )
+    submit = SubmitField(
+        "Save",
+        render_kw={'placeholder': 'btn'}
+    )
+    def __init__(self, pid="", author="", title="", heading="", text="", bgimgh="", imgh="", *args, **kwargs):
+        super(AdminPostEdit, self).__init__(*args, **kwargs)
+        self.pid.data = pid
+        self.author.data = author
+        self.title.data = title
+        self.heading.data = heading
+        self.text.data = text
+        self.bgimgh.data = bgimgh
+        self.imgh.data = imgh
+
+class AdminPostDelete(FlaskForm):
+    pids = HiddenField(
+        id="selected",
+        validators=[]
+        )
+    confirm = BooleanField(
+        "Are you sure you want to delete these post(s)?",
+        validators=[validators.DataRequired("You need to confirm that you want to delete the post(s).")],
+        render_kw={}
+    )
+    submit = SubmitField("Delete", render_kw={'class': 'btn'})

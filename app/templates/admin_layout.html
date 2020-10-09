@@ -70,15 +70,12 @@
         <aside class="side-menu col-s-12 col-md-2">
             <h3>Menu</h3>
             {% if user.is_web_admin %}
-            <a href="/admin_car"><i class="fa fa-car" aria-hidden="true"></i> Manage Cars</a><br />
+            <a href="/admin_car"><i class="fa fa-car" aria-hidden="true"></i> Manage Cars</a>
             <a href="/admin_post"><i class="fa fa-pencil-square-o" aria-hidden="true"></i> Edit Posts </a>
             {% endif %}
             {% if user.is_admin %}
-            <br />
             <a href="/admin_user"><i class="fa fa-users" aria-hidden="true"></i> Manage Users </a>
-            <br />
             <a href="/admin_team"><i class="fa fa-flag-checkered" aria-hidden="true"></i> Manage Teams</a>
-            <br />
             <a href="/admin_groups"><i class="fa fa-shield" aria-hidden="true"></i> Manage Groups</a>
             {% endif %}
         </aside>

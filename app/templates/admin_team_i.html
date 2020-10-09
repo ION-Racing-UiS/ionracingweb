@@ -19,7 +19,7 @@
                 <td>{{ member.u.parent_container.get_attribute('cn', False, 'LDAP') }}</td>
             </tr>
         {% endfor %}
-            <tr>
+            <tr id="r-row">
                 <td>
                     <span id="addMemberLabel" style="display: block;">Add member:</span>
                     <span id="removeMembersLabel" style="display: none;">Remove member</span>

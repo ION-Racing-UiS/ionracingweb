@@ -50,12 +50,15 @@ def getFileName(path):
     :path (str): Path to the file.\n
     getFileName(`path`) -> str(filename)
     '''
+    if type(path) is None:
+        return ""
     for i in range(len(path)-1, 0, -1):
         if path[i] == "/":
             return path[i+1:]
     for i in range(len(path)-1, 0, -1):
         if path[i] == "\\":
             return path[i+1:]
+    return path
 
 def getFileExt(path):
     '''
@@ -64,9 +67,87 @@ def getFileExt(path):
     :path (str): Path to the file.\n
     getFileExt(`path`) -> str(ext)
     '''
+    if type(path) is None:
+        return ""
     for i in range(len(path)-1, 0, -1):
         if path[i] == ".":
             return path[i:]
+    return ""
+
+def getTableFields(cursor=None, table=""):
+    '''
+    Uses a MySQL DB `cursor` to query for field names for a specific table.
+    Parameters:\n
+    :cursor (MySQLCursor): Cursor object for MySQL DB.\n
+    :table (str): Name of the table you want to find the field names for.\n
+    getTableFields(`cursor`, `table`) -> {int: str}
+    '''
+    if not cursor or table == "":
+        return {}
+    q = "SHOW COLUMNS FROM %s" % table
+    cursor.execute(q)
+    res = cursor.fetchall()
+    r = {}
+    for i in range(len(res)):
+        r[i] = res[i][0]
+    return r
+
+def getSingleResult(fetchedone=(), cursor=None, table=""):
+    '''
+    Constructs a dict from a single result from DB i.e. `cursor.fetchone()` and 
+    return it with keys from the column names.\n
+    Parameters:\n
+    :fetchedone (tuple): `fetchone()` from cursor which will be a tuple.\n
+    :cursor (MySQLCursor): Cursor object for MySQL DB.\n
+    :table (str): Name of the table you want to find the field names for.\n
+    getSingleResult(`fetchedone`, `cursor`, `table`) -> {str(column_name): str(value)}
+    '''
+    if fetchedone == () or cursor == None or table == "":
+        return {}
+    r = {}
+    for k, v in getTableFields(cursor=cursor, table=table).items():
+        r[v] = fetchedone[k]
+    return r
+
+def getMultipleResults(fetchedall=[], cursor=None, table=""):
+    '''
+    Constructs a dict from multiple results from DB i.e. `cursor.fetchall()` and
+    returns it as a dict with the keys \"fields\" - column names and \"values\" - 
+    a dict with the column names as key for their values.\n
+    Parameters:\n
+    :fetchedall (list[()]): result from `cursor.fetchall()` which is a list of N-tuples.\n
+    :cursor (MySQLCursor): Cursor object for MySQL DB.\n
+    :table (str): Name of the table you want to find the field names for.\n
+    getMultipleResults(`fetchedall`, `cursor`, `table`) -> {"fields": str, "values": {str(`self["fields"][i]`): str}}
+    '''
+    if fetchedall == [] or cursor == None or table == "":
+        return []
+    r = {}
+    table_fields = getTableFields(cursor=cursor, table=table)
+    r["fields"] = table_fields.values()
+    if fetchedall == []:
+        return r
+    r["values"] = {}
+    for row in fetchedall:
+        r["values"] = {} 
+        for k, v in table_fields.items():
+            r["values"][v] = row[k]
+    return r
+
+def decodeJSONAndSplit(string="", separator=","):
+    '''
+    Load a JSON string with separated values.\n
+    Parameters:\n
+    :string (Bytes|str): JSON data to decode and split.\n
+    :separator (str): Value separator.\n
+    decodeJSONAndSplit(`string`, `separator`) -> list[str]
+    '''
+    data = string.decode("utf-8", "strict").replace("%2C", ",").replace("%20", " ")
+    data = data.split("=")[-1].split(",")
+    if data[-1] == "":
+        return data[0:-1]
+    else:
+        return data
 
 if __name__ == "__main__":
     url="http://ad.ionracing.no/contact/form/ION-WS0/"
