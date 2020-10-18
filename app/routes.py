@@ -33,7 +33,6 @@ def get_remote_info(request=request):
     url = request.url # Get the requested url
     return {"ip": ip, "method": method, "url": url}
     
-
 def get_remote_addr(request=request):
     '''
     Returns the layer 3 address of a remote host.\n
