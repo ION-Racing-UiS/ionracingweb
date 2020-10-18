@@ -32,6 +32,7 @@ def get_remote_info(request=request):
     method = request.method # Get request method
     url = request.url # Get the requested url
     return {"ip": ip, "method": method, "url": url}
+    
 
 def get_remote_addr(request=request):
     '''
