@@ -221,6 +221,55 @@ $(document).ready(function () {
                 }
             })
         });
+    } else if (document.title === "ION Racing | Manage Groups" || document.title === "ION Racing | Manage Admins" || document.title === "ION Racing | Manage Web Admin" || (document.title.includes("ION Racing | Manage " && document.title.includes("Users")))) {
+        $.ajax({
+            url: "/query/cn/all",
+            type: "POST",
+            success: function(resp) {
+                for (let k in resp) {
+                    usernames[usernames.length] = resp[k];
+                }
+            }
+        });
+        let addMemberLabel = document.getElementById("addMemberLabel");
+        let removeMemberLabel = document.getElementById("removeMembersLabel");
+        let search = document.getElementById("search");
+        let addMember = document.getElementById("addMember");
+        let removeMembers = document.getElementById("removeMembers");
+        let members = document.getElementsByClassName("member");
+        for (let i = 0; i < members.length; i++) {
+            let member = members[i];
+            let selected = document.getElementById("selected");
+            member.addEventListener("click", function() {
+                if (member.classList.contains("selected")) {
+                    member.classList.remove("selected");
+                    removeFromSelection(member.children[0].textContent);
+                    if (selected.value === "") {
+                        // Restore add elements
+                        addMemberLabel.style.display = "block";
+                        removeMemberLabel.style.display = "none";
+                        removeMemberLabel.parentElement.setAttribute("colspan", "0");
+                        search.style.display = "block";
+                        search.parentElement.setAttribute("colspan", "3");
+                        addMember.style.display = "block";
+                        removeMembers.style.display = "none";
+                    }
+                } else {
+                    member.classList.add("selected");
+                    addToSelection(member.children[0].textContent)
+                    if (selected.value !== "") {
+                        // Hide add elements
+                        addMemberLabel.style.display = "none";
+                        removeMemberLabel.style.display = "block";
+                        removeMemberLabel.parentElement.setAttribute("colspan", "3");
+                        search.style.display = "none";
+                        search.parentElement.setAttribute("colspan", "0");
+                        addMember.style.display = "none";
+                        removeMembers.style.display = "block";
+                    }
+                }
+            });
+        }
     } else if (document.title === "ION Racing | Manage Posts") {
         $(".clickable-row").click(function() {
             window.location = $(this).data("href");
@@ -325,7 +374,37 @@ $(document).ready(function () {
             });
             //window.location.href = "/admin_user";
         });
+    } else if (document.title === "ION Racing | Delete Post(s)") {
+        let posts = document.getElementsByClassName("post");
+        let selection = document.getElementById("selection");
+        for (let i = 0; i < posts.length; i++) {
+            let post = posts[i];
+            let selected = document.getElementById("selected");
+            post.addEventListener("click", function() {
+                if (post.classList.contains("selected")) {
+                    post.classList.remove("selected");
+                    removeFromSelection(post.children[0].textContent);
+                    /** Loop through selection cell and remove the id from it. */
+                } else {
+                    post.classList.add("selected");
+                    addToSelection(post.children[0].textContent);
+                    /** Add html if there is a selection cell in the table. */
+                }
+            })
+        }
     }
+    $(".flash-element").click(function(e) {
+        e.preventDefault();	
+        $(this).parent("li").remove();
+    });
+    $(".flash-element").hover(
+        function(event) {
+            $(this).parent("li").addClass("del");
+        },
+        function(event) {
+            $(this).parent("li").removeClass("del");
+        }
+    );
     $(window).resize(function () { resizeBg(); });
 });
 

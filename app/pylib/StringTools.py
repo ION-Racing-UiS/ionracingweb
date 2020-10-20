@@ -43,14 +43,16 @@ def removeBetween(string, index0, index1):
     result = str(snippet0)+str(snippet1)
     return result
 
-def getFileName(path):
+def getFileName(path=""):
     '''
     Finds the last index of a `/` or `\\` and then returns the filename.\n
     Parameters:\n
     :path (str): Path to the file.\n
     getFileName(`path`) -> str(filename)
     '''
-    if type(path) is None:
+    if type(path) is None or path is None:
+        return ""
+    if path == "":
         return ""
     for i in range(len(path)-1, 0, -1):
         if path[i] == "/":

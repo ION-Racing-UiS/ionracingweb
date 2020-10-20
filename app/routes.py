@@ -8,9 +8,10 @@ from app.pylib import win_user, StringTools
 from app.pylib.ad_settings import get_ous, get_teams, get_ad_settings
 from app.pylib.auth_user import User
 from app.pylib.StringTools import getTableFields, getSingleResult, getMultipleResults, decodeJSONAndSplit
-from app.pylib.FileOperations import delete_file
+from app.pylib.FileOperations import delete_file, find_file
 from pyad import pyad, adcontainer, aduser, adgroup, adobject
 from flask_ldap import ldap
+from app.pylib.sortteam import SortTeam
 import os
 import time
 import pythoncom
@@ -402,7 +403,7 @@ def login():
     route_log()
     # print("Current_user: " + str(current_user))
     if current_user.is_authenticated:
-        flash("You are already logged in.")
+        flash("You are already logged in.", "info")
         return redirect(url_for("appuser_home"))
     form = LoginForm()
     pythoncom.CoInitialize()
@@ -414,22 +415,22 @@ def login():
             print(res)
             User.try_login(username, password)
         except ldap.INVALID_CREDENTIALS as e: # Invalid username or password
-            flash("Invalid username or password", "danger")
+            flash("Invalid username or password", "warning")
             res = build_log("Invalid user credentials for: " + username)
             print(res)
             print(str(e))
             return render_template("login.html", active=5, head_menu=app.config["head_menu"], form=form)
         except ldap.INVALID_DN_SYNTAX or ldap.INVALID_SYNTAX: # Syntax error
-            flash("Invalid syntax for login", "danger")
+            flash("Invalid syntax for login", "warning")
             res = build_log("Invalid syntax for login, user: " + username)
             print(res)
             return render_template("login.html", active=5, head_menu=app.config["head_menu"], form=form)
         except pyad.invalidResults: # Unable to get the user from ldap_server
-            flash("Invalid username or password", "danger")
+            flash("Invalid username or password", "warning")
             res = build_log("Invalid syntax for login, user: " + username)
             return render_template("login.html", active=5, head_menu=app.config["head_menu"], form=form)
         except ldap.SERVER_DOWN: # Unable to contact dc
-            flash("The Domain Controller could not be contacted at this time, please try again later.")
+            flash("The Domain Controller could not be contacted at this time, please try again later.", "error")
             res = build_log("Domain Controller could no be contacted!")
             return render_template("login.html", active=5, head_menu=app.config["head_menu"], form=form)
         user = User(username)
@@ -441,7 +442,8 @@ def login():
         print(res)
         return redirect(url_for("appuser_home"))
     if form.errors:
-        flash(form.errors, 'danger')
+        for error in form.errors:
+            flash(error, 'error')
         res = build_log("Form error.")
         print(res)
     return render_template("login.html", active=5, head_menu=app.config["head_menu"], form=form)
@@ -533,7 +535,7 @@ def appuser_password():
                 flash("Your password has been changed!", "success")
                 return redirect(url_for('appuser_home'))
             else:
-                flash("The passwords does not match, please try again.", "error")
+                flash("The passwords does not match, please try again.", "warning")
                 return redirect(url_for('appuser_password'))
         elif old_form.is_submitted() and old_form.validate():
             username = old_form.username.data
@@ -541,21 +543,21 @@ def appuser_password():
             try: 
                 User.try_login(adu.cn, password)
             except ldap.INVALID_CREDENTIALS: # Invalid username or password
-                flash("Invalid username or password: INVALID_CREDENTIALS", "danger")
+                flash("Invalid username or password: INVALID_CREDENTIALS", "warning")
                 res = build_log("Invalid user credentials for: " + adu.cn)
                 print(res)
                 return redirect(url_for('appuser_password'))
             except ldap.INVALID_DN_SYNTAX or ldap.INVALID_SYNTAX: # Syntax error
-                flash("Invalid syntax for login", "danger")
+                flash("Invalid syntax for login", "warning")
                 res = build_log("Invalid syntax for login, user: " + adu.cn)
                 print(res)
                 return redirect(url_for('appuser_password'))
             except pyad.invalidResults: # Unable to get the user from ldap_server
-                flash("Invalid username or password: invalidResults", "danger")
+                flash("Invalid username or password: invalidResults", "warning")
                 res = build_log("Invalid syntax for login, user: " + adu.cn)
                 return redirect(url_for('appuser_password'))
             except ldap.SERVER_DOWN: # Unable to contact dc
-                flash("The Domain Controller could not be contacted at this time, please try again later.")
+                flash("The Domain Controller could not be contacted at this time, please try again later.", "error")
                 res = build_log("Domain Controller could no be contacted!")
                 return redirect(url_for('appuser_password'))
             session["change_pwd_stage"] = 1
@@ -578,7 +580,7 @@ def admin():
     route_log()
     #print("Current_user: " + str(current_user))
     if current_user.is_authenticated and (current_user.is_web_admin or current_user.is_admin):
-        flash("You are already logged in.")
+        flash("You are already logged in.", "info")
         return redirect(url_for("admin_home"))
     form = LoginForm()
     pythoncom.CoInitialize()
@@ -590,21 +592,21 @@ def admin():
             print(res)
             User.try_admin_login(username, password)
         except ldap.INVALID_CREDENTIALS as e:
-            flash("Invalid username or password", "danger")
+            flash("Invalid username or password", "warning")
             res = build_log("Invalid user credential for: " + username)
             print(res)
             return render_template("admin_login.html", head_menu=app.config["head_menu"], form=form)
         except ldap.INVALID_DN_SYNTAX or ldap.INVALID_SYNTAX:
-            flash("Invalid syntax for login", "danger")
-            res = build_log("Invalid syntax for login, user: ", "danger")
+            flash("Invalid syntax for login", "warning")
+            res = build_log("Invalid syntax for login, user: ")
             print(res)
-            return render_template("")
+            return render_template("admin_login.html", head_menu=app.config["head_menu"], form=form)
         except pyad.invalidResults:
-            flash("Invalid username or password", "danger")
+            flash("Invalid username or password", "warning")
             res = build_log("Invalid username or password for user: " + username)
             return render_template("admin_login.html", head_menu=app.config["head_menu"], form=form)
         except ldap.SERVER_DOWN:
-            flash("The Domain Controller could not be contacted at this time, please try again later.")
+            flash("The Domain Controller could not be contacted at this time, please try again later.", "error")
             res = build_log("Domain Controller could no be contacted!")
             return render_template("admin_login.html", head_menu=app.config["head_menu"], form=form)
         admin = User(username)
@@ -614,7 +616,7 @@ def admin():
         print(res)
         return redirect(url_for("admin_home"))
     if form.errors:
-        flash(str(form.errors), 'danger')
+        flash(str(form.errors), 'error')
         res = build_log("Form error: " + str(form.errors))
         print(res)
     return render_template("admin_login.html", head_menu=app.config["head_menu"], form=form)
@@ -678,7 +680,7 @@ def admin_car_add():
                 'torque': float(form.torque.data)
             }
         except ValueError as e:
-            flash("An error was encountered when parsing the data:\t" + str(e))
+            flash("An error was encountered when parsing the data:\t" + str(e), "error")
             res = build_log("ValueError when parsing data:\t" + str(e))
             print(res)
             return render_template("admin_car_add.html", user=current_user)
@@ -710,7 +712,7 @@ def admin_car_i(id):
     try:
         i = int(id)
     except ValueError as e:
-        flash("Error while parsing argument id as an integer:\t" + str(e))
+        flash("Error while parsing argument id as an integer:\t" + str(e), "error")
         res = build_log("Error while parsing argument id as integer:\t" + str(e))
         print(res)
         return redirect(url_for("admin_car"))
@@ -732,7 +734,7 @@ def admin_car_i(id):
                 'torque': float(form.torque.data)
             }
         except ValueError as e:
-            flash("An error was encountered when parsing the data:\t" + str(e))
+            flash("An error was encountered when parsing the data:\t" + str(e), "error")
             res = build_log("ValueError when parsing data:\t" + str(e))
             print(res)
         if form.img.data:
@@ -746,7 +748,7 @@ def admin_car_i(id):
                 try:
                     os.remove(old_img)
                 except FileNotFoundError as e:
-                    flash("Unable to delete the imgage file for the car: %s, file: %s does not exist" % (str(i), StringTools.getFileName(car[4].replace("/", "\\"))))
+                    flash("Unable to delete the imgage file for the car: %s, file: %s does not exist" % (str(i), StringTools.getFileName(car[4].replace("/", "\\"))), "info")
                     res = build_log("Unable to delete the imgage file for the car: %s, file: %s does not exist" % (str(i), StringTools.getFileName(car[4].replace("/", "\\"))))
                     print(res)
             form.img.data.save(path)
@@ -787,6 +789,8 @@ def admin_car_remove():
     cursor = db.cursor()
     if request.method == "POST" and form.is_submitted() and form.validate() and form.submit.data:
         car_ids = form.cars.data
+        if not car_ids:
+            return redirect(url_for("admin_car_remove"))
         if car_ids[-1] == ",":
             car_ids = car_ids[0:-1].split(',')
         for car_id in car_ids:
@@ -801,14 +805,14 @@ def admin_car_remove():
                 try:
                     os.remove(img)
                 except FileNotFoundError as e:
-                    flash("Unable to delete the imgage file for the car: %s, file: %s does not exist" % (str(car_id), StringTools.getFileName(img.replace("/", "\\"))))
+                    flash("Unable to delete the imgage file for the car: %s, file: %s does not exist" % (str(car_id), StringTools.getFileName(img.replace("/", "\\"))), "info")
                     res = build_log("Unable to delete the imgage file for the car: %s, file: %s does not exist" % (str(car_id), StringTools.getFileName(img.replace("/", "\\"))))
                     print(res)
             cursor.execute("START TRANSACTION")
             q = "DELETE FROM car WHERE id=%s"
             cursor.execute(q, (car_id,))
             cursor.execute("SELECT @`id`:=MAX(`id`)+1 FROM car")
-            auto_inc = cursor.fetchone()[0]
+            auto_inc = cursor.fetchone()[0] or 0
             cursor.execute("ALTER TABLE car AUTO_INCREMENT = %s", (auto_inc,))
             cursor.execute("COMMIT")
         return redirect(url_for("admin_car"))
@@ -857,7 +861,7 @@ def admin_team_add():
         if not os.path.exists(os.path.join(basedir, str(team))):
             os.makedirs(os.path.join(basedir, str(team)))
         msg = "Team: %s added by %s" % (team, current_user.u.cn)
-        flash(msg)
+        flash(msg, "success")
         res = build_log(msg)
         print(res)
         return redirect(url_for("admin_team"))
@@ -895,7 +899,7 @@ def admin_team_remove():
             shutil.rmtree(os.path.join(basedir, team))
         g.delete()
         msg = "Team: %s deleted by %s" % (team, current_user.u.cn)
-        flash(msg)
+        flash(msg, "info")
         res = build_log(msg)
         print(res)
         return redirect(url_for("admin_team"))
@@ -1038,7 +1042,7 @@ def admin_user_username(username):
             username = u.get_attribute('distinguishedName', False)
             user = aduser.ADUser.from_dn(str(username))
     if user is None:
-        flash("There is no user by the username: " + str(username))
+        flash("There is no user by the username: " + str(username), "warning")
         return redirect(url_for("admin_user"))
     teams = []
     choises = []
@@ -1066,7 +1070,7 @@ def admin_user_username(username):
                 'title': str(form.title.data)
             }
         except ValueError as e:
-            flash("There was an error during parsing of the data: " + str(e))
+            flash("There was an error during parsing of the data: " + str(e), "error")
             return redirect(url_for("admin_user"))
         user.update_attributes(data)
         for k, v in other_data.items():
@@ -1081,7 +1085,7 @@ def admin_user_username(username):
                     try:
                         os.remove(os.path.join(basedir, year_select, img))
                     except FileNotFoundError as e:
-                        flash("Unable to locate the image to delete.")
+                        flash("Unable to locate the image %s" % os.path.join(year_select, img), "info")
                     finally:
                         user.remove_from_attribute("wbemPath", imgP)
             filename = user.get_attribute("cn", False) + StringTools.getFileExt(form.wbemPath.data.filename)
@@ -1138,7 +1142,7 @@ def admin_user_add():
             msg = "Failed user registration due to wrong input data in either fname or lname."
             res = build_log(msg)
             print(res)
-            flash(msg)
+            flash(msg, "warning")
             return render_template("admin_user_create.html", user=current_user, form=form)
         while fname[-1] == " ":
             fname = fname[0:-1]
@@ -1163,7 +1167,7 @@ def admin_user_add():
             msg = "User registration failed, username: %s allready exists in the Active Directory database!" % (user_settings["sAMAccountName"])
             res = build_log(msg)
             print(res)
-            flash(msg)
+            flash(msg, "warning")
             return render_template("admin_user_create.html", user=current_user, form=form)
         try:
             ou = adcontainer.ADContainer.from_cn(user_data["department"].upper())
@@ -1187,7 +1191,7 @@ def admin_user_add():
             res = build_log(msg)
             print(res)
             pythoncom.CoUninitialize()
-            flash(msg)
+            flash(msg, "error")
             return render_template("admin_user_create.html", user=current_user, form=form)
         win_user.update_attributes(user_settings["sAMAccountName"], user_settings, None)
         win_user.join_group(user_settings["sAMAccountName"])
@@ -1195,7 +1199,7 @@ def admin_user_add():
         res = build_log("New User created successfully: %s." % user_settings["sAMAccountName"])
         print(res)
         msg = "%s, created successfully by %s" % (user_settings["sAMAccountName"], current_user.username)
-        flash(msg)
+        flash(msg, "success")
         return redirect("/admin_user/user/%s" % user_settings["sAMAccountName"])
     return render_template("admin_user_create.html", user=current_user, form=form)
 
@@ -1296,69 +1300,78 @@ def admin_post_i(pid):
     q = "SELECT * FROM post WHERE pid=%s"
     cur.execute(q, (pid,))
     r = getSingleResult(cur.fetchone(), cur, "post")
-    #print("r:\t" + str(r))
     form = AdminPostEdit(pid=r["pid"], author=r["author"], title=r["title"], heading=r["heading"], text=r["text"], bgimgh=r["bgimg"], imgh=r["img"])
-    #print("Form test (type(%s)%s==(type(%s)%s)): " % (type(form.pid.data), form.pid.data, type(pid), pid) + str(form.pid.data==pid))
-    if request.method == "POST" and form.is_submitted() and form.validate() and form.submit.data and form.pid.data == pid:
+    if request.method == "POST" and form.is_submitted() and form.validate() and form.submit.data:
+        now = datetime.now()
+        date_time = now.strftime("%Y-%m-%d %H:%M:%S")
         try:
             data = {
-                'pid': str(form.pid.data),
-                'author': str(form.author.data),
-                'title': request.form["title"],
-                'heading': request.form["heading"],
-                'text': request.form["text"]
+                'pid': request.form.get("pid"),
+                'title': request.form.get("title"),
+                'datetime': date_time,
+                'heading': request.form.get("heading"),
+                'text': request.form.get("text"),
             }
+            print("Data:\t%s" % data)
         except ValueError as e:
-            flash("An error was encountered when parsing the data:\t" + str(e))
-            res = build_log("ValueError when parsing data:\t" + str(e))
-            print(res)
-        #print("form.img.data:\t%s\nform.bgim.data:\t%s" % (form.img.data, form.bgimg.data))
-        if form.img.data and form.bgimg.data:
-            img = form.img
-            bgimg = form.bgimg
-            data["img"] = str(app.config["POST_IMG_PATH"] + str(data["pid"]) + "-img" + StringTools.getFileExt(img.data.filename))
-            data["bgimg"] = str(app.config["POST_IMG_PATH"] + str(data["pid"]) + "-bgimg" + StringTools.getFileExt(bgimg.data.filename))
-            delete_file(StringTools.getFileName(r["img"]), "", app.config["POST_IMAGES"])
-            delete_file(StringTools.getFileName(r["bgimg"]), "", app.config["POST_IMAGES"])
-            img_path = os.path.join(app.config["POST_IMAGES"], str(data["pid"]) + "-img" + StringTools.getFileExt(img.data.filename))
-            print("img_path:\t" + str(img_path))
-            form.img.data.save(img_path)
-            bgimg_path = os.path.join(app.config["POST_IMAGES"], str(data["pid"]) + "-bgimg" + StringTools.getFileExt(bgimg.data.filename))
-            print("bgimg_path:\t" + str(bgimg_path))
-            form.bgimg.data.save(bgimg_path)
-            q = "UPDATE post SET author=%s, title=%s, heading=%s, text=%s, img=%s, bgimg=%s WHERE pid=%s"
-            cur.execute("START TRANSACTION")
-            cur.execute(q, (data["author"], data["title"], data["heading"], data["text"], data["img"], data["bgimg"], data["pid"]))
-            cur.execute("COMMIT")
-        elif form.img.data:
-            img = form.img
-            data["img"] = str(app.config["POST_IMG_PATH"] + str(data["pid"]) + "-img" + StringTools.getFileExt(img.data.filename))
-            delete_file(StringTools.getFileName(r["img"]), "", app.config["POST_IMAGES"])
-            img_path = os.path.join(app.config["POST_IMAGES"], str(data["pid"]) + "-img" + StringTools.getFileExt(img.data.filename))
-            form.img.data.save(img_path)
-            q = "UPDATE post SET author=%s, title=%s, heading=%s, text=%s, img=%s WHERE pid=%s"
-            cur.execute("START TRANSACTION")
-            cur.execute(q, (data["author"], data["title"], data["heading"], data["text"], data["img"], data["pid"]))
+            flash("Unable to parse data, error=%s" % str(e), "error")
+            return redirect(url_for("admin_post"))
+        base_dir = app.config["POST_IMAGES"]
+        if form.bgimg.data and form.img.data:
+            data['bgimg'] = form.bgimg.data.filename
+            bgimg_fn = data['pid'] + "-bgimg"
+            bgimg_fn_old = find_file(base_dir, bgimg_fn)
+            del_file = delete_file(base_dir=base_dir, path=bgimg_fn_old)
+            if del_file:
+                flash("Unable to locate the file for attibute: %s" % "bgimg")
+            bgimg_fn += StringTools.getFileExt(data['bgimg'])
+            bgimg_db = app.config["POST_IMG_PATH"] + bgimg_fn
+            form.bgimg.data.save(os.path.join(base_dir, bgimg_fn))
+            data['img'] = form.img.data.filename
+            img_fn = data['pid'] + "-img"
+            img_fn_old = find_file(base_dir, img_fn)
+            del_file = delete_file(base_dir=base_dir,  path=img_fn_old)
+            if del_file:
+                flash("Unable to locate the file for attibute: %s" % "img")
+            img_fn += StringTools.getFileExt(data['img'])
+            img_db = app.config["POST_IMG_PATH"] + img_fn
+            form.img.data.save(os.path.join(base_dir, img_fn))
+            q = "UPDATE `post` SET `title`=%s, `datetime`=%s, `heading`=%s, `text`=%s, `bgimg`=%s, `img`=%s WHERE `pid`=%s"
+            cur.execute("START TRANSACTION")            
+            cur.execute(q, (data["title"], data["datetime"], data["heading"], data["text"], bgimg_db, img_db, data["pid"]))
             cur.execute("COMMIT")
         elif form.bgimg.data:
-            bgimg = form.bgimg
-            data["bgimg"] = str(app.config["POST_IMG_PATH"] + str(data["pid"]) + "-bgimg" + StringTools.getFileExt(bgimg.data.filename))
-            delete_file(StringTools.getFileName(r["bgimg"]), "", app.config["POST_IMAGES"])
-            bgimg_path = os.path.join(app.config["POST_IMAGES"], str(data["pid"]) + "-bgimg" + StringTools.getFileExt(bgimg.data.filename))
-            print("bgimg_path:\t" + str(bgimg_path))
-            form.bgimg.data.save(bgimg_path)
-            q = "UPDATE post SET author=%s, title=%s, heading=%s, text=%s, bgimg=%s WHERE pid=%s"
-            cur.execute("START TRANSACTION")
-            cur.execute(q, (data["author"], data["title"], data["heading"], data["text"], data["img"], data["pid"]))
+            bgimg_fn = data['pid'] + "-bgimg"
+            bgimg_fn_old = find_file(base_dir, bgimg_fn)
+            del_file = delete_file(base_dir=base_dir, path=bgimg_fn_old)
+            if del_file:
+                flash("Unable to locate the file for attibute: %s" % "bgimg")
+            bgimg_fn += StringTools.getFileExt(data['bgimg'])
+            bgimg_db = app.config["POST_IMG_PATH"] + bgimg_fn
+            form.bgimg.data.save(os.path.join(base_dir, bgimg_fn))
+            q = "UPDATE `post` SET `title`=%s, `datetime`=%s, `heading`=%s, `text`=%s, `bgimg`=%s WHERE `pid`=%s"
+            cur.execute("START TRANSACTION")            
+            cur.execute(q, (data["title"], data["datetime"], data["heading"], data["text"], bgimg_db, data["pid"]))
+            cur.execute("COMMIT")
+        elif form.img.data:
+            img_fn = data['pid'] + "-img"
+            img_fn_old = find_file(base_dir, img_fn)
+            del_file = delete_file(base_dir=base_dir,  path=img_fn_old)
+            if del_file:
+                flash("Unable to locate the file for attibute: %s" % "img")
+            img_fn += StringTools.getFileExt(data['img'])
+            img_db = app.config["POST_IMG_PATH"] + img_fn
+            form.img.data.save(os.path.join(base_dir, img_fn))
+            q = "UPDATE `post` SET `title`=%s, `datetime`=%s, `heading`=%s, `text`=%s, `img`=%s WHERE `pid`=%s"
+            cur.execute("START TRANSACTION")            
+            cur.execute(q, (data["title"], data["datetime"], data["heading"], data["text"], img_db, data["pid"]))
             cur.execute("COMMIT")
         else:
-            q = "UPDATE post SET author=%s, title=%s, heading=%s, text=%s WHERE pid=%s"
-            cur.execute("START TRANSACTION")
-            cur.execute(q, (data["author"], data["title"], data["heading"], data["text"], data["pid"]))
+            q = "UPDATE `post` SET `title`=%s, `datetime`=%s, `heading`=%s, `text`=%s WHERE `pid`=%s"
+            cur.execute("START TRANSACTION")            
+            cur.execute(q, (data["title"], data["datetime"], data["heading"], data["text"], data["pid"]))
             cur.execute("COMMIT")
-        res = build_log("Post updated! PID: " + str(data["pid"]) + " Title: " + str(data["title"]) + " by: " + current_user.username)
-        print(res)
-        flash("Post PID: " + str(data["pid"]) + " title: " + str(data["title"]) + " has successfully been updated!", 'success')
+        flash("Post PID=%s has been updated by %s" % (data['pid'], current_user.username), "info")
         return redirect(url_for("admin_post"))
     return render_template("admin_post_i.html", user=current_user, form=form, post=r)
 
@@ -1389,7 +1402,7 @@ def admin_post_add():
                 'text': str(form.text.data)
             }
         except ValueError as e:
-            flash("An error was encountered when parsing the data:\t" + str(e))
+            flash("An error was encountered when parsing the data:\t" + str(e), "error")
             res = build_log("ValueError when parsing data:\t" + str(e))
             print(res)
         print("form.img.data:\t%s\nform.bgim.data:\t%s" % (form.img.data, form.bgimg.data))
@@ -1450,11 +1463,38 @@ def admin_post_delete():
         return redirect(url_for("appuser_home"))
     db = get_db()
     cur = db.cursor()
-    q = "SELECT pid, author, title, datetime FROM post"
-    cur.execute(q)
     form = AdminPostDelete()
     if request.method == "POST" and form.is_submitted() and form.validate() and form.submit.data:
-        pass
+        pids = form.pids.data[0:-1].split(",")
+        base_dir = app.config["POST_IMAGES"]
+        for pid in pids:
+            q = "SELECT `bgimg`, `img` FROM post WHERE pid=%s"
+            cur.execute(q, (pid,))
+            result = {"res": cur.fetchone()}
+            if not result["res"]:
+                continue
+            print(result["res"])
+            if not result["res"][0] == None:
+                result["bgimg"] = StringTools.getFileName(result["res"][0])
+            if not result["res"][1] == None:
+                result["imb"] = StringTools.getFileName(result["res"][1])
+            result.pop("res")
+            cur.execute("START TRANSACTION")
+            cur.execute("DELETE FROM `post` WHERE `pid`=%s", (pid,))
+            cur.execute("COMMIT")
+            for k, v in result.items():
+                del_file = delete_file(v, base_dir=base_dir)
+                if del_file:
+                    flash("Could not find file %s, therefore it has not been deleted." % v, "info")
+            flash("Post PID=%s has been deleted by %s" % (pid, current_user.username), "info")
+        cur.execute("START TRANSACTION")
+        cur.execute("SELECT @`pid`:=MAX(`pid`)+1 FROM post")
+        auto_inc = cur.fetchone()[0] or 0
+        cur.execute("ALTER TABLE `post` AUTO_INCREMENT = %s", (auto_inc,))
+        cur.execute("COMMIT")
+        return redirect(url_for("admin_post"))
+    q = "SELECT pid, author, title, datetime FROM post"
+    cur.execute(q)
     posts = {}
     for post in cur.fetchall():
         posts[int(post[0])] = {
@@ -1463,6 +1503,29 @@ def admin_post_delete():
             'datetime': post[3]
         }
     return render_template("admin_post_delete.html", user=current_user, posts=posts, form=form)
+
+@app.route("/admin_groups")
+def admin_groups():
+    if admin_check(current_user):
+        return redirect(url_for("appuser_home"))
+    group_names = sorted(["Admins", get_ad_settings()["usergroup"], "Web Admin"])
+    groups = []
+    for g_n in group_names:
+        groups.append(adgroup.ADGroup.from_cn(g_n))
+    return render_template("admin_groups.html", user=current_user, groups=groups)
+
+@app.route("/admin_groups/<gn>", methods=["GET", "POST"])
+def admin_group_gn(gn):
+    pythoncom.CoInitialize()
+    group_names = sorted(["Admins", get_ad_settings()["usergroup"], "Web Admin"])
+    groups = []
+    for g_n in group_names:
+        groups.append(adgroup.ADGroup.from_cn(g_n))
+    g = adgroup.ADGroup.from_cn(str(gn))
+    members = g.get_members()
+    s = SortTeam(members)
+    members = s.get_list()
+    return render_template("admin_group_gn.html", user=current_user, members=members, group=g, groups=groups)
 
 @app.route("/test/json", methods=["POST"])
 def test_json():

@@ -194,6 +194,10 @@ div > table > tbody > tr > td {
     border-right: 2px solid white;
 }
 
+div > table > tbody > tr:hover > td {
+    background-color: black;
+}
+
 div > table > tbody > tr > td:last-child {
     border-right: none;
 }
@@ -377,4 +381,14 @@ div.page-header {
     text-align: center;
     border-bottom: 2px solid white;
     width: 100%;
+}
+
+td > p {
+    padding-right: 5px;
+    border-right: 1px solid white;
+}
+
+td > p:last-child {
+    padding: 0;
+    border: none;
 }

@@ -5,6 +5,7 @@ basedir = os.path.abspath(os.path.dirname(__file__)) + "\\app\\"
 #print("basedir:\t" + str(basedir))
 
 class Config(object):
+    SERVER_NAME = None
     SECRET_KEY = os.urandom(24).hex()
     ENABLE_LOG = 0
     TEXT_REGEXP = '[^\u0041-\u005A\u0061-\u007A\u00C0-\u00D6\u00D8-\u00F6\u00F8-\u024F\u1E00-\u1EFF ]'

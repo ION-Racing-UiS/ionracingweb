@@ -2,6 +2,9 @@
 CLS
 
 IF NOT EXIST "..\app\logs\" MD "..\app\logs\"
+IF NOT EXIST "..\app\static\uploads\images\cars" MD "..\app\static\uploads\images\cars"
+IF NOT EXIST "..\app\static\uploads\images\members" MD "..\app\static\uploads\images\members"
+IF NOT EXIST "..\app\static\uploads\images\posts" MD "..\app\static\uploads\images\posts"
 ECHO #Edit this file>>"..\app\pylib\ad_settings.py"
 
 ECHO Setup self-signed SSL certificates? (OpenSSL is required for this!) (y/n)

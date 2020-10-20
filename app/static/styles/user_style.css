@@ -62,10 +62,13 @@ main {
 
 .flashes > li {
     width: 100%;
+    display: flex;
+    flex-wrap: nowrap;
+    flex-direction: row;
     list-style: none;
     border-width: 2px;
     border-style: solid;
-    border-radius: 5px;
+    border-radius: 0px;
     padding: 2px;
     background-color: #333;
     transition-property: background-color;
@@ -74,8 +77,101 @@ main {
     transition-delay: 50ms;
 }
 
+.flashes > li.success {
+    border-color: #D3E5CF;
+    background-color: #DDF1D8;
+    color: #4F6D2F;
+}
+
+.flashes > li.info {
+    border-color: #C9DBE5;
+    background-color: #D9EDF6;
+    color: #366C90;
+}
+
+.flashes > li.warning {
+    border-color: #F3F1DC;
+    background-color: #FEF7E5;
+    color: #78705B;
+}
+
+.flashes > li.error {
+    border-color: #E3CFD1;
+    background-color: #F2DEDF;
+    color: #A5473F;
+}
+
 .flashes > li:hover {
     background-color: #000;
+}
+
+.flashes > li > p {
+    width: -moz-available;
+    width: -webkit-fill-available;
+    width: fill-available;
+    padding: 0;
+    margin: 0 auto 2px auto;
+}
+
+.flashes > li > i:last-child {
+    text-align: center;
+    vertical-align: middle;
+    float: inline-end;
+    margin-left: 5px;
+    margin-top: 3px;
+    height: -moz-min-content;
+    height: -webkit-min-content;
+    height: min-content;
+}
+
+.flashes > li > i:first-child {
+    text-align: center;
+    vertical-align: middle;
+    float: inline-start;
+    margin-right: 5px;
+    margin-top: 4px;
+    height: -moz-min-content;
+    height: -webkit-min-content;
+    height: min-content;
+}
+
+.flashes > li > i:last-child:hover {
+    cursor: pointer;
+}
+
+.flashes > li.del {
+    filter: brightness(50%);
+}
+
+.flashes > li.del.success {
+    background-color: #DDF1D8;
+}
+
+.flashes > li.del.info {
+    background-color: #D9EDF6;
+}
+
+.flashes > li.del.warning {
+    background-color: #FEF7E5;
+}
+
+.flashes > li.del.error {
+    background-color: #F2DEDF;
+}
+
+.flashes i.flash-element {
+    margin-right: 3px;
+    margin-top: 3px;
+    transition-property: margin-right border-width margin-top;
+    transition-delay: 25ms 25ms 25ms;
+    transition-duration: 125ms 125ms 125ms;
+    transition-timing-function: ease-in-out ease-in-out ease-in-out;
+}
+
+.flashes i.flash-element:hover {
+    margin-right: 0px;
+    margin-top: 0px;
+    border: 3px dashed;
 }
 
 a.navbar-brand > i {

@@ -57,14 +57,31 @@
         </div>
     </nav>
     <main class="row">
-        {% with messages = get_flashed_messages() %}
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% with warnings = get_flashed_messages(with_categories=true, category_filter=["warning"]) %}
+        {% with errors = get_flashed_messages(with_categories=true, category_filter=["error"]) %}
+        {% with info = get_flashed_messages(with_categories=true, category_filter=["info"]) %}
+        {% with successes = get_flashed_messages(with_categories=true, category_filter=["success"]) %}
         {% if messages %}
         <ul class="flashes">
-            {% for message in messages %}
-            <li>{{ message }}</li>
+            {% for category, warning in warnings %}
+            <li class="{{ category }}"><i class="fa fa-exclamation-triangle" aria-hidden="true"></i><p>{{ warning }}</p><i class="fa fa-times flash-element" aria-hidden="true"></i></li>
+            {% endfor %}
+            {% for category, error in errors %}
+            <li class="{{ category }}"><i class="fa fa-exclamation-circle" aria-hidden="true"></i><p>{{ error }}</p><i class="fa fa-times flash-element" aria-hidden="true"></i></li>
+            {% endfor %}
+            {% for category, i in info %}
+            <li class="{{ category }}"><i class="fa fa-info-circle" aria-hidden="true"></i><p>{{ i }}</p><i class="fa fa-times flash-element" aria-hidden="true"></i></li>
+            {% endfor %}
+            {% for category, success in successes %}
+            <li class="{{ category }}"><i class="fa fa-check-circle" aria-hidden="true"></i><p>{{ success }}</p><i class="fa fa-times flash-element" aria-hidden="true"></i></li>
             {% endfor %}
         </ul>
         {% endif %}
+        {% endwith %}
+        {% endwith %}
+        {% endwith %}
+        {% endwith %}
         {% endwith %}
         <aside class="side-menu col-s-12 col-md-3">
             <h3>Menu</h3>

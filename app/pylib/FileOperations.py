@@ -10,7 +10,7 @@ def delete_file(path="", year="", base_dir=""):
     :base_dir (str): Base directory from app.config that correspondes to the route.
 
     '''
-    if path == "":
+    if path == "" or getFileName(path) == "":
         return 1
     if year=="":
         p = os.path.join(base_dir, getFileName(path))
@@ -22,3 +22,12 @@ def delete_file(path="", year="", base_dir=""):
         return 1
     return 0
     
+def find_file(chdir=os.getcwd(), filename=""):
+    if filename=="":
+        return ""
+    elif chdir=="":
+        return ""
+    else:
+        for f in os.listdir(chdir):
+            if filename.lower() in f.lower():
+                return f
