@@ -22,3 +22,5 @@ app/static/uploads/images/posts/*.*
 .vscode\
 .vscode\*
 server.py
+/venv
+\venv
