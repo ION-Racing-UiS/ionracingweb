@@ -6,6 +6,7 @@ from flask_limiter import Limiter
 from flask_limiter.util import get_remote_address
 from flask_ldap import LDAP, login_required
 from flask_login import LoginManager
+from flask_uploads import UploadSet, configure_uploads, IMAGES, patch_request_class
 from pyad import pyad, aduser, adobject, adgroup, addomain, adcontainer, adcomputer, adquery, adsearch
 from app.pylib import win_user
 import datetime
@@ -27,6 +28,9 @@ ldap = LDAP(app)
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = "login"
+carimages = UploadSet('carimages', IMAGES, default_dest=lambda  x: 'SecretKey')
+configure_uploads(app, carimages)
+patch_request_class(app)
 
 today = datetime.date.today()
 month = ""

@@ -1,0 +1,27 @@
+{% extends "admin_layout.html" %}
+{% block title %} | Mange Groups{% endblock %}
+{% block content %}
+<div class="row split">
+    <div class="sub-menu">
+        <div class="header">
+
+        </div>
+        <div class="team-list">
+            <div class="team-list team-list-head">
+                <div class="team-list-head-row">
+                    <p>Group</p>
+                </div>
+            </div>
+            <div class="team-list team-list-body">
+                {% for group in groups %}
+                    <a href="/admin_groups/{{ group.get_attribute('cn', False) }}" class="team">{{ group.get_attribute('cn', False) }}</a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div id="view">
+        {% block view %}
+        {% endblock %}
+    </div>
+</div>
+{% endblock %}

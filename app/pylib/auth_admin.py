@@ -14,9 +14,28 @@ def get_ldap_connection():
     return conn
 
 def is_web_admin(user):
+    '''
+    Checks if a user object from AD is part of the `web admin` group.\n
+    Arguments:\n
+    :param user: User object to check. <type:pyad.aduser.ADUser>
+    '''
     if type(user) is not pyad.aduser.ADUser:
         return False
     g = adgroup.ADGroup.from_cn("web admin").get_members()
+    for m in g:
+        if user.guid_str == m.guid_str and user.dn == m.dn:
+            return True
+    return False
+
+def is_admin(user):
+    '''
+    Checks if a user object from AD is part of the `Administrators` group.\n
+    Arguments:\n
+    :param user: User object to check. <type:pyad.aduser.ADUser>
+    '''
+    if type(user) is not pyad.aduser.ADUser:
+        return False
+    g = adgroup.ADGroup.from_cn("Administrators").get_members()
     for m in g:
         if user.guid_str == m.guid_str and user.dn == m.dn:
             return True
@@ -44,6 +63,8 @@ class Admin(UserMixin):
         self.u = aduser.ADUser.from_cn(username)
         self.guid = self.u.get_attribute('objectGUID')[0].tobytes().hex()
         self.username = self.u.get_attribute('cn')[0]
+        self.is_web_admin = is_web_admin(self.u)
+        self.is_admin = is_admin(self.u)
 
     def __repr__(self):
         '''
@@ -69,7 +90,7 @@ class Admin(UserMixin):
         ad_settings = get_ad_settings()
         pyad.set_defaults(ldap_server=ad_settings['ldap_server'], username=ad_settings['username'], password=ad_settings['password'])
         u = aduser.ADUser.from_cn(username)
-        if is_web_admin(u):
+        if is_web_admin(u) or is_admin(u):
             dn = u.dn
             conn = get_ldap_connection()
             conn.simple_bind_s(
@@ -78,3 +99,17 @@ class Admin(UserMixin):
             )
         else:
             raise ldap.INVALID_CREDENTIALS("You do not have the required privileges required to access this area.")
+
+    def get_id(self):
+        '''
+        Return \'cn\' of a User.
+        '''
+        return str(self.username)
+
+    def get(id):
+        '''
+        Return a user by username\n
+        Arguments:\n
+        :param id: Username of the user <type:str>
+        '''
+        return User(username=id)
