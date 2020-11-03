@@ -1,0 +1,398 @@
+td, th {
+    text-align: center;
+}
+
+div.header {
+    width: 100%;
+    background-color: whitesmoke;
+    display: flex;
+}
+
+div.header * {
+    width: 50%;
+    text-align: center;
+    padding: 0;
+    margin: 0;
+    height: 30px;
+}
+
+div.header *:hover {
+    border-bottom: 1px solid blue;
+    background-color: gray;
+}
+
+div.car-list {
+    width: 100%;
+}
+
+div.car-list-head-row {
+    font-weight: bold;
+    background-color: darkslateblue;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+}
+
+div.car-list-head {
+    padding: 0;
+    margin: 0;
+}
+
+div.car-list-head-row * {
+    display: inline-block;
+    width: 10%;
+    border-right: solid 1px white;
+    height: 40px;
+    padding: 5px 0 5px 0;
+    margin: 0;
+    vertical-align: middle;
+}
+
+div.car-list-head-row *:last-child {
+    border-right: none;
+}
+
+div.car-list-body {
+    background-color: darkslategray;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+}
+
+div.car-list-body > a, div.car-list-body > div {
+    display: block;
+    transition-property: background-color;
+    transition-delay: 75ms;
+    transition-duration: 350ms;
+    transition-timing-function: ease-in-out;
+}
+
+div.car-list-body > a:nth-child(2n), div.car-list-body > div:nth-child(2n) {
+    background-color: rgb(112, 112, 112);
+}
+
+div.car-list-body > a * , div.car-list-body > div * {
+    display: inline-block;
+    width: 10%;
+    border-right: solid 1px white;
+    color: white;
+    height: 100%;
+}
+
+div.car-list-body > a:hover, div.car-list-body > div:hover, div > table > tbody > tr:hover, div > table > tbody > tr.post:hover, div > table > tbody > tr.member:hover, div > table > tbody > tr:last-child:hover {
+    background-color: black;
+    cursor: pointer;
+}
+
+div.car-list-body > a *:last-child, div.car-list-body > div *:last-child {
+    border-right: none;
+}
+
+#content {
+    margin: 0;
+    padding: 0;
+}
+
+form > img {
+    width: 100%;
+}
+
+.allign-middle {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+div.selected {
+    background-color: darkred !important;
+}
+
+div.sub-menu {
+    text-align: center;
+    background-color: #111;
+    border-right: 2px inset white;
+    border-left: 2px inset white;
+    text-transform: capitalize;
+    width: 8ch;
+}
+
+div.row.split > div.sub-menu {
+    width: auto;
+}
+
+div.team-list-head {
+    background-color: #646464;
+    margin: 0;
+    padding: 0;
+}
+
+div.team-list-body {
+    margin: 0;
+    padding: 0;
+}
+
+div.team-list-body > p, div.team-list-body > a {
+    transition-delay: 50ms;
+    transition-duration: 150ms;
+    transition-property: background-color;
+    transition-timing-function: ease-in-out;
+    background-color: #222;
+    margin:0;
+    padding: 5px;
+    color: #FFFFFF;
+    display: block;
+    text-decoration: none;
+}
+
+div.team-list-body > p:nth-child(2n), div.team-list-body > a:nth-child(2n) {
+    background-color: #353535;
+}
+
+div.team-list-body > p:hover, div.team-list-body > a:hover {
+    background-color: #050505;
+    cursor: pointer;
+}
+
+div#view {
+    text-align: center;
+    width: calc(100% - 8ch);
+    vertical-align: middle;
+}
+
+div > h2 {
+    background-color: darkslateblue;
+    margin: 0;
+    /*border-bottom: 2px solid white;*/
+}
+
+div > table {
+    width: 100%;
+}
+
+div > table > thead > tr:first-child {
+    background-color: darkslateblue;
+    border-top: 2px solid white;
+    border-bottom: 2px solid white;
+}
+
+div > table > tbody > tr:nth-child(2n) {
+    background-color: #222;
+}
+
+div > table > thead > tr > th {
+    border-right: 2px solid white;
+}
+
+div > table > thead > tr > th:last-child {
+    border-right: none;
+}
+
+div > table > tbody > tr > td {
+    border-right: 2px solid white;
+}
+
+div > table > tbody > tr:hover > td {
+    background-color: black;
+}
+
+div > table > tbody > tr > td:last-child {
+    border-right: none;
+}
+
+div > table > tbody > tr#r-row:last-child {
+    background-color: black;
+    cursor: default;
+}
+
+div > table > tbody > tr:last-child> td:nth-child(2) {
+    position: relative;
+}
+
+div > table > tbody > tr > td > img {
+    max-height: 125px;
+}
+
+div > table > tbody > tr {
+    transition-property: background-color;
+    transition-delay: 25ms;
+    transition-duration: 175ms;
+    transition-timing-function: ease-in-out;
+}
+
+div > table > tbody > tr.selected {
+    background-color: darkred !important;
+}
+
+div > table > tbody > tr > td > p {
+    display: inline-block;
+    vertical-align: middle;
+    margin: auto;
+}
+
+td > input[type=text] {
+    width: 100%;
+}
+
+td > button[type=button] {
+    width: 100%;
+}
+
+.autocomplete-items {
+    position: absolute;
+    border: 1px solid #d4d4d4;
+    border-bottom: none;
+    border-top: none;
+    z-index: 99;
+    /*position the autocomplete items to be the same width as the container:*/
+    top: 100%;
+    left: 0;
+    right: 0;
+}
+
+.autocomplete-items div {
+    padding: 10px;
+    cursor: pointer;
+    background-color: #151515;
+    border-bottom: 1px solid #d4d4d4;
+    transition-delay: 25ms;
+    transition-duration: 100ms;
+    transition-timing-function: ease-in-out;
+    transition-property: background-color;
+}
+
+.autocomplete-items div:hover {
+    /*when hovering an item:*/
+    background-color: #444;
+}
+
+.autocomplete-active {
+    /*when navigating through the items using the arrow keys:*/
+    background-color: DodgerBlue !important;
+    color: #000;
+}
+
+div.row.split {
+    flex-wrap: nowrap;
+}
+
+input[type=text]#search {
+    position: relative;
+}
+
+#content > h2 {
+    text-align: center;
+}
+
+#content > div.img > img {
+    text-align: center;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    max-height: 10%;
+    height: 300px;
+}
+
+#content > div.img {
+    position: relative;
+    width: fit-content;
+    width: -webkit-fit-content;
+    width: -moz-fit-content;
+    margin: 10px auto;
+    border: outset 5px black;
+    border-radius: 5px;
+}
+
+div.overlay {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 100;
+    background-color: rgba(0, 0, 0, 0.0);
+    transition-property: background-color;
+    transition-delay: 25ms;
+    transition-duration: 175ms;
+    transition-timing-function: ease-in-out;
+}
+
+div.overlay:hover {
+    background-color: rgba(0, 0, 0, 0.0);
+}
+
+div.overlay-color {
+    background-color: rgba(0, 0, 0, 0.75);
+}
+
+div.disabled {
+    background-image: url("/static/images/disabled.png");
+    background-size: contain;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+
+div.disabled:hover {
+    background-image: none;
+}
+
+#content > form {
+    width: 90%;
+    margin: 10px auto 0 auto;
+}
+
+#content > form > input[type=submit] {
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    width: 75%;
+    display: block;
+    box-shadow: 3px 3px 2px 2px black;
+    margin-bottom: 2px;
+}
+
+#content > form > div > input[type=text], #content > form > div > select, div#content > form  textarea.form-control {
+    box-shadow: 4px 4px 2px 2px black;
+}
+
+td#selection > p {
+    display: block !important;
+    cursor: default;
+}
+
+div#view > table > tbody > tr.member {
+    cursor: pointer;
+}
+
+.clickable-row {
+    cursor: pointer;
+}
+
+div.page-header > h2 {
+    display: block;
+    text-align: center;
+    margin: 0 auto;
+}
+
+div.page-header {
+    background-color: darkslateblue;
+    text-align: center;
+    border-bottom: 2px solid white;
+    width: 100%;
+}
+
+td > p {
+    padding-right: 5px;
+    border-right: 1px solid white;
+}
+
+td > p:last-child {
+    padding: 0;
+    border: none;
+}
+
+tr.selected * {
+    background-color: darkred !important;
+}

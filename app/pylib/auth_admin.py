@@ -99,3 +99,17 @@ class Admin(UserMixin):
             )
         else:
             raise ldap.INVALID_CREDENTIALS("You do not have the required privileges required to access this area.")
+
+    def get_id(self):
+        '''
+        Return \'cn\' of a User.
+        '''
+        return str(self.username)
+
+    def get(id):
+        '''
+        Return a user by username\n
+        Arguments:\n
+        :param id: Username of the user <type:str>
+        '''
+        return User(username=id)

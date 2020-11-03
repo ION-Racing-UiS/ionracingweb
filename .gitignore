@@ -12,7 +12,15 @@ app/logs/*.*
 app\logs\*.*
 *.bat
 *.pem
-app/pylib/ad_settings.py
 ionracing.py
+app/static/uploads/images/members/*.*
+app/static/uploads/images/members/*/
+app/static/uploads/images/cars/*.*
+app/static/uploads/images/posts/*.*
+.vscode/
+.vscode/*
+.vscode\
+.vscode\*
+server.py
 /venv
 \venv

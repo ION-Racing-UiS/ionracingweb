@@ -11,34 +11,15 @@
             <p>This form will make domain user creation easier. All fields is required to make an account.</p>
         </div>
         <form id="user_reg" name="user_reg" method="POST" action="/user_reg/register" class="col-xs-12 col-md-12">
-            {{ form.csrf_token }}
-            <div class="form-group">
-                <div class="col-xs-12">
-                    {{ wtf.form_field(form.department) }}
-                </div>
-                <div class="col-xs-12">
-                    {{ wtf.form_field(form.role) }}
-                </div>
-            </div>
             <div class="form-group">
                 <div class="col-xs-12"><br />
-                    {{ wtf.form_field(form.first_name) }}<br />
-                    {{ wtf.form_field(form.last_name) }}<br />
-                    {{ wtf.form_field(form.user_name) }}<br />
-                    {{ wtf.form_field(form.full_name) }}<br />
-                    {{ wtf.form_field(form.email) }}<br />
-                    {{ wtf.form_field(form.password) }}<br />
-                    {{ wtf.form_field(form.confirm_password) }}
-                </div>
-            </div>
-            <div class="form-group">
-                <div class="col-xs-12">
-                    <div class="col-xs-12">
-                        {{ wtf.form_field(form.terms) }}
-                        <span>I agree to the terms & conditions described <a href="/terms" target="_blank">here</a>.
-                        </span>
-                    </div>
-                    {{ wtf.form_field(form.submit) }}
+                    {% for field in form %}
+                    {% if field.id != "csrf_token" %}
+                    {{ wtf.form_field(field) }}
+                    {% else %}
+                    {{ field }}
+                    {% endif %}
+                    {% endfor %}
                 </div>
             </div>
         </form>

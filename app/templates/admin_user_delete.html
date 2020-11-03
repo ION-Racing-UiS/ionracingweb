@@ -1,0 +1,37 @@
+{% extends "admin_user.html" %}
+{% block title %} | Delete User(s){% endblock %}
+{% block view %}
+<h2>Remove User(s)</h2>
+<table>
+    <thead>
+        <tr>
+            <th>CN</th>
+            <th>givenName</th>
+            <th>sn</th>
+            <th>OU</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for u in users %}
+            <tr class="member">
+                <td>{{ u.get_attribute('cn', False, 'LDAP') }}</td>
+                <td>{{ u.get_attribute('givenName', False, 'LDAP') }}</td>
+                <td>{{ u.get_attribute('sn', False, 'LDAP') }}</td>
+                <td>{{ u.parent_container.get_attribute('cn', False, 'LDAP') }}</td>
+            </tr>
+        {% endfor %}
+            <tr id="r-row">
+                <td colspan="0">
+                    <span id="removeMembersLabel" style="display: block;">Remove member</span>
+                </td>
+                <td id="selection" colspan="2">
+                    
+                </td>
+                <td colspan="0">
+                    <button id="removeMembers" type="button" style="display: block;">Remove</button>
+                </td>
+            </tr>
+    </tbody>
+</table>
+<input id="selected" style="display: none;" name="selected" type="hidden">
+{% endblock %}

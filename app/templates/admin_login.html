@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block title %} | Admin Login{% endblock %}
+{% block content %}
+<!-- User registration form -->
+<div class="container">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='styles/contact.css') }}" />
+    <div class="row">
+        <div class="col-xs-12 col-md-12">
+            <h1>Admin login.</h1>
+            <p>Please use your Windows Active Directory User credentials to login as admin.</p>
+        </div>
+        <form id="user_reg" name="user_reg" method="POST" action="/admin" class="col-xs-12 col-md-12">
+            {{ form.csrf_token }}
+            <div class="form-group">
+                <div class="col-xs-12"><br />
+                    {{ wtf.form_field(form.username) }}<br />
+                    {{ wtf.form_field(form.password) }}
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-xs-12">
+                    {{ wtf.form_field(form.login) }}
+                </div>
+            </div>
+        </form>
+    </div>
+</div>
+{% endblock %}

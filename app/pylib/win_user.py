@@ -6,6 +6,7 @@ import os
 import re
 from pathlib import Path
 import datetime
+import json
 
 ad_settings = get_ad_settings()
 
@@ -14,12 +15,14 @@ username = ad_settings["username"] # Account operations account
 password = ad_settings["password"] # Password for the account above
 topLevelDomain = ad_settings["topLevelDomain"] # Top level domain name
 homeDrive = ad_settings["homeDrive"] # User home drive letter
-homeProfileDirectoryPrefix = ad_settings["homeProfileDirectoryPrefix"] # UNC Share path for profiles
-homeDirectorySuffix = ad_settings["homeDirectorySuffix"] # Suffix to access the profile directory from homeDrive
+profileDirectoryPrefix = ad_settings["profileDirectoryPrefix"] # UNC Share path for profiles
+homeDirectoryPrefix = ad_settings["homeDirectoryPrefix"] # Suffix to access the profile directory from homeDrive
 scriptPath = ad_settings["scriptPath"] # path to script in \\<servername>\sysvol\<topLevelDomain>\scripts
 physicalDeliveryOfficeName = ad_settings["physicalDeliveryOfficeName"] # Office name
 company = ad_settings["company"] # Official Company name
 userdomain = ad_settings["userdomain"] # Just your domain name, ie. google, not google.com
+base_ou = ad_settings["base_ou"]
+usergroup = ad_settings["usergroup"]
 domainsuffix = ad_settings["domainsuffix"] # What top level domain you have, ie. .com, .net, .eu, dk, .no, .se
 ous = ad_settings["ous"] # Organizational units list for the wtf form <type:list> of <type:tuple> or <type:str> and <type:str>
 path = ad_settings["path"] # Absolute path to this file within the filesystem.
@@ -55,22 +58,28 @@ def create_user_settings(user_input):
         dept = dept[0].upper() + dept[1:].lower()
     sAMAccountName = get_username(fname, lname)
     userPrincipalName = get_userPrincipalName(sAMAccountName)
+    year = u_group.get_attribute("cn", False)
     return {
         'company': company,
-        'department': dept,
-        'description': role,
+        'department': json.dumps({year: dept}),
+        'description': json.dumps({year: role}),
         'displayName': get_name(fname, lname),
         'givenName': capitalize(fname),
-        'homeDirectory': str(homeProfileDirectoryPrefix + sAMAccountName + homeDirectorySuffix),
+        'homeDirectory': str(homeDirectoryPrefix + sAMAccountName),
         'homeDrive': homeDrive,
         'mail': email,
         'physicalDeliveryOfficeName': physicalDeliveryOfficeName,
-        'profilePath': str(homeProfileDirectoryPrefix + sAMAccountName),
+        'profilePath': str(profileDirectoryPrefix + sAMAccountName),
         'sn': lname,
         'scriptPath': scriptPath,
         'userPrincipalName': userPrincipalName,
         'sAMAccountName': sAMAccountName,
-        'title': dept,
+        'title': json.dumps({year: role}),
+        'c': user_input["c"],
+        'st': user_input["st"],
+        'postalCode': user_input["postalCode"],
+        'l': user_input["l"],
+        'streetAddress': user_input["streetAddress"]
     } # 'cn' and 'name' keys have been removed as they cause exceptions when being updated.
 
 def create_user(user_settings, password): # Deprecated function
@@ -293,6 +302,10 @@ def name_check(name):
     :param name: Name of new user <type:str>
     '''
     usernames = loop_addomain()
+    g = adgroup.ADGroup.from_cn(usergroup).get_members()
+    for user in g:
+        if user.get_attribute("cn", False).lower() == name.lower():
+            return False
     #print(str(usernames))
     if name in usernames:
         return False
@@ -340,5 +353,8 @@ if __name__=="__main__":
         #print(str(user))
         group = adgroup.ADGroup.from_cn(user_groups)
         group.add_members([user])
+    elif len(os.sys.argv) == 2:
+        res = name_check(os.sys.argv[-1])
+        print("Username: %s is available %b" % (os.sys.argv[-1], res))
     else:
         print("Usage: win_user.py \"First_name Last_name\" \"Password\" \"Department\" \"Role\" \"Mail\"\nOr: win_user.py \"First_name Last_name\" \"Department\"")

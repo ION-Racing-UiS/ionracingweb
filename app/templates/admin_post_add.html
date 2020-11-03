@@ -1,0 +1,15 @@
+{% extends "admin_layout.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block title %} | Create Post{% endblock %}
+{% block content %}
+<h2>Create post</h2>
+<form action="/admin_post/add" method="POST" enctype="multipart/form-data">
+    {% for field in form %}
+    {% if field.id != "csrf_token" and field.id != "imgh" and field.id != "bgimgh" and field.id !="pid" %}
+    {{ wtf.form_field(field) }}
+    {% else %}
+    {{ field }}
+    {% endif %}
+    {% endfor %}
+</form>
+{% endblock %}

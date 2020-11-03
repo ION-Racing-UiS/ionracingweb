@@ -1,0 +1,30 @@
+{% extends "admin_layout.html" %}
+{% block title %} | Manage Posts{% endblock %}
+{% block content %}
+<div id="view" class="row" style="width: auto;">
+    <div class="header">
+        <a href="/admin_post/add"><i class="fa fa-plus-square" aria-hidden="true"></i></a>
+        <a href="/admin_post/delete"><i class="fa fa-trash" aria-hidden="true"></i></a>
+    </div>
+    <table>
+        <thead>
+            <tr>
+                <th>PID</th>
+                <th>Author</th>
+                <th>Title</th>
+                <th>Datetime</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for pid, post in posts.items() %}
+            <tr class="clickable-row" data-href="/admin_post/{{ pid }}">
+                <td>{{ pid }}</td>
+                <td>{{ post['author'] }}</td>
+                <td>{{ post['title'] }}</td>
+                <td>{{ post['datetime'] }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

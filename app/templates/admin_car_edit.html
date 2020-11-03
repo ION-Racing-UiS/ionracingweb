@@ -1,0 +1,36 @@
+{% extends "admin_layout.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block title %} | Edit Car{% endblock %}
+{% block content %}
+<!-- Edit car form -->
+<div class="container">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/contact.css') }}" />
+        <div class="row">
+            <div class="col-xs-12 col-md-12">
+                <h1>Edit car</h1>
+                <p>The form will edit a car int the database for our webpages.</p>
+            </div>
+            <form action="/admin_car/{{ form.cid.data }}" method="POST" enctype="multipart/form-data" id="car_add" class="col-xs-12 col-md-12">
+                {{ form.csrf_token }}
+                {% if img is defined %}
+                <img src="{{ url_for('static', filename=img) }}" alt="{{ form.name.data }}" />
+                {% endif %}
+                <div class="form-group">
+                    {{ form.cid }}<br />
+                    {{ wtf.form_field(form.name) }}<br />
+                    {{ wtf.form_field(form.year) }}<br />
+                    {{ wtf.form_field(form.number) }}<br />
+                    {{ wtf.form_field(form.mass) }}<br />
+                    {{ wtf.form_field(form.engine) }}<br />
+                    {{ wtf.form_field(form.output) }}<br />
+                    {{ wtf.form_field(form.torque) }}<br />
+                    {{ wtf.form_field(form.img) }}<br />
+                </div>
+                <div class="form-group">
+                    {{ wtf.form_field(form.confirm) }}
+                    {{ wtf.form_field(form.submit) }}
+                </div>
+            </form>
+        </div>
+</div>
+{% endblock %}

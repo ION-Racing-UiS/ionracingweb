@@ -1,0 +1,28 @@
+{% extends "admin_layout.html" %}
+{% block title %} | Manage Teams{% endblock %}
+{% block content %}
+<div class="row">
+    <div class="sub-menu">
+        <div class="header">
+            <a href="/admin_team/add"><i class="fa fa-plus-square" aria-hidden="true"></i></a>
+            <a href="/admin_team/delete"><i class="fa fa-trash" aria-hidden="true"></i></a>
+        </div>
+        <div class="team-list">
+            <div class="team-list team-list-head">
+                <div class="team-list-head-row">
+                    <p>Year</p>
+                </div>
+            </div>
+            <div class="team-list team-list-body">
+                {% for team in teams %}
+                    <p class="team">{{ team }}</p>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div id="view">
+        {% block view %}
+        {% endblock %}
+    </div>
+</div>
+{% endblock %}

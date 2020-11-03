@@ -1,0 +1,46 @@
+{% extends "admin_groups.html" %}
+{% block title %} | Manage {{ group.get_attribute('cn', False) }}{% endblock %}
+{% block view %}
+<h2>Group {{ group.get_attribute('cn', False) }}</h2>
+<table>
+    <thead>
+        <tr>
+            <th>CN</th>
+            <th>givenName</th>
+            <th>SN</th>
+            <th>MemberOf</th>
+            <th>Disabled</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for member in members %}
+        <tr class="member">
+            <td>{{ member.get_attribute('cn', False) }}</td>
+            <td>{{ member.get_attribute('givenName', False) }}</td>
+            <td>{{ member.get_attribute('sn', False) }}</td>
+            <td>
+                {% for g in member.get_attribute('memberOf', True)|sort(reverse=True) %}
+                <p>{{ g.split(",")[0].strip("CN=") }}</p>
+                {% endfor %}
+            </td>
+            <td>{{ member.get_user_account_control_settings()["ACCOUNTDISABLE"] }}</td>
+        </tr>
+        {% endfor %}
+        <tr id="r-row">
+            <td>
+                <span id="addMemberLabel" style="display: block;">Add member:</span>
+                <span id="removeMembersLabel" style="display: none;">Remover member</span>
+            </td>
+            <td colspan="3">
+                <input type="text" name="search" id="search" style="display: block;" placeholder="Search" autocomplete="off">
+                <input type="hidden" name="selected" id="selected" style="display: none;">
+            </td>
+            <td>
+                <button id="addMember" type="button" style="display: block;">Add</button>
+                <button id="removeMembers" type="button" style="display: none;">Remove</button>
+            </td>
+        </tr>
+    </tbody>
+</table>
+<script type="text/javascript">autocomplete(document.getElementById("search"), usernames);</script>
+{% endblock %}

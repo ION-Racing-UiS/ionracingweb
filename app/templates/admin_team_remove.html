@@ -1,0 +1,17 @@
+{% extends "admin_team.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block view %}
+<h2>Delete Team</h2>
+<form action="/admin_team/delete" method="post">
+    {{ form.csrf_token() }}
+    <div class="form-group">
+        {% for field in form %}
+        {% if field.id=="csrf_token" %}
+        {{ field }}
+        {% else %}
+        {{ wtf.form_field(field) }}
+        {% endif %}
+        {% endfor %}
+    </div>
+</form>
+{% endblock %}

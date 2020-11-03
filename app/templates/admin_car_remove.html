@@ -1,0 +1,46 @@
+{% extends "admin_layout.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block title %} | Delete Cars{% endblock %}
+{% block content %}
+<div id="" class="">
+    <div class="row page-header">
+        <h2>Delete Car(s)</h2>
+    </div>
+    <div class="row">
+        <div class="car-list">
+            <div class="car-list car-list-head">
+                <div class="car-list-head-row">
+                    <p>ID</p>
+                    <p>Year</p>
+                    <p>Name</p>
+                    <p>Number</p>
+                    <p>Image</p>
+                </div>
+            </div>
+            <div class="car-list car-list-body">
+                {% for car in cars.keys() %}
+                <div class="car">
+                    <p>{{ cars[car]['id'] }}</p>
+                    <p>{{ cars[car]['year'] }}</p>
+                    <p>{{ cars[car]['name'] }}</p>
+                    <p>{{ cars[car]['number'] }}</p>
+                    {% if cars[car]['img'] %}
+                    <img src="{{ url_for('static', filename=cars[car]['img']) }}" alt="{{ cars[car]['name'] }}" />
+                    {% else %}
+                    <img src="" alt="{{ cars[car]['name'] }}" />
+                    {% endif %}
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <form action="/admin_car/remove" method="POST" class="allign-middle">
+            {{ form.csrf_token }}
+            {{ form.cars }}
+            {{ wtf.form_field(form.confirm) }}<br />
+            {{ wtf.form_field(form.submit) }}
+        </form>
+    </div>
+</div>
+{% endblock %}

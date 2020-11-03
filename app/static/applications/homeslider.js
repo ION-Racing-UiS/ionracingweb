@@ -19,7 +19,7 @@ function showslide(n) {
     var speed = document.getElementById("speed");
     var weight = document.getElementById("weight");
     var year = document.getElementById("year");
-    var km_h = '<sup class="supp">km/h</sup>'
+    var km_h = '<sup class="supp">Nm</sup>'
     var kg = '<sup class="supp">kg</sup>'
 
     var slides = document.getElementsByClassName("carslides");
@@ -92,7 +92,7 @@ function CreateMenuAndSlider() {
         carslides.classList.add("carslides")
         img = document.createElement("img")
         img.classList.add("carimg")
-        img.src = "/static/images/" + ele[1]["img"]
+        img.src = "/static/" + ele[1]["img"]
 
 
         carslides.appendChild(img)

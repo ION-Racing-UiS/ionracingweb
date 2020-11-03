@@ -1,0 +1,15 @@
+{% extends "admin_layout.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block title %} | Create user{% endblock %}
+{% block content %}
+<h2>Create disabled user account</h2>
+<form action="/admin_user/add" method="POST" >
+    {% for field in form %}
+    {% if field.id != "imgPath" and field.id != "csrf_token" %}
+    {{ wtf.form_field(field) }}
+    {% else %}
+    {{ field }}
+    {% endif %}
+    {% endfor %}
+</form>
+{% endblock %}

@@ -1,0 +1,32 @@
+{% extends "admin_layout.html" %}
+{% block title %} | Manage Users{% endblock %}
+{% block content %}
+<div style="width: 100%; position: relative;">
+    <input type="text" placeholder="Search" id="search" autocomplete="off" name="search" style="display: block; width: 100%;">
+</div>
+<div class="row split">
+    <div class="sub-menu">
+        <div class="header">
+            <a href="/admin_user/add"><i class="fa fa-plus-square" aria-hidden="true"></i></a>
+            <a href="/admin_user/remove"><i class="fa fa-trash" aria-hidden="true"></i></a>
+        </div>
+        <div class="team-list">
+            <div class="team-list team-list-head">
+                <div class="team-list-head-row">
+                    <p>Department</p>
+                </div>
+            </div>
+            <div class="team-list team-list-body">
+                {% for department in departments %}
+                    <a href="/admin_user/{{ department.cn }}" class="team">{{ department.cn }}</a>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <div id="view">
+        {% block view %}
+        {% endblock %}
+    </div>
+</div>
+<script type="text/javascript">autocomplete(document.getElementById("search"), usernames);</script>
+{% endblock %}

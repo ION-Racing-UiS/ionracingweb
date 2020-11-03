@@ -1,0 +1,28 @@
+{% extends "admin_layout.html" %}
+{% import "bootstrap/wtf.html" as wtf %}
+{% block title %} | Manage Post{% endblock %}
+{% block content %}
+<h2>Edit post {{ post['title'] }}</h2>
+<div class="img">
+    <div id="overlay" class="overlay"></div>
+{% if form.bgimgh.data %}
+<img id="bg_img" src="{{ url_for('static', filename=form.bgimgh.data) }}" alt="{{ post['title'] }}">
+{% else %}
+<img id="member_img" src="" alt="{{ post['title'] }}">
+{% endif %}
+{% if form.imgh.data %}
+<img id="bg_img" src="{{ url_for('static', filename=form.imgh.data) }}" alt="{{ post['title'] }}">
+{% else %}
+<img id="member_img" src="" alt="{{ post['title'] }}">
+{% endif %}
+</div>
+<form action="/admin_post/{{ post['pid'] }}" method="POST" enctype="multipart/form-data">
+    {% for field in form %}
+    {% if field.id != "csrf_token" and field.id != "imgh" and field.id != "bgimgh" and field.id != "pid" %}
+    {{ wtf.form_field(field) }}
+    {% else %}
+    {{ field }}
+    {% endif %}
+    {% endfor %}
+</form>
+{% endblock %}
