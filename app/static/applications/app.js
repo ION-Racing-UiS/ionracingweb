@@ -1,6 +1,7 @@
 /* global $ */
 var usernames = [];
 var team_id = "";
+let user_name = "";
 // Init function
 $(document).ready(function () {
     var resizeBg = function () {
@@ -222,6 +223,7 @@ $(document).ready(function () {
             })
         });
     } else if (document.title === "ION Racing | Manage Groups" || document.title === "ION Racing | Manage Admins" || document.title === "ION Racing | Manage Web Admin" || (document.title.includes("ION Racing | Manage " && document.title.includes("Users")))) {
+        team_id = window.location.pathname.split("/")[2].replace("%20", " ");
         $.ajax({
             url: "/query/cn/all",
             type: "POST",
@@ -229,6 +231,14 @@ $(document).ready(function () {
                 for (let k in resp) {
                     usernames[usernames.length] = resp[k];
                 }
+            }
+        });
+        $.ajax({
+            url: "/username",
+            type: "POST",
+            async: true,
+            success: function(resp) {
+                user_name = resp;
             }
         });
         let addMemberLabel = document.getElementById("addMemberLabel");
@@ -270,6 +280,90 @@ $(document).ready(function () {
                 }
             });
         }
+        addMember.addEventListener("click", function() {
+            if (search.value !== "") {
+                $.ajax({
+                    url: "/group/add/" + team_id + "/" + search.value,
+                    type: "POST",
+                    success: function(resp) {
+                        if (usernames.includes(resp)) {
+                            search.value = "";
+                        }
+                    },
+                    complete: function() {
+                        window.location.href = window.location.pathname.replace("/" + team_id.replace(" ", "%20"), "");
+                    }
+                })
+            }
+        });
+        removeMembers.addEventListener("click", function() {
+            let selected = document.getElementById("selected");
+            let s = "";
+            if (selected.value[selected.value.length-1] === ",") {
+                s = selected.value.substring(0, selected.value.length-1);
+            } else {
+                s = selected.value;
+            }
+            let c = false;
+            if ($("#selected").val().includes(user_name)) {
+                c = confirm("You are about to remove yourself from this group. Are you sure?");
+            } else {c = true;}
+            let d = {"username": s};
+            if (c) {
+                $.ajax({
+                    url: "/group/remove/" + team_id,
+                    type: "POST",
+                    data: d,
+                    dataType: "json",
+                    contentType: "application/json; charset=utf-8",
+                    success: function(resp) {
+                        if (resp === "") {
+                            alert("Unable to remove users from the group!");
+                        } else if (resp !== "") {
+                            alert("Removed users: " + resp + " from group: " + team_id);
+                        }
+                    },
+                    complete: function() {
+                        window.location.href = window.location.pathname.replace("/" + team_id.replace(" ", "%20"), "");
+                    }
+                })
+            } else {
+                for (let i = 0; i < members.length; i++) {
+                    let member = members[i];
+                    let selected = document.getElementById("selected");
+                    if (member.classList.contains("selected")) {
+                        member.classList.remove("selected");
+                        removeFromSelection(member.children[0].textContent);
+                        if (selected.value === "") {
+                            // Restore add elements
+                            addMemberLabel.style.display = "block";
+                            removeMemberLabel.style.display = "none";
+                            removeMemberLabel.parentElement.setAttribute("colspan", "0");
+                            search.style.display = "block";
+                            search.parentElement.setAttribute("colspan", "3");
+                            addMember.style.display = "block";
+                            removeMembers.style.display = "none";
+                        }
+                    } /*else {
+                        member.classList.add("selected");
+                        addToSelection(member.children[0].textContent)
+                        if (selected.value !== "") {
+                            // Hide add elements
+                            addMemberLabel.style.display = "none";
+                            removeMemberLabel.style.display = "block";
+                            removeMemberLabel.parentElement.setAttribute("colspan", "3");
+                            search.style.display = "none";
+                            search.parentElement.setAttribute("colspan", "0");
+                            addMember.style.display = "none";
+                            removeMembers.style.display = "block";
+                        }
+                    } */
+                }
+            }
+        })
+        $(".member").click(function() {
+            let c = $(this).children(":first-child");
+        })
     } else if (document.title === "ION Racing | Manage Posts") {
         $(".clickable-row").click(function() {
             window.location = $(this).data("href");

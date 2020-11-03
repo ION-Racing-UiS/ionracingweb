@@ -140,7 +140,7 @@ def admin_check(current_user=current_user):
     :current_user (app.pylib.auth_user.User): `current_user` of the session.\n
     admin_check(`current_user`) -> bool
     '''
-    if not current_user.is_web_admin or not current_user.is_admin:
+    if not current_user.is_web_admin and not current_user.is_admin:
         flash("You are not authorized to access this page", 'warning')
         return True
     user_agent = request.user_agent
@@ -989,10 +989,15 @@ def group(action, to_from):
             for a in attr:
                 if a.split(':')[0] == str(to_from):
                     user.remove_from_attribute("wbemPath", a)
+                    if delete_file(path=StringTools.getFileName(a.split(':')[-1]), year=str(to_from), base_dir=app.config["MEMBER_IMAGES"]):
+                        flash("Unable to delete image %s" % a.split(':')[-1], 'error')
             keys = ["department", "description", "title"]
             for k in keys:
                 a = json.loads(user.get_attribute(k, False))
-                a.pop(str(to_from))
+                try:
+                    a.pop(str(to_from))
+                except KeyError as e:
+                    pass
                 user.update_attribute(k, json.dumps(a))
     if action.lower() == "remove":
         g.remove_members(u)
@@ -1505,6 +1510,7 @@ def admin_post_delete():
     return render_template("admin_post_delete.html", user=current_user, posts=posts, form=form)
 
 @app.route("/admin_groups")
+@login_required
 def admin_groups():
     if admin_check(current_user):
         return redirect(url_for("appuser_home"))
@@ -1515,6 +1521,7 @@ def admin_groups():
     return render_template("admin_groups.html", user=current_user, groups=groups)
 
 @app.route("/admin_groups/<gn>", methods=["GET", "POST"])
+@login_required
 def admin_group_gn(gn):
     pythoncom.CoInitialize()
     group_names = sorted(["Admins", get_ad_settings()["usergroup"], "Web Admin"])
@@ -1526,6 +1533,11 @@ def admin_group_gn(gn):
     s = SortTeam(members)
     members = s.get_list()
     return render_template("admin_group_gn.html", user=current_user, members=members, group=g, groups=groups)
+
+@app.route("/username", methods=["POST"])
+@login_required
+def username():
+    return current_user.username
 
 @app.route("/test/json", methods=["POST"])
 def test_json():
