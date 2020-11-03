@@ -39,7 +39,7 @@ def get_remote_info(request=request):
     method = request.method # Get request method
     url = request.url # Get the requested url
     return {"ip": ip, "method": method, "url": url}
-
+    
 def get_remote_addr(request=request):
     '''
     Returns the layer 3 address of a remote host.\n
@@ -284,6 +284,10 @@ def home():
         }
     }
     return render_template("home.html", active=0, head_menu=app.config["head_menu"], cars=cars, posts=posts)
+
+@app.route("/sponsor/", methods=["GET", "POST"])
+def sponsor():
+    return render_template("sponsors.html", head_menu=app.config["head_menu"])
 
 @app.route("/user_reg/")
 @app.route("/user_reg/register", methods=["POST"])

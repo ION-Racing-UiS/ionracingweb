@@ -13,6 +13,10 @@ app\logs\*.*
 *.bat
 *.pem
 ionracing.py
+/venv
+\venv
+venv/
+venv\
 app/static/uploads/images/members/*.*
 app/static/uploads/images/members/*/
 app/static/uploads/images/cars/*.*
