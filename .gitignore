@@ -24,3 +24,4 @@ app/static/uploads/images/posts/*.*
 server.py
 /venv
 \venv
+app/pylib/ad_settings.py
