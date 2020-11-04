@@ -92,6 +92,9 @@
   align-items: center;
   cursor: pointer;
   margin-top: 3%;
+  width: fit-content;
+  width: -moz-fit-content;
+  width: -webkit-fit-content;
 }
 
 .down-arrow-container {
@@ -419,6 +422,29 @@
   width: 78%;
   height: 100%;
   min-height: 80vh;
+  display: flex;
+}
+.mainsponsor{
+  display: flex;
+  /* justify-content: center; */
+  align-items: center;
+  position: relative;
+}
+
+.mainsponsortext{
+  padding: 0;
+  margin: 0;
+  width: 50%;
+  height: fit-content;
+  height: -moz-fit-content;
+  height: -webkit-fit-content;
+  margin-left: 7%;
+}
+.mainsponsorimg{
+  width: 30%;
+  align-self: center;
+  position: absolute;
+  right: 6%;
 }
 
 .main{
