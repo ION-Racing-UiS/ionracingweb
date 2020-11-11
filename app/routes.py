@@ -148,6 +148,15 @@ def admin_check(current_user=current_user):
         flash("Admin interface is not available on mobile devices. Sorry you're SOL.", 'info')
         return True
 
+def pyad_default(username, password):
+    pyad.set_defaults(ldap_server=get_ad_settings()["ldap_server"], username=username, password=password)
+    print("!!! Changed PYAD settings to user %s" % username)
+
+def pyad_reset():
+    ad_settings = get_ad_settings()
+    pyad.set_defaults(ldap_server=ad_settings["ldap_server"], username=ad_settings["username"], password=ad_settings["password"])
+    print("!!! Reset PYAD settings to default")
+
 def get_countries():
     '''
     Returns a list of tuples for use with wtforms SelectField.\n
@@ -444,6 +453,7 @@ def login():
         flash("You have been logged in.", 'success')
         res = build_log("Successful login for: " + username)
         print(res)
+        pyad_default(username, password)
         return redirect(url_for("appuser_home"))
     if form.errors:
         for error in form.errors:
@@ -460,7 +470,9 @@ def logout():
         flash("You are now logged out.", 'success')
     if current_user.is_admin or current_user.is_web_admin:
         logout_user()
+        pyad_reset()
         return redirect(url_for("admin"))
+    pyad_reset()
     logout_user()
     return redirect(url_for("login"))
 
@@ -618,11 +630,13 @@ def admin():
         flash("You have been logged in.", "success")
         res = build_log("Successful login for: " + username)
         print(res)
+        pyad_default(username, password)
         return redirect(url_for("admin_home"))
     if form.errors:
         flash(str(form.errors), 'error')
         res = build_log("Form error: " + str(form.errors))
         print(res)
+        pyad_reset()
     return render_template("admin_login.html", head_menu=app.config["head_menu"], form=form)
 
 @app.route("/admin_home")
