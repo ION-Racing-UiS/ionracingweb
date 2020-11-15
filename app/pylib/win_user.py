@@ -175,7 +175,10 @@ def join_group(sAMAccountName, group_cn=user_groups_d):
     elif type(group_cn) is dict:
         for v in group_cn.values():
             g = adgroup.ADGroup.from_cn(str(v))
-            user.add_to_group(g)
+            try:
+                user.add_to_group(g)
+            except:
+                g.add_members([user])
     else:
         group = adgroup.ADGroup.from_cn(group_cn)
         group.add_members([user])

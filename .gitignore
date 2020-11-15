@@ -20,7 +20,9 @@ venv\
 app/static/uploads/images/members/*.*
 app/static/uploads/images/members/*/
 app/static/uploads/images/cars/*.*
+app/static/uploads/images/cars/*/
 app/static/uploads/images/posts/*.*
+app/static/uploads/images/posts/*/
 .vscode/
 .vscode/*
 .vscode\
