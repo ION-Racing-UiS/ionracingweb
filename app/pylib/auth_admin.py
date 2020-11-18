@@ -1,8 +1,8 @@
 import ldap
+import pythoncom
 from app.pylib.ad_settings import get_ad_settings
 from flask_login import UserMixin
 from pyad import *
-import pythoncom
 
 def get_ldap_connection():
     '''

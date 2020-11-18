@@ -1,12 +1,13 @@
 import pywin32_system32
 import win32api
-from pyad import pyad, aduser, adobject, adgroup, addomain, adcontainer, adcomputer, adquery, adsearch
-from app.pylib.ad_settings import get_ad_settings
 import os
 import re
-from pathlib import Path
+import pythoncom
 import datetime
 import json
+from pyad import pyad, aduser, adobject, adgroup, addomain, adcontainer, adcomputer, adquery, adsearch
+from app.pylib.ad_settings import get_ad_settings
+from pathlib import Path
 
 ad_settings = get_ad_settings()
 
@@ -163,6 +164,7 @@ def join_group(sAMAccountName, group_cn=user_groups_d):
     #print("Input arguments are of valid types")
     user_groups = []
     user = aduser.ADUser.from_cn(sAMAccountName)
+    pythoncom.CoInitialize()
     if type(group_cn) == (type(None) or  None):
         for g in sorted(user.get_attribute('memberOf')):
             user_groups.append(str(adgroup.ADGroup.from_dn(str(g)).cn))
@@ -175,10 +177,7 @@ def join_group(sAMAccountName, group_cn=user_groups_d):
     elif type(group_cn) is dict:
         for v in group_cn.values():
             g = adgroup.ADGroup.from_cn(str(v))
-            try:
-                user.add_to_group(g)
-            except:
-                g.add_members([user])
+            g.add_members([aduser.ADUser.from_cn(str(sAMAccountName))])
     else:
         group = adgroup.ADGroup.from_cn(group_cn)
         group.add_members([user])
