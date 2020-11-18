@@ -13,7 +13,7 @@ __credits__ = "Truls Skadberg (Scadic)"
 __version__ = "1.0.1"
 __maintainer__ = "Truls Skadberg (Scadic)"
 __email__ = "trulshskadberg@gmail.com"
-__status__ = "Prototype"
+__status__ = "Production"
 
 def get_input(promt="", t=str):
     '''
