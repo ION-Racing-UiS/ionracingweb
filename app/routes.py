@@ -1048,7 +1048,9 @@ def admin_user_department(department):
         if type(c) is adcontainer.ADContainer and c.cn.lower() != "teams":
             departments.append(c)
     dept = adcontainer.ADContainer.from_cn(str(department))
+    print("Dept:=%s" % dept)
     members = dept.get_children(filter_=[aduser.ADUser])
+    print("Members:=%s" % members)
     return render_template("admin_user_department.html", user=current_user, department=dept, members=members, departments=departments)
 
 @app.route("/admin_user/user/<username>", methods=["GET", "POST"])

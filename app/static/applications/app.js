@@ -222,7 +222,7 @@ $(document).ready(function () {
                 }
             })
         });
-    } else if (document.title === "ION Racing | Manage Groups" || document.title === "ION Racing | Manage Admins" || document.title === "ION Racing | Manage Web Admin" || (document.title.includes("ION Racing | Manage " && document.title.includes("Users")))) {
+    } else if (document.title === "ION Racing | Manage Groups" || document.title === "ION Racing | Manage Admins" || document.title === "ION Racing | Manage Web Admin" || (document.title.includes("ION Racing | Manage ION Users"))) {
         team_id = window.location.pathname.split("/")[2].replace("%20", " ");
         $.ajax({
             url: "/query/cn/all",

@@ -21,13 +21,18 @@ def is_web_admin(user):
     :user (pyad.aduser.ADUser): User object to check. <type:pyad.aduser.ADUser>\n
     is_web_admin(`user`) -> bool
     '''
+    r = False
     if type(user) is not pyad.aduser.ADUser:
-        return False
+        r = False
     g = adgroup.ADGroup.from_cn("Web Admin").get_members()
     for m in g:
         if user.guid_str == m.guid_str and user.dn == m.dn:
-            return True
-    return False
+            r = True
+    domain_admins = adgroup.ADGroup.from_cn("Domain Admins").get_members(True)
+    for m in domain_admins:
+        if user.guid_str == m.guid_str and user.dn == m.dn:
+            r = True
+    return r
 
 def is_admin(user):
     '''
@@ -36,13 +41,18 @@ def is_admin(user):
     :user (pyad.aduser.ADUser): User object to check.\n
     is_admin(`user`) -> bool
     '''
+    r = False
     if type(user) is not pyad.aduser.ADUser:
-        return False
+        r = False
     g = adgroup.ADGroup.from_cn("Admins").get_members()
     for m in g:
         if user.guid_str == m.guid_str and user.dn == m.dn:
-            return True
-    return False
+            r = True
+    domain_admins = adgroup.ADGroup.from_cn("Domain Admins").get_members(True)
+    for m in domain_admins:
+        if user.guid_str == m.guid_str and user.dn == m.dn:
+            r = True
+    return r
 
 def get_images(images=[]):
     '''

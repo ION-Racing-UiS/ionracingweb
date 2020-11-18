@@ -1,16 +1,16 @@
+import os
+import tkinter as tk
 from json import dump, load, JSONDecodeError
 from tkinter.filedialog import asksaveasfile, askopenfilename
 from sys import exit
 from getpass import getpass
 from pathlib import Path
-import os
-import tkinter as tk
 
 __author__ = "Truls Skadberg (Scadic)"
 __copyright__ = "Copyright 2020, Scadic"
 __credits__ = "Truls Skadberg (Scadic)"
 
-__version__ = "1.0.0"
+__version__ = "1.0.1"
 __maintainer__ = "Truls Skadberg (Scadic)"
 __email__ = "trulshskadberg@gmail.com"
 __status__ = "Prototype"
@@ -50,7 +50,7 @@ def prompts():
         "password":  getpass("Password for the user: "),
         "topLevelDomain": get_input("Top level domain of the domain of AD. <domain>.<tld>: ", str),
         "homeDrive": get_input("Home drive the useraccounts will use. i.e. 'H:': ", str),
-        "profileDeliveryPrefix": get_input("Path prefix for user profiles in a UNC format. \\\\<Servername>\\<share>\\", str),
+        "profileDirectoryPrefix": get_input("Path prefix for user profiles in a UNC format. \\\\<Servername>\\<share>\\", str),
         "homeDirectoryPrefix": get_input("Path prefix for user home directories in a UNC format. \\\\<Servername>\\<share>\\", str),
         "scriptPath": get_input("Path to the script name which is located in \\\\<Servername>\\sysvol\\<domain>.<tld>\\scripts\\", str),
         "physicalDeliveryOfficeName": get_input("Office name or code: ", str),
@@ -60,21 +60,72 @@ def prompts():
         "usergroup": get_input("Group where all none default users are located, recommended is to use '<domain> Users': ", str),
         "domainsuffix": get_input("Top level domain. <domain>.<tld>: ", str),
         "path": str(Path(__file__).absolute()),
-        "user_groups": [get_input("Group where all none default users are located, recommended is to use '<domain> Users': ", str)],
-        "user_groups_d": {1: get_input("Group where all none default users are located, recommended is to use '<domain> Users': ", str)},
+        "user_groups": [],#[get_input("Group where all none default users are located, recommended is to use '<domain> Users': ", str)],
+        "user_groups_d": {},#{1: get_input("Group where all none default users are located, recommended is to use '<domain> Users': ", str)},
         "db_user": get_input("Username to use to connect to MySQL DB: ", str),
         "db_pwd": getpass("Password to use to connect to MySQL DB: ", str),
         "db_host": get_input("Host of the DB: ", str),
         "db_db": get_input("DB to connect to: ", str),
-        "db_port": get_input("Port on which to connect to MySQL DB, usually 3306: ", str)
+        "db_port": get_input("Port on which to connect to MySQL DB, usually 3306: ", int)
     }
+
+def __get_path__(path=None):
+    '''
+    Gets the path for the settings file from settings_path.json.
+    If no path is found it will return an empty string.\n
+    Parameters:\n
+    :path (str): The path of settings_path.json.\n
+    __get_path__(path) -> str
+    '''
+    path = path or os.path.join(os.getcwd(), 'settings_path.json')
+    if not os.path.isfile(path):
+        print("Path: '%s' is not a file, but a directory!" % path)
+        return ""
+    try:
+        f = open(path, 'r')
+        try:
+            p = load(f)["path"]
+            if not os.path.isfile(p):
+                print("Path: '%s' is not a file, but a directory!" % p)
+                return ""
+            return p
+        except JSONDecodeError as e:
+            print("Unable to decode JSON file!\n%s" % str(e))
+            exit(1)
+        except KeyError as e:
+            print("Key 'path' not found in the JSON file!\n%s" % str(e))
+            return ""
+    except FileNotFoundError as e:
+        print("The JSON file could not be found or does not exist!\n%s" % str(e))
+        return ""
+    finally:
+        f.close()
+    return ""
+
+def __save_path__(path=None, data=""):
+    '''
+    Saves the path of the settings file to 'settings_path.json'\n
+    :path (str): Path to 'settings_path.json' file.\n
+    :data (str)" Path to the settings file.\n
+    __save_path__(path, data) -> None
+    '''
+    d = {'path': str(data)}
+    path = path or os.path.join(os.getcwd(), 'settings_path.json')
+    try:
+        f = open(path, 'w')
+        dump(d, f, indent=2)
+    except FileNotFoundError as e:
+        print("Unable to find the file: %s\n%s" % (path, e))
+        exit(1)
+    finally:
+        f.close()
 
 class ServerSettings():
     '''
     ServerSettings which holds a dict loaded from a JSON file or user input.
     It also has the keys as attributes for their corressponding values.
     '''
-    def __init__(self, json_settings_file="", new=False):
+    def __init__(self, json_settings_file=__get_path__(), new=False):
         '''
         Tries to use the supplied path to a json settings file to load settings for the server.
         If it encounters errors or no files, you may be prompted for input or the program may exit.\n
@@ -90,7 +141,8 @@ class ServerSettings():
                 print("Creating new ServerSettings...")
                 self.settings = prompts()
                 self.__setattrs__()
-                self.__save_settings__()
+                p = self.__save_settings__()
+                __save_path__(p)
             elif not os.path.exists(json_settings_file):
                 print("Cannot find the server settings file!\n \
                 \rFile may have been deleted or you do not have access to the file.\
@@ -100,7 +152,8 @@ class ServerSettings():
                 print("No settings!\nPlease remember where your server settings file is located!")
                 self.settings = prompts()
                 self.__setattrs__()
-                self.__save_settings__()
+                p = self.__save_settings__()
+                __save_path__(p)
         elif os.path.exists(json_settings_file):
             with open(json_settings_file) as f:
                 try:
@@ -141,7 +194,7 @@ class ServerSettings():
     def __save_settings__(self):
         '''
         Method for saving the contents of `self.settings` to a json file.
-        And returns the filename of where the json file\n
+        And returns the filename of where the json file is located.\n
         __save_settings__(`self`) -> str
         '''
         f = asksaveasfile(mode="w", filetypes=[('JSON', '*.json')], defaultextension=('JSON', '*.json'))
@@ -163,17 +216,20 @@ class ServerSettings():
             self.settings = prompts()
             a = self.__setattrs__()
             r = self.__save_settings__()
+            __save_path__(data=r)
             return r
         else:
             with open(f, 'r') as reader:
                 try:
                     self.settings = load(reader)
                     self.__setattrs__()
+                    __save_path__(data=reader.name)
                 except JSONDecodeError as e:
                     print("Unable to decode JSON data!")
                     self.settings = prompts()
                     self.__setattrs__()
-                    self.__save_settings__()
+                    r = self.__save_settings__()
+                    __save_path__(data=r)
                 self.print_settings()
                 reader.close()
             return self.settings
