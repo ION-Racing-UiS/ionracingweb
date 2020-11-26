@@ -30,3 +30,4 @@ app/static/uploads/images/posts/*/
 server.py
 /venv
 \venv
+settings_path.json
