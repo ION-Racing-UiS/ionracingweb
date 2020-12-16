@@ -18,7 +18,7 @@ global limiter
 app = Flask(__name__)
 Bootstrap(app=app)
 app.config.from_object(Config)
-app.config["head_menu"] = ["Home", "User_reg", "Systems", "Terms", "Contact", "Login"]
+app.config["head_menu"] = ["Home", "Sponsor", "User_reg", "Systems", "Terms", "Contact", "Login"]
 app.config["LDAP_HOST"] = win_user.ldap_server
 app.config["LDAP_DOMAIN"] = win_user.topLevelDomain + "." + win_user.domainsuffix
 limiter = Limiter(app, key_func=get_remote_address, default_limits=["60 per minute", "5 per second"],)
