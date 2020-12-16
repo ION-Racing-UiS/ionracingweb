@@ -1,0 +1,11 @@
+
+
+body {
+    background: #011321;
+}
+
+.section{
+    min-height: 100vh;
+    background: #011321;
+    width: 100%;
+}

@@ -12,7 +12,7 @@
             <div class="welcomespons-innter-col1">
                 <div class="typeeffectcontainer">
                     <h1>We create the</h1>
-                    <span class="txt-type" data-wait="3000" data-words='["Developers" ,"Designers", "Creators", "engineers"]'></span>
+                    <span class="txt-type" data-wait="3000" data-words='["Engineers", "Developers" ,"Designers", "Creators" ]'></span>
                     <h1>of the future!</h1>
 
                     <div class="becomesponsor">
@@ -51,7 +51,7 @@
                     {{sponsor.text}} 
                 </p>
             </div>
-            <img src={{ sponsor.image}} class="mainsponsorimg" alt={{ sponsor.alt }} srcset="">
+            <img src="{{ url_for('static', filename=sponsor.image) }}" class="mainsponsorimg" alt={{ sponsor.alt }} srcset="">
         </div>
         {% endfor %}
         <div class="down-arrow-container">
@@ -86,7 +86,7 @@
                        </p> 
                     </div>
                 </div>
-                <img src={{sponsor.image}} alt={{sponsor.alt}} srcset="">
+                <img src="{{ url_for('static', filename=sponsor.image) }}" alt={{sponsor.alt}} srcset="">
             </div>
             {% if loop.index < sponsors.platinum|length %}
                 <hr/>
@@ -114,7 +114,7 @@
             {% for sponsor in sponsors.gold %}
             <div class="goldsponsorsub">
                 <div class="goldimgcontainer">
-                    <img src="{{ url_for('static', filename='images/Molstad.svg')}}" alt="" srcset="">
+                    <img src="{{ url_for('static', filename=sponsor.image) }}" alt="" srcset="">
                 </div>
                 <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Culpa perspiciatis consectetur quae explicabo labore inventore a enim dolorum laborum</p>
             </div>
@@ -141,7 +141,7 @@
         <div class="container silverbronzecontainer">
             {% for sponsor in sponsors.silver%}
             <div class="silverbronzesub">
-                <img src={{sponsor.image}} alt={{sponsor.alt}} srcset="">
+                <img src="{{ url_for('static', filename=sponsor.image) }}" alt={{sponsor.alt}} srcset="">
             </div>
             {% endfor %}
         </div>
@@ -163,7 +163,7 @@
         <div class="container silverbronzecontainer">
             {% for sponsor in sponsors.bronze%}
             <div class="silverbronzesub">
-                <img src={{sponsor.image}} alt={{sponsor.alt}} srcset="">
+                <img src="{{ url_for('static', filename=sponsor.image) }}" alt={{sponsor.alt}} srcset="">
             </div>
             {% endfor %}
         </div>

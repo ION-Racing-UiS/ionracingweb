@@ -294,156 +294,20 @@ def home():
     }
     return render_template("home.html", active=0, head_menu=app.config["head_menu"], cars=cars, posts=posts)
 
-@app.route("/sponsor/", methods=["GET", "POST"])
+@app.route("/sponsor/", methods=["GET"])
 def sponsor():
-    sponsors = {
-        "main" : [
-            {
-                "id" : 0,
-                "name" : "J.B Ugland Holding AS",
-                "url" : "https://www.google.com/",
-                "text" : """ J.B. Ugland Holding AS was established 18th of September 2000 and 
-                    is the parent company of all the J.B. Ugland-companies. 
-                    The company is located in Sørlandets Teknologipark in Grimstad (Norway) where Johan 
-                    Benad Ugland is the owner and his son, Johan Martin Ugland, is the chief 
-                    executive officer. Their vision is “Pride in developing”, an expression 
-                    that promotes big ambitions and versatile engagement in the local community. 
-                    Therefore, J.B. Ugland Holding AS wishes to contribute to development that creates 
-                    long-lasting and sustainable changes. That’s whay the company ownes businesses within 
-                    numerous business areas, such as construction, civil engineering, shipping, investments and renewable 
-                    energy. In Addition, the company is also committed to the community and are engaged in several local initiatives that contributes 
-                    to growth and wellbeing in their local community in Grimstad. The Ugland family and the JBU-companies continues a thousand year old tradition related to three main businesses. 
-                    These businesses are related to farming, trading and shipping. The Storegra farm in Grimstad is therefore an important part of the family`s history and origins back to the 1200`s. 
-                    Johan Benad Ugland took over the family farm in 1973 and has since then had a strong focus on locally resources and a good anchoring in the production chain. """,
-                "image" : url_for('static', filename='images/MECA_ALT.svg'),
-                "alt" : "MECA",
-            },
-            {
-                "id" : 0,
-                "name" : "J.B Ugland Holding AS",
-                "url" : "https://www.google.com/",
-                "text" : """ J.B. Ugland Holding AS was established 18th of September 2000 and 
-                    is the parent company of all the J.B. Ugland-companies. 
-                    The company is located in Sørlandets Teknologipark in Grimstad (Norway) where Johan 
-                    Benad Ugland is the owner and his son, Johan Martin Ugland, is the chief 
-                    executive officer. Their vision is “Pride in developing”, an expression 
-                    that promotes big ambitions and versatile engagement in the local community. 
-                    Therefore, J.B. Ugland Holding AS wishes to contribute to development that creates 
-                    long-lasting and sustainable changes. That’s whay the company ownes businesses within 
-                    numerous business areas, such as construction, civil engineering, shipping, investments and renewable 
-                    energy. In Addition, the company is also committed to the community and are engaged in several local initiatives that contributes 
-                    to growth and wellbeing in their local community in Grimstad. The Ugland family and the JBU-companies continues a thousand year old tradition related to three main businesses. 
-                    These businesses are related to farming, trading and shipping. The Storegra farm in Grimstad is therefore an important part of the family`s history and origins back to the 1200`s. 
-                    Johan Benad Ugland took over the family farm in 1973 and has since then had a strong focus on locally resources and a good anchoring in the production chain. """,
-                "image" : url_for('static', filename='images/MECA_ALT.svg'),
-                "alt" : "MECA",
-            },
-        ],
-        "platinum" : [
-            {
-                "id" : 0,
-                "name" : "molstad modell&form",
-                "url" : "https://www.molstad.no/",
-                "text" : """ J.B. Ugland Holding AS was established 18th of September 2000 and is the parent company of all the J.B. Ugland-companies. The company is located in Sørlandets Teknologipark in Grimstad (Norway) where Johan Benad Ugland is the owner and his son, Johan Martin Ugland, is the chief executive officer. Their vision is “Pride in developing”, an expression that promotes big ambitions and versatile engagement in the 
-                    local community. Therefore, J.B. Ugland Holding AS wishes to contribute 
-                    to development that... """,
-                "image" : url_for('static', filename='images/Molstad.svg'),
-                "alt" : "Molstad",
-            },
-            {
-                "id" : 1,
-                "name" : "NITO",
-                "url" : "https://www.nito.no/",
-                "text" : """ J.B. Ugland Holding AS was established 18th of September 2000 and is the parent company of all the J.B. Ugland-companies. The company is located in Sørlandets Teknologipark in Grimstad (Norway) where Johan Benad Ugland is the owner and his son, Johan Martin Ugland, is the chief executive officer. Their vision is “Pride in developing”, an expression that promotes big ambitions and versatile engagement in the 
-                    local community. Therefore, J.B. Ugland Holding AS wishes to contribute 
-                    to development that... """,
-                "image" : url_for('static', filename='images/NITO.svg'),
-                "alt" : "Molstad",
-            },
-            {
-                "id" : 2,
-                "name" : "molstad modell&form",
-                "url" : "https://www.molstad.no/",
-                "text" : """ J.B. Ugland Holding AS was established 18th of September 2000 and is the parent company of all the J.B. Ugland-companies. The company is located in Sørlandets Teknologipark in Grimstad (Norway) where Johan Benad Ugland is the owner and his son, Johan Martin Ugland, is the chief executive officer. Their vision is “Pride in developing”, an expression that promotes big ambitions and versatile engagement in the 
-                    local community. Therefore, J.B. Ugland Holding AS wishes to contribute 
-                    to development that... """,
-                "image" : url_for('static', filename='images/Molstad.svg'),
-                "alt" : "Molstad",
-            },
-        ],
-        "gold" : [
-            {
-                "id" : 0,
-                "name" : "molstad modell&form",
-                "url" : "https://www.molstad.no/",
-                "text" : """ Lorem ipsum dolor sit, amet consectetur adipisicing elit. 
-                             Culpa perspiciatis consectetur quae explicabo labore inventore a enim dolorum laborum """,
-                "image" : url_for('static', filename='images/Molstad.svg'),
-                "alt" : "Molstad",
-            },
-            {
-                "id" : 1,
-                "name" : "molstad modell&form",
-                "url" : "https://www.molstad.no/",
-                "text" : """ Lorem ipsum dolor sit, amet consectetur adipisicing elit. 
-                             Culpa perspiciatis consectetur quae explicabo labore inventore a enim dolorum laborum """,
-                "image" : url_for('static', filename='images/Molstad.svg'),
-                "alt" : "Molstad",
-            },
-            {
-                "id" : 2,
-                "name" : "molstad modell&form",
-                "url" : "https://www.molstad.no/",
-                "text" : """ Lorem ipsum dolor sit, amet consectetur adipisicing elit. 
-                             Culpa perspiciatis consectetur quae explicabo labore inventore a enim dolorum laborum """,
-                "image" : url_for('static', filename='images/Molstad.svg'),
-                "alt" : "Molstad",
-            },
-        ],
-        "silver" : [
-            {
-                "id" : 0,
-                "name": "Molstad",
-                "image": url_for('static', filename='images/Molstad.svg'),
-                "alt": "Molstad",
-            },
-            {
-                "id" : 0,
-                "name": "Molstad",
-                "image": url_for('static', filename='images/Molstad.svg'),
-                "alt": "Molstad",
-            },
-            {
-                "id" : 0,
-                "name": "Molstad",
-                "image": url_for('static', filename='images/Molstad.svg'),
-                "alt": "Molstad",
-            },
-        ],
-        "bronze" : [
-            {
-                "id" : 0,
-                "name": "Molstad",
-                "image": url_for('static', filename='images/Molstad.svg'),
-                "alt": "Molstad",
-            },
-            {
-                "id" : 0,
-                "name": "Molstad",
-                "image": url_for('static', filename='images/Molstad.svg'),
-                "alt": "Molstad",
-            },
-            {
-                "id" : 0,
-                "name": "Molstad",
-                "image": url_for('static', filename='images/Molstad.svg'),
-                "alt": "Molstad",
-            },
-        ]
-    }
+    return render_template("sponsors.html", head_menu=app.config["head_menu"], sponsors=app.config["sponsors"])
 
-    return render_template("sponsors.html", head_menu=app.config["head_menu"], sponsors=sponsors)
 
+@app.route("/getsponsors/", methods=["GET"])
+def getSponsors():
+    return app.config["sponsors"]
+
+@app.route("/sponsor/edit_sponsors/", methods=["GET", "POST"])
+def edit_sponsors():
+    if request.method == "GET":
+        return render_template("sponsor_edit.html")
+    print("POST")
 
 @app.route("/user_reg/")
 @app.route("/user_reg/register", methods=["POST"])
