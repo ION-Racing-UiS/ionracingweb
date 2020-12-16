@@ -61,7 +61,6 @@ document.addEventListener('DOMContentLoaded', init);
 // Init App
 function init() {
   const txtElement = document.querySelector('.txt-type');
-  console.log(txtElement);
   const words = JSON.parse(txtElement.getAttribute('data-words'));
   const wait = txtElement.getAttribute('data-wait');
   // Init TypeWriter

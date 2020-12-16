@@ -29,36 +29,31 @@
             <div class="chevron"></div>
         </div>
     </div>
+
+
+    {% if sponsors.main|length > 0 %}
     <div class="section main">
         <div class="logocontainer">
             <h1 class="sponsortypee">
                     Main Sponsor
             </h1>
         </div>
+        {% for sponsor in sponsors.main %}
         <div class="container-fluid mainsponsor">
             <div class="sponsortext mainsponsortext">
                 <span class="subsponsorname subsponsornameMain">
-                    J.B Ugland Holding AS
-                    <a href="#" target="_blank">
+                    {{sponsor.name}}
+                    <a href={{sponsor.url}} target="_blank">
                             <img src="{{ url_for('static', filename='images/Link.png')}}" class="" alt="" srcset="">
                     </a>
                 </span>
                 <p>
-                    J.B. Ugland Holding AS was established 18th of September 2000 and is the parent company of all the J.B. Ugland-companies. 
-                    The company is located in Sørlandets Teknologipark in Grimstad (Norway) where Johan Benad Ugland is the owner and his son, 
-                    Johan Martin Ugland, is the chief executive officer. Their vision is “Pride in developing”, an expression that promotes 
-                    big ambitions and versatile engagement in the local community. Therefore, J.B. Ugland Holding AS wishes to contribute to development that
-                    creates long-lasting and sustainable changes. That’s whay the company ownes businesses within numerous business areas, such as construction,
-                    civil engineering, shipping, investments and renewable energy. In Addition, the company is also committed to the community and are engaged 
-                    in several local initiatives that contributes to growth and wellbeing in their local community in Grimstad.
-                    The Ugland family and the JBU-companies continues a thousand year old tradition related to three main businesses. 
-                    These businesses are related to farming, trading and shipping. The Storegra farm in Grimstad is therefore an important part
-                    of the family`s history and origins back to the 1200`s. Johan Benad Ugland took over the family farm in 1973 and has since
-                    then had a strong focus on locally resources and a good anchoring in the production chain. 
+                    {{sponsor.text}} 
                 </p>
             </div>
-            <img src="{{ url_for('static', filename='images/MECA_ALT.svg')}}" class="mainsponsorimg" alt="" srcset="">
+            <img src={{ sponsor.image}} class="mainsponsorimg" alt={{ sponsor.alt }} srcset="">
         </div>
+        {% endfor %}
         <div class="down-arrow-container">
             <div class="chevron"></div>
             <div class="chevron"></div>
@@ -66,7 +61,9 @@
         </div>
         
     </div>
+    {% endif %}
 
+    {% if sponsors.platinum|length > 0 %}
     <div class="section platinum">
         <div class="logocontainer">
             <h1 class="sponsortypee">
@@ -75,62 +72,26 @@
         </div>
 
         <div class="container">
+            {% for sponsor in sponsors.platinum %}
             <div class="platinumsponsorsub">
                 <div class="subplatinumcontainer">
-                    <span class="subsponsorname">Subsponsor
-                        <a href="#" target="_blank">
+                    <span class="subsponsorname">{{sponsor.name}}
+                        <a href={{sponsor.url}} target="_blank">
                             <img src="{{ url_for('static', filename='images/Link.png')}}" class="" alt="" srcset="">
                         </a>
                     </span>
                     <div class="subplatinumtext">
                        <p>
-                            J.B. Ugland Holding AS was established 18th of September 2000 and is the parent company of all the J.B. Ugland-companies. 
-                            The company is located in Sørlandets Teknologipark in Grimstad (Norway) where Johan Benad Ugland is the owner and his son, 
-                            Johan Martin Ugland, is the chief executive officer. Their vision is “Pride in developing”, an expression that promotes 
-                            big ambitions and versatile engagement in the local community. Therefore, J.B. Ugland Holding AS wishes to contribute to development that...
+                           {{sponsor.text}}
                        </p> 
                     </div>
                 </div>
-                <img src="{{ url_for('static', filename='images/Molstad.svg')}}" alt="" srcset="">
+                <img src={{sponsor.image}} alt={{sponsor.alt}} srcset="">
             </div>
-            <hr/>
-            <div class="platinumsponsorsub">
-                <div class="subplatinumcontainer">
-                    <span class="subsponsorname">Subsponsor
-                        <a href="#" target="_blank">
-                            <img src="{{ url_for('static', filename='images/Link.png')}}" class="" alt="" srcset="">
-                        </a>
-                    </span>
-                    <div class="subplatinumtext">
-                       <p>
-                            J.B. Ugland Holding AS was established 18th of September 2000 and is the parent company of all the J.B. Ugland-companies. 
-                            The company is located in Sørlandets Teknologipark in Grimstad (Norway) where Johan Benad Ugland is the owner and his son, 
-                            Johan Martin Ugland, is the chief executive officer. Their vision is “Pride in developing”, an expression that promotes 
-                            big ambitions and versatile engagement in the local community. Therefore, J.B. Ugland Holding AS wishes to contribute to development that...
-                       </p> 
-                    </div>
-                </div>
-                <img src="{{ url_for('static', filename='images/Molstad.svg')}}" alt="" srcset="">
-            </div>
-            <hr/>
-            <div class="platinumsponsorsub">
-                <div class="subplatinumcontainer">
-                    <span class="subsponsorname">Subsponsor
-                        <a href="#" target="_blank">
-                            <img src="{{ url_for('static', filename='images/Link.png')}}" class="" alt="" srcset="">
-                        </a>
-                    </span>
-                    <div class="subplatinumtext">
-                       <p>
-                            J.B. Ugland Holding AS was established 18th of September 2000 and is the parent company of all the J.B. Ugland-companies. 
-                            The company is located in Sørlandets Teknologipark in Grimstad (Norway) where Johan Benad Ugland is the owner and his son, 
-                            Johan Martin Ugland, is the chief executive officer. Their vision is “Pride in developing”, an expression that promotes 
-                            big ambitions and versatile engagement in the local community. Therefore, J.B. Ugland Holding AS wishes to contribute to development that...
-                       </p> 
-                    </div>
-                </div>
-                <img src="{{ url_for('static', filename='images/Molstad.svg')}}" alt="" srcset="">
-            </div>
+            {% if loop.index < sponsors.platinum|length %}
+                <hr/>
+            {% endif %}
+            {% endfor %}
         </div>
         <div class="down-arrow-container down-arrow-platinum">
             <div class="chevron"></div>
@@ -138,6 +99,10 @@
             <div class="chevron"></div>
         </div>
     </div>
+    {% endif %}
+
+
+    {% if sponsors.gold|length > 0 %}
     <div class="section gold">
         <div class="logocontainer">
             <h1 class="sponsortypee">
@@ -146,33 +111,17 @@
         </div>
 
         <div class="container goldcontainer">
+            {% for sponsor in sponsors.gold %}
             <div class="goldsponsorsub">
                 <div class="goldimgcontainer">
                     <img src="{{ url_for('static', filename='images/Molstad.svg')}}" alt="" srcset="">
                 </div>
                 <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Culpa perspiciatis consectetur quae explicabo labore inventore a enim dolorum laborum</p>
             </div>
-            <div class="goldsponsorsub">
-                <div class="goldimgcontainer">
-                    <img src="{{ url_for('static', filename='images/Molstad.svg')}}" alt="" srcset="">
-                </div>
-                <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Culpa perspiciatis consectetur quae explicabo labore inventore a enim dolorum laborum</p>
-            </div>
+            {% if loop.index % 2 == 0%}
             <hr style="margin-top: 3%;">
-
-            <div class="goldsponsorsub">
-                <div class="goldimgcontainer">
-                    <img src="{{ url_for('static', filename='images/Molstad.svg')}}" alt="" srcset="">
-                </div>
-                <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Culpa perspiciatis consectetur quae explicabo labore inventore a enim dolorum laborum</p>
-            </div>
-            <div class="goldsponsorsub">
-                <div class="goldimgcontainer">
-                    <img src="{{ url_for('static', filename='images/Molstad.svg')}}" alt="" srcset="">
-                </div>
-                <p>Lorem ipsum dolor sit, amet consectetur adipisicing elit. Culpa perspiciatis consectetur quae explicabo labore inventore a enim dolorum laborum</p>
-            </div>
-            <hr style="margin-top: 3%;">
+            {% endif %}
+            {% endfor %}
         </div>
         <div class="down-arrow-container">
             <div class="chevron"></div>
@@ -181,28 +130,20 @@
         </div>
             
     </div>
+    {% endif %}
+    {% if sponsors.silver|length > 0 %}
     <div class="section silver">
         <div class="logocontainer">
             <h1 class="sponsortypee"> 
                Silver Sponsors 
             </h1>
         </div>
-        <div class="container goldcontainer">
+        <div class="container silverbronzecontainer">
+            {% for sponsor in sponsors.silver%}
             <div class="silverbronzesub">
-                <img src="{{ url_for('static', filename='images/Molstad.svg')}}" alt="" srcset="">
+                <img src={{sponsor.image}} alt={{sponsor.alt}} srcset="">
             </div>
-            <div class="silverbronzesub">
-                <img src="{{ url_for('static', filename='images/Molstad.svg')}}" alt="" srcset="">
-            </div>
-            <div class="silverbronzesub">
-                <img src="{{ url_for('static', filename='images/Molstad.svg')}}" alt="" srcset="">
-            </div>
-            <div class="silverbronzesub">
-                <img src="{{ url_for('static', filename='images/Molstad.svg')}}" alt="" srcset="">
-            </div>
-            <div class="silverbronzesub">
-                <img src="{{ url_for('static', filename='images/Molstad.svg')}}" alt="" srcset="">
-            </div>
+            {% endfor %}
         </div>
         <div class="down-arrow-container">
             <div class="chevron"></div>
@@ -210,37 +151,29 @@
             <div class="chevron"></div>
         </div>
     </div>
+    {% endif %}
+    
+    {% if sponsors.bronze|length > 0%}
     <div class="section bronze">   
         <div class="logocontainer">
             <h1 class="sponsortypee"> 
                Bronze Sponsors 
             </h1>
         </div>
-        <div class="container goldcontainer">
+        <div class="container silverbronzecontainer">
+            {% for sponsor in sponsors.bronze%}
             <div class="silverbronzesub">
-                <img src="{{ url_for('static', filename='images/Molstad.svg')}}" alt="" srcset="">
+                <img src={{sponsor.image}} alt={{sponsor.alt}} srcset="">
             </div>
-            <div class="silverbronzesub">
-                <img src="{{ url_for('static', filename='images/Molstad.svg')}}" alt="" srcset="">
-            </div>
-            <div class="silverbronzesub">
-                <img src="{{ url_for('static', filename='images/Molstad.svg')}}" alt="" srcset="">
-            </div>
-            <div class="silverbronzesub">
-                <img src="{{ url_for('static', filename='images/Molstad.svg')}}" alt="" srcset="">
-            </div>
-            <div class="silverbronzesub">
-                <img src="{{ url_for('static', filename='images/Molstad.svg')}}" alt="" srcset="">
-            </div>
+            {% endfor %}
         </div>
         <div class="down-arrow-container">
             <div class="chevron"></div>
             <div class="chevron"></div>
             <div class="chevron"></div>
         </div>
-            
     </div>
-
+    {% endif %}
     <script src="{{ url_for('static', filename='applications/sponsor.js') }}"></script>
 {% endblock  %}
 {% block footer %}
