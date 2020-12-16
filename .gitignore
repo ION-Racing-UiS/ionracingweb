@@ -31,3 +31,4 @@ server.py
 /venv
 \venv
 /settings_path.json
+settings_path.json
