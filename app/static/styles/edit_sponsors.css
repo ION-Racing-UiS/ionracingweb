@@ -1,4 +1,5 @@
-
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Russo+One&display=swap');
 
 body {
     background: #011321;
@@ -8,4 +9,45 @@ body {
     min-height: 100vh;
     background: #011321;
     width: 100%;
+}
+
+.actions{
+    width: 100%;
+    display: flex;
+    align-items: center;
+}
+
+.actioncontainer{
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    text-align: center;
+    min-height: 15vh;
+}
+
+.actioncontainer > h1 {
+  font-family: 'Russo One', sans-serif !important;
+  text-transform: uppercase;
+  font-size: 1.6em;
+}
+
+.editstatus{
+    position: fixed;
+    top: 39%;
+    left: 1%;
+    width: 18%;
+}
+
+::placeholder { /* Chrome, Firefox, Opera, Safari 10.1+ */
+  color: black;
+  opacity: 1; /* Firefox */
+}
+
+:-ms-input-placeholder { /* Internet Explorer 10-11 */
+  color: black;
+}
+
+::-ms-input-placeholder { /* Microsoft Edge */
+  color: black;
 }

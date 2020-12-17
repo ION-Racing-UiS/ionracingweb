@@ -55,7 +55,7 @@ app.config["sponsors"] = {
                 "alt" : "MECA",
             },
             { 
-                "id" : 0,
+                "id" : 1,
                 "name" : "J.B Ugland Holding AS",
                 "url" : "https://www.google.com/",
                 "text" : """ J.B. Ugland Holding AS was established 18th of September 2000 and 
@@ -146,7 +146,7 @@ app.config["sponsors"] = {
                 "alt": "Molstad",
             },
             {
-                "id" : 0,
+                "id" : 1,
                 "name": "Molstad",
                 "url" : "",
                 "text": "",
@@ -154,7 +154,7 @@ app.config["sponsors"] = {
                 "alt": "Molstad",
             },
             {
-                "id" : 0,
+                "id" : 2,
                 "name": "Molstad",
                 "image": 'images/Molstad.svg',
                 "alt": "Molstad",
@@ -170,7 +170,7 @@ app.config["sponsors"] = {
                 "alt": "Molstad",
             },
             {
-                "id" : 0,
+                "id" : 1,
                 "name": "Molstad",
                 "url" : "",
                 "text": "",
@@ -178,7 +178,7 @@ app.config["sponsors"] = {
                 "alt": "Molstad",
             },
             {
-                "id" : 0,
+                "id" : 2,
                 "name": "Molstad",
                 "url" : "",
                 "text": "",

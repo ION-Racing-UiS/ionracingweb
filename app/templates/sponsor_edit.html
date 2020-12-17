@@ -7,10 +7,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" />
     <meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 
-    <title>My first BootstrapVue app</title>
-
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles/edit_sponsors.css') }}">
-    <!-- Required Stylesheets -->
+        <!-- Required Stylesheets -->
     <link
       type="text/css"
       rel="stylesheet"
@@ -28,43 +25,231 @@
     <!-- Required scripts -->
     <script src="https://unpkg.com/vue@latest/dist/vue.js"></script>
     <script src="https://unpkg.com/bootstrap-vue@latest/dist/bootstrap-vue.js"></script>
+
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles/edit_sponsors.css') }}">
     {% endblock%}
     {% block content %}
     <!-- Our application root element -->
     <div class="section">
-        <div id="app" class="container">
-            <div class="actioncontainer">
-                <h1>Action to take... </h1>
-                <div class="btn-group btn-group-toggle" data-toggle="buttons">
-                    <label class="btn btn-secondary active">
-                        <input type="radio" name="Add" id="option1" autocomplete="off" checked> Add
-                    </label>
-                    <label class="btn btn-secondary">
-                        <input type="radio" name="Update" id="option2" autocomplete="off"> Update
-                    </label>
-                    <label class="btn btn-secondary">
-                        <input type="radio" name="Delete" id="option3" autocomplete="off"> Delete
-                    </label>
-                </div>
+        <div id="app">
+          <div class="container">
+            <div class="actions">
+              <div class="actioncontainer">
+                <h1>Action to take</h1>
+                    <b-form-group v-slot="{ ariaDescribedby }">
+                      <b-form-radio-group
+                        id="btn-radios-1"
+                        v-model="actionselected"
+                        :options="actionoptions"
+                        :aria-describedby="ariaDescribedby"
+                        name="radios-btn-default"
+                        buttons
+                        class="d-flex flex-wrap"
+                      ></b-form-radio-group>
+                    </b-form-group> 
+              </div>
+              <div class="actioncontainer">
+                  <h1>Sponsor type</h1>
+                    <b-form-group v-slot="{ ariaDescribedby }">
+                      <b-form-radio-group
+                        id="btn-radios-2"
+                        v-model="sponsorselected"
+                        :options="sponsoroptions"
+                        :aria-describedby="ariaDescribedby"
+                        name="radios-btn-default"
+                        buttons
+                        class="d-flex flex-wrap"
+                      ></b-form-radio-group>
+                    </b-form-group>
+                  </div>
+              
             </div>
-            <div class="actioncontainer">
+            <div class="formcontainer" v-if="actionselected !== 'delete'">
+                <b-form @submit.prevent="onSubmit" @reset="onReset">
+                  <!-- sponsor id -->
+                  <b-form-group
+                    id="input-group-Id"
+                    label="Sponsor ID:"
+                    label-for="input-1"
+                  >
+                    <b-form-input
+                      id="input-Id"
+                      v-model="form.id"
+                      type="number"
+                      placeholder="Sponsor ID"
+                      :disabled="!ReadyToEdit"
+                      required
+                    ></b-form-input>
+                  </b-form-group>
 
+                  <!-- sponsor name -->
+                  <b-form-group
+                    id="input-group-name"
+                    label="Sponsor Name:"
+                    label-for="input-1"
+                  >
+                    <b-form-input
+                      id="input-Id"
+                      v-model="form.name"
+                      type="text"
+                      placeholder="Sponsor Name"
+                      :disabled="!ReadyToEdit"
+                      required
+                    ></b-form-input>
+                  </b-form-group>
+
+                  <!-- sponsor link -->
+                  <b-form-group
+                    id="input-group-link"
+                    label="Sponsor Link:"
+                    label-for="input-1"
+                  >
+                    <b-form-input
+                      id="input-Id"
+                      v-model="form.url"
+                      type="text"
+                      placeholder="Sponsor Url"
+                      :disabled="!ReadyToEdit"
+                      required
+                      ></b-form-input>
+                    </b-form-group>
+                  
+                  <!-- sponsor text -->
+                  <b-form-group
+                    id="input-group-text"
+                    label="Sponsor Description:"
+                    label-for="input-1"
+                  >
+                  <b-form-textarea
+                      id="sponsor-text"
+                      v-model="form.text"
+                      placeholder="Sponsor Description..."
+                      rows="9"
+                      :disabled="!ReadyToEdit"
+                      ></b-form-textarea>
+                    </b-form-group>
+                    
+                    <!-- sponsor image -->
+                    <b-form-group
+                      id="input-group-image"
+                      label="Sponsor Image:"
+                      label-for="input-1"
+                    >
+                    <b-form-file
+                      v-model="form.image"
+                      placeholder="Choose a file or drop it here..."
+                      accept=".jpg, .png, .gif"
+                      :disabled="!ReadyToEdit"
+                    ></b-form-file>
+                    <b-button @click="form.image = null" variant="secondary" style="margin-top: 1%;">Reset</b-button>
+                    <div class="mt-3">Selected file: [[ form.image ? form.image.name : '' ]]</div>
+                  </b-form-group>
+
+                 <b-button :disabled="!ReadyToEdit || !ReadyToSend" type="submit" variant="success">Submit</b-button>
+                 <b-button :disabled="!ReadyToEdit || !ReadyToSend" @click="ResetAll()" type="button" variant="secondary">Reset all</b-button>
+                </b-form>
             </div>
+          </div>
         </div>
     </div>
         
     <!-- Start running your app -->
     <script>
+      let a; 
       window.app = new Vue({
         el: '#app',
         data: {
-          name: ''
+          name: '',
+          actionselected: '',
+          actionoptions: [
+              { text: 'Add', value: 'add' },
+              { text: 'Update', value: 'update' },
+              { text: 'Delete', value: 'delete' }
+          ],
+          sponsorselected: '',
+          sponsoroptions: [
+              { text: 'Main', value: 'main' },
+              { text: 'Platinum', value: 'platinum' },
+              { text: 'Gold', value: 'gold' },
+              { text: 'Silver', value: 'silver' },
+              { text: 'Bronze', value: 'bronze' }
+          ],
+          form : {
+            id: -1,
+            name: "",
+            url: "",
+            text: "",
+            image: null,
+            alt: "",
+            action: "",
+            sponsortype:"",
+          },
+          status : {
+            variant : "light"
+          }
         },
         computed: {
           showAlert() {
-            return this.name.length > 4 ? true : false
+            return this.actionselected.length > 4 ? true : false
+          },
+          ReadyToEdit() {
+            return this.actionselected !== '' && this.sponsorselected !== ''
+          },
+          ReadyToSend(){
+            return (this.form.id !== -1 && this.form.id !== "-1") && this.form.name !== '' 
+            && this.form.url !== '' && this.form.url !== '' && this.form.image !== null
+          },
+          updateVariant() {
+            if (this.actionselected === 'add') {
+              this.status.variant = "primary"
+            } else if (this.actionselected === 'update') {
+              this.status.variant = "warning"
+            } else if (this.actionselected === 'delete') {
+              this.status.variant = "danger"
+            }
           }
-        }
+        },
+        methods: {
+          onSubmit(){
+            a = this.form.image;
+            this.form.action = this.actionselected
+            this.form.sponsortype = this.sponsorselected
+            this.form.alt = this.form.name
+
+            const formdata = new FormData()
+            formdata.append("name", this.form.name);
+
+            // The problem is here, need to fix, get 400...
+            fetch('/sponsor/edit_sponsors/', {
+              method: 'POST',
+              headers: {
+                // 'Content-Type': 'application/json',
+                'enctype':"multipart/form-data"
+              },
+              body: JSON.stringify(formdata)
+            })
+            .then((res) => {
+              data = res.json()
+            })
+            .then((data) => {
+              console.log(data);
+            })
+            .catch((error) => {
+              console.log(error);
+            });
+          },
+          onReset(){
+            console.log("halla 2");
+          },
+          ResetAll(){
+            this.form.id = -1
+            this.form.name = ""
+            this.form.url = ""
+            this.form.text = ""
+            this.form.image = null
+          }
+        },
+        delimiters: ['[[',']]'],
       })
     </script>
 {% endblock  %}
